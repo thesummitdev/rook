@@ -26,5 +26,5 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'dev.thesummit.flink.App'
+    mainClass = 'dev.thesummit.flink.FlinkApplication'
 }
