@@ -3,30 +3,39 @@
  */
 package dev.thesummit.flink;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import dev.thesummit.flink.database.ConnectionPool;
+import dev.thesummit.flink.database.FlinkConnectionPool;
+import dev.thesummit.flink.handlers.LinkHandler;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.sql.SQLException;
 
 public class FlinkApplication {
+  // TODO: Change these to OS ENV parameters.
+  static final String DB_URL = "jdbc:postgresql://localhost:5432/flink-dev";
+  static final String DB_USER = "tyler";
+  static final String DB_PASSWORD = "";
+  public ConnectionPool pool = null;
+
+  public FlinkApplication() {
+    try {
+      this.pool =
+          FlinkConnectionPool.create(
+              FlinkApplication.DB_URL, FlinkApplication.DB_USER, FlinkApplication.DB_PASSWORD);
+    } catch (SQLException e) {
+      System.out.println(e);
+    }
+  }
 
   public static void main(String[] args) throws IOException {
     HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-    server.createContext("/main", new MyHandler());
+
+    // Register Route Handlers.
+    server.createContext("/main", new LinkHandler(new FlinkApplication()));
+
     server.setExecutor(null);
     server.start();
-    System.out.println("flink server running on port 8000");
-  }
-}
-
-class MyHandler implements HttpHandler {
-  public void handle(HttpExchange t) throws IOException {
-    String response = "This is the response ok!";
-    t.sendResponseHeaders(200, response.length());
-    OutputStream os = t.getResponseBody();
-    os.write(response.getBytes());
-    os.close();
+    System.out.println("flink development server running on port 8000");
   }
 }
