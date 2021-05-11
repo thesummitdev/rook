@@ -16,23 +16,37 @@ public class FlinkApplication {
   static final String DB_URL = "jdbc:postgresql://localhost:5432/flink-dev";
   static final String DB_USER = "tyler";
   static final String DB_PASSWORD = "";
+  private static FlinkApplication appContext = null;
   public ConnectionPool pool = null;
 
-  public FlinkApplication() {
-    try {
-      this.pool =
-          FlinkConnectionPool.create(
-              FlinkApplication.DB_URL, FlinkApplication.DB_USER, FlinkApplication.DB_PASSWORD);
-    } catch (SQLException e) {
-      System.out.println(e);
+  public static FlinkApplication create() {
+
+    if (FlinkApplication.appContext == null) {
+
+      appContext = new FlinkApplication();
+
+      try {
+        appContext.pool =
+            FlinkConnectionPool.create(
+                FlinkApplication.DB_URL, FlinkApplication.DB_USER, FlinkApplication.DB_PASSWORD);
+      } catch (SQLException e) {
+        System.out.println(e);
+      }
     }
+
+    return appContext;
+  }
+
+  public static FlinkApplication getContext() {
+    return appContext;
   }
 
   public static void main(String[] args) throws IOException {
     HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
+    FlinkApplication.create();
     // Register Route Handlers.
-    server.createContext("/main", new LinkHandler(new FlinkApplication()));
+    server.createContext("/main", new LinkHandler());
 
     server.setExecutor(null);
     server.start();

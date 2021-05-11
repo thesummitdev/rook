@@ -12,22 +12,16 @@ import java.sql.Statement;
 
 public class LinkHandler implements HttpHandler {
 
-  FlinkApplication app = null;
-
-  public LinkHandler(FlinkApplication app) {
-    this.app = app;
-  }
-
   public void handle(HttpExchange t) throws IOException {
 
     String response = "";
+
     try {
-      Connection conn = this.app.pool.getConnection();
+      Connection conn = FlinkApplication.getContext().pool.getConnection();
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * from links;");
       while (rs.next()) {
-        System.out.println(rs.getString("url"));
-        response = response + rs.getString("url");
+        response = response + rs.getString("url") + "\n";
       }
 
     } catch (SQLException e) {
