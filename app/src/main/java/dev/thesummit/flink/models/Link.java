@@ -17,10 +17,10 @@ public class Link implements DatabaseObject {
   private String tags;
   private Boolean unread;
 
-  private static String INSERT_QUERY =
+  private static final String INSERT_QUERY =
       "INSERT INTO links (url, tags, unread) VALUES (?,?,?) RETURNING id;";
-  private static String DELETE_QUERY = "DELETE FROM links WHERE id=?;";
-  private static String UPDATE_QUERY = "UPDATE links SET url=?, tags=?, unread=? WHERE id=? ";
+  private static final String DELETE_QUERY = "DELETE FROM links WHERE id=?;";
+  private static final String UPDATE_QUERY = "UPDATE links SET url=?, tags=?, unread=? WHERE id=? ";
 
   /**
    * Construct a Link instance.
