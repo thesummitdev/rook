@@ -11,11 +11,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LinkHandler implements CrudHandler {
+
+  private static Logger log = Logger.getLogger(LinkHandler.class.getName());
 
   /** Register a database connection with the request context. */
   public static void before(Context ctx) {
@@ -36,15 +40,15 @@ public class LinkHandler implements CrudHandler {
 
     JSONArray arr = new JSONArray();
 
-    try {
-      Connection conn = ctx.use(Connection.class);
-      Statement statement = conn.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * from links;");
-      while (rs.next()) {
-        Link l = Link.fromResultSet(rs);
-        arr.put(l.toJSONObject());
+    Connection conn = ctx.use(Connection.class);
+    try (Statement statement = conn.createStatement()) {
+      log.log(Level.FINE, statement.toString());
+      try (ResultSet rs = statement.executeQuery("SELECT * from links;")) {
+        while (rs.next()) {
+          Link l = Link.fromResultSet(rs);
+          arr.put(l.toJSONObject());
+        }
       }
-
     } catch (SQLException e) {
       System.out.println(e);
     }
@@ -60,17 +64,18 @@ public class LinkHandler implements CrudHandler {
   @Override
   public void getOne(Context ctx, String resourceId) {
     Link l = null;
-    try {
-      Connection conn = ctx.use(Connection.class);
-      // TODO
-      // https://stackoverflow.com/questions/46433459/postgres-select-where-the-where-is-uuid-or-string
-      PreparedStatement statement = conn.prepareStatement("SELECT * from links WHERE id::text = ?");
+    Connection conn = ctx.use(Connection.class);
+    // TODO
+    // https://stackoverflow.com/questions/46433459/postgres-select-where-the-where-is-uuid-or-string
+    try (PreparedStatement statement =
+        conn.prepareStatement("SELECT * from links WHERE id::text = ?")) {
       statement.setString(1, resourceId);
-      ResultSet rs = statement.executeQuery();
-      while (rs.next()) {
-        l = Link.fromResultSet(rs);
+      log.log(Level.FINE, statement.toString());
+      try (ResultSet rs = statement.executeQuery(); ) {
+        while (rs.next()) {
+          l = Link.fromResultSet(rs);
+        }
       }
-      statement.close();
     } catch (SQLException e) {
       System.out.println(e);
     }
@@ -98,17 +103,19 @@ public class LinkHandler implements CrudHandler {
       throw new BadRequestResponse("Unable to parse JSON payload");
     }
 
-    try {
-      Connection conn = ctx.use(Connection.class);
-      PreparedStatement statement =
-          conn.prepareStatement(
-              "INSERT INTO links (url, tags, unread) VALUES (?,?,?) RETURNING *;");
+    Connection conn = ctx.use(Connection.class);
+    try (PreparedStatement statement =
+        conn.prepareStatement(
+            "INSERT INTO links (url, tags, unread) VALUES (?,?,?) RETURNING *;")) {
       statement.setString(1, body.getString("url"));
       statement.setString(2, body.getString("tags"));
       statement.setBoolean(3, body.getBoolean("unread"));
-      ResultSet rs = statement.executeQuery();
-      while (rs.next()) {
-        l = Link.fromResultSet(rs);
+      log.log(Level.FINE, statement.toString());
+
+      try (ResultSet rs = statement.executeQuery()) {
+        while (rs.next()) {
+          l = Link.fromResultSet(rs);
+        }
       }
     } catch (SQLException e) {
 
@@ -134,16 +141,18 @@ public class LinkHandler implements CrudHandler {
       throw new BadRequestResponse("Unable to parse JSON payload");
     }
 
-    try {
-      Connection conn = ctx.use(Connection.class);
-      PreparedStatement statement = conn.prepareStatement(UPDATE_QUERY);
+    Connection conn = ctx.use(Connection.class);
+
+    try (PreparedStatement statement = conn.prepareStatement(UPDATE_QUERY)) {
       statement.setString(1, body.getString("url"));
       statement.setString(2, body.getString("tags"));
       statement.setBoolean(3, body.getBoolean("unread"));
       statement.setString(4, resourceId);
-      ResultSet rs = statement.executeQuery();
-      while (rs.next()) {
-        l = Link.fromResultSet(rs);
+      log.log(Level.FINE, statement.toString());
+      try (ResultSet rs = statement.executeQuery()) {
+        while (rs.next()) {
+          l = Link.fromResultSet(rs);
+        }
       }
     } catch (SQLException e) {
 
@@ -157,22 +166,27 @@ public class LinkHandler implements CrudHandler {
   @Override
   public void delete(Context ctx, String resourceId) {
 
-    try {
-      Connection conn = ctx.use(Connection.class);
+    Connection conn = ctx.use(Connection.class);
+    try (PreparedStatement checkIfExists =
+        conn.prepareStatement("SELECT COUNT(id) FROM LINKS where id::text = ?;")) {
 
-      PreparedStatement checkIfExists =
-          conn.prepareStatement("SELECT COUNT(id) FROM LINKS where id::text = ?;");
       checkIfExists.setString(1, resourceId);
-      ResultSet rs = checkIfExists.executeQuery();
-      rs.next();
-      int count = rs.getInt(1);
-      boolean recordFound = count > 0;
+      log.log(Level.FINE, checkIfExists.toString());
+
+      boolean recordFound = false;
+      try (ResultSet rs = checkIfExists.executeQuery()) {
+        rs.next();
+        int count = rs.getInt(1);
+        recordFound = count > 0;
+      }
 
       if (recordFound) {
-        PreparedStatement statement =
-            conn.prepareStatement("DELETE FROM LINKS where id::text = ?;");
-        statement.setString(1, resourceId);
-        statement.execute();
+        try (PreparedStatement statement =
+            conn.prepareStatement("DELETE FROM LINKS where id::text = ?;")) {
+          statement.setString(1, resourceId);
+          log.log(Level.FINE, statement.toString());
+          statement.execute();
+        }
       } else {
         ctx.status(404);
         ctx.result(String.format("Link with id %s does not exist.", resourceId));

@@ -52,8 +52,10 @@ public class FlinkApplication {
         () -> {
           ApiBuilder.crud("links/:id", new LinkHandler());
         });
-    app.before("links*", (ctx) -> LinkHandler.before(ctx));
-    app.after("links*", (ctx) -> LinkHandler.after(ctx));
+    app.before("links", (ctx) -> LinkHandler.before(ctx));
+    app.after("links", (ctx) -> LinkHandler.after(ctx));
+    app.before("links/*", (ctx) -> LinkHandler.before(ctx));
+    app.after("links/*", (ctx) -> LinkHandler.after(ctx));
 
     FlinkApplication.create(); // Init app and database pool.
     app.start(8000); // Start listening for http requests.
