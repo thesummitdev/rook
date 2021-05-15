@@ -3,12 +3,12 @@
  */
 package dev.thesummit.flink;
 
-import com.sun.net.httpserver.HttpServer;
 import dev.thesummit.flink.database.ConnectionPool;
 import dev.thesummit.flink.database.FlinkConnectionPool;
 import dev.thesummit.flink.handlers.LinkHandler;
+import io.javalin.Javalin;
+import io.javalin.apibuilder.*;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.sql.SQLException;
 
 public class FlinkApplication {
@@ -30,7 +30,7 @@ public class FlinkApplication {
             FlinkConnectionPool.create(
                 FlinkApplication.DB_URL, FlinkApplication.DB_USER, FlinkApplication.DB_PASSWORD);
       } catch (SQLException e) {
-        System.out.println(e);
+        throw new RuntimeException("Unable to connected to database", e);
       }
     }
 
@@ -42,14 +42,20 @@ public class FlinkApplication {
   }
 
   public static void main(String[] args) throws IOException {
-    HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+    Javalin app =
+        Javalin.create(
+            config -> {
+              config.enableDevLogging();
+            });
+    app.get("/", ctx -> ctx.result("Hello World"));
+    app.routes(
+        () -> {
+          ApiBuilder.crud("links/:id", new LinkHandler());
+        });
+    app.before("links*", (ctx) -> LinkHandler.before(ctx));
+    app.after("links*", (ctx) -> LinkHandler.after(ctx));
 
-    FlinkApplication.create();
-    // Register Route Handlers.
-    server.createContext("/main", new LinkHandler());
-
-    server.setExecutor(null);
-    server.start();
-    System.out.println("flink development server running on port 8000");
+    FlinkApplication.create(); // Init app and database pool.
+    app.start(8000); // Start listening for http requests.
   }
 }

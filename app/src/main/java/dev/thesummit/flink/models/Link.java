@@ -57,7 +57,7 @@ public class Link implements DatabaseObject {
    * @throws SQLException
    */
   @Override
-  public void add() throws SQLException {
+  public void put() throws SQLException {
     Connection conn = FlinkApplication.getContext().pool.getConnection();
 
     PreparedStatement statement = conn.prepareStatement(Link.INSERT_QUERY);
@@ -102,7 +102,7 @@ public class Link implements DatabaseObject {
    * @throws SQLException
    */
   @Override
-  public void update() throws SQLException {
+  public void patch() throws SQLException {
     Connection conn = FlinkApplication.getContext().pool.getConnection();
 
     PreparedStatement statement = conn.prepareStatement(Link.UPDATE_QUERY);
@@ -143,6 +143,22 @@ public class Link implements DatabaseObject {
             .put("unread", this.unread);
 
     return obj;
+  }
+
+  /**
+   * Make a JSON compliant object from the link instance.
+   *
+   * @return The JSONObject.
+   */
+  public static Link fromJSONObject(JSONObject obj) {
+
+    Link l = new Link(obj.getString("url"), obj.getString("tags"), obj.getBoolean("unread"));
+
+    if (obj.has("id")) {
+      l.setId((UUID) obj.get("id"));
+    }
+
+    return l;
   }
 
   /**

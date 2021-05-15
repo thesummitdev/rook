@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface DatabaseObject {
-  public void add() throws SQLException;
+  public void put() throws SQLException;
 
   public static void delete(String uuid) throws SQLException {}
 
@@ -17,5 +17,5 @@ public interface DatabaseObject {
     return new ArrayList<DatabaseObject>();
   }
 
-  public void update() throws SQLException;
+  public void patch() throws SQLException;
 }

@@ -22,8 +22,17 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.0-jre'
+
+    // Database JDBC driver
     implementation 'org.postgresql:postgresql:42.2.20.jre7'
+
+    // JSON
     implementation 'org.json:json:20210307'
+
+    // HTTP Server
+    implementation 'io.javalin:javalin-bundle:3.13.7'
+    // Logging
+    implementation 'org.slf4j:slf4j-simple:1.7.30'
 }
 
 application {
