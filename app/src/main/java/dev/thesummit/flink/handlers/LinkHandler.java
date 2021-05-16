@@ -63,22 +63,8 @@ public class LinkHandler implements CrudHandler {
   /** Request handler for GET ${host}/links/{id} */
   @Override
   public void getOne(Context ctx, String resourceId) {
-    Link l = null;
     Connection conn = ctx.use(Connection.class);
-    // TODO
-    // https://stackoverflow.com/questions/46433459/postgres-select-where-the-where-is-uuid-or-string
-    try (PreparedStatement statement =
-        conn.prepareStatement("SELECT * from links WHERE id::text = ?")) {
-      statement.setString(1, resourceId);
-      log.log(Level.FINE, statement.toString());
-      try (ResultSet rs = statement.executeQuery(); ) {
-        while (rs.next()) {
-          l = Link.fromResultSet(rs);
-        }
-      }
-    } catch (SQLException e) {
-      System.out.println(e);
-    }
+    Link l = Link.get(resourceId, conn);
 
     if (l == null) {
       throw new NotFoundResponse(String.format("Link with id %s was not found.", resourceId));
@@ -104,21 +90,54 @@ public class LinkHandler implements CrudHandler {
     }
 
     Connection conn = ctx.use(Connection.class);
-    try (PreparedStatement statement =
-        conn.prepareStatement(
-            "INSERT INTO links (url, tags, unread) VALUES (?,?,?) RETURNING *;")) {
-      statement.setString(1, body.getString("url"));
-      statement.setString(2, body.getString("tags"));
-      statement.setBoolean(3, body.getBoolean("unread"));
-      log.log(Level.FINE, statement.toString());
 
-      try (ResultSet rs = statement.executeQuery()) {
-        while (rs.next()) {
-          l = Link.fromResultSet(rs);
-        }
+    if (!body.has("url")) {
+      ctx.status(400);
+      ctx.result("Missing Required fields: url");
+      return;
+    }
+
+    String url = "";
+    String tags = "";
+    Boolean unread = false;
+
+    try {
+      url = body.getString("url");
+
+      if (body.has("tags")) {
+        tags = body.getString("tags");
       }
-    } catch (SQLException e) {
+      if (body.has("unread")) {
+        unread = body.getBoolean("unread");
+      }
+    } catch (JSONException e) {
+      ctx.status(400);
+      ctx.result(e.toString());
+      return;
+    }
 
+    try {
+      l = new Link(url, tags, unread);
+    } catch (JSONException e) {
+      ctx.status(400);
+      ctx.result("Could not parse Link from request body.");
+      return;
+    }
+
+    try {
+
+      // Validate the link before committing to database.
+      if (!l.isValid()) {
+        ctx.status(400);
+        ctx.result("Invalid link parameters.");
+        return;
+      }
+
+      l.put(conn); // Everything looks good, add to database.
+    } catch (SQLException e) {
+      ctx.status(500);
+      ctx.result(String.format("An error occured: %s", e.toString()));
+      return;
     }
 
     ctx.status(200);
@@ -129,33 +148,61 @@ public class LinkHandler implements CrudHandler {
   /** Request handler for PATCH ${host}/links/{id} */
   @Override
   public void update(Context ctx, String resourceId) {
-    String UPDATE_QUERY = "UPDATE links SET url=?, tags=?, unread=? WHERE id::text=? RETURNING *;";
 
-    Link l = null;
+    Connection conn = ctx.use(Connection.class);
+    Link l = Link.get(resourceId, conn);
+
+    if (l == null) {
+      ctx.status(404);
+      ctx.result("Link not found.");
+      return;
+    }
+
     JSONObject body = null;
 
     try {
       body = new JSONObject(ctx.body());
-
     } catch (JSONException e) {
       throw new BadRequestResponse("Unable to parse JSON payload");
     }
 
-    Connection conn = ctx.use(Connection.class);
+    String newUrl = null;
+    String newTags = null;
+    Boolean newUnread = null;
 
-    try (PreparedStatement statement = conn.prepareStatement(UPDATE_QUERY)) {
-      statement.setString(1, body.getString("url"));
-      statement.setString(2, body.getString("tags"));
-      statement.setBoolean(3, body.getBoolean("unread"));
-      statement.setString(4, resourceId);
-      log.log(Level.FINE, statement.toString());
-      try (ResultSet rs = statement.executeQuery()) {
-        while (rs.next()) {
-          l = Link.fromResultSet(rs);
-        }
+    try {
+      if (body.has("url")) {
+        newUrl = body.getString("url");
+        l.setUrl(newUrl);
       }
-    } catch (SQLException e) {
+      if (body.has("tags")) {
+        newTags = body.getString("tags");
+        l.setTags(newTags);
+      }
+      if (body.has("unread")) {
+        newUnread = body.getBoolean("unread");
+        l.setUnread(newUnread);
+      }
+    } catch (JSONException e) {
+      ctx.status(400);
+      ctx.result(e.toString());
+      return;
+    }
 
+    try {
+      //
+      // Validate the link before committing to database.
+      if (!l.isValid()) {
+        ctx.status(400);
+        ctx.result("Invalid link parameters.");
+        return;
+      }
+
+      l.patch(conn); // Everything looks good, update the database.
+    } catch (SQLException e) {
+      ctx.status(500);
+      ctx.result(e.toString());
+      return;
     }
 
     ctx.status(200);

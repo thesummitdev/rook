@@ -30,6 +30,9 @@ dependencies {
     implementation 'io.javalin:javalin-bundle:3.13.7'
     // Logging
     implementation 'org.slf4j:slf4j-simple:1.7.30'
+    // URL Validation
+    // https://mvnrepository.com/artifact/commons-validator/commons-validator
+    implementation 'commons-validator:commons-validator:1.7'
 }
 
 application {

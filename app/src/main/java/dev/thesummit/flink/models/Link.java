@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
 
 public class Link implements DatabaseObject {
@@ -17,6 +18,8 @@ public class Link implements DatabaseObject {
   private String tags;
   private Boolean unread;
 
+  private static final String[] URL_SCHEMES = {"http", "https"};
+  private static final UrlValidator urlValidator = new UrlValidator(URL_SCHEMES);
   private static final String INSERT_QUERY =
       "INSERT INTO links (url, tags, unread) VALUES (?,?,?) RETURNING id;";
   private static final String DELETE_QUERY = "DELETE FROM links WHERE id=?;";
@@ -40,8 +43,47 @@ public class Link implements DatabaseObject {
     this.unread = unread;
   }
 
-  public static Link get(String uidd) throws SQLException {
-    return null;
+  /**
+   * Get a link from the database.
+   *
+   * <p><b>WARNING:</b> Will use a connection from the application pool.
+   *
+   * @param uuid The link's id.
+   * @return The Link or NULL if not found.
+   */
+  public static Link get(String uuid) {
+
+    Connection conn = FlinkApplication.getContext().pool.getConnection();
+    try {
+      return Link.get(uuid, conn);
+    } finally {
+      FlinkApplication.getContext().pool.releaseConnection(conn);
+    }
+  }
+
+  /**
+   * Get a link from the database.
+   *
+   * @param uuid The link's id.
+   * @param conn The database connection to use.
+   * @return The Link or NULL if not found.
+   */
+  public static Link get(String uuid, Connection conn) {
+
+    // TODO
+    // https://stackoverflow.com/questions/46433459/postgres-select-where-the-where-is-uuid-or-string
+    try (PreparedStatement statement =
+        conn.prepareStatement("SELECT * FROM LINKS where id::text = ?;")) {
+      statement.setString(1, uuid);
+      try (ResultSet rs = statement.executeQuery()) {
+        if (!rs.next()) {
+          return null;
+        }
+        return Link.fromResultSet(rs);
+      }
+    } catch (SQLException e) {
+      return null;
+    }
   }
 
   public static List<Link> getAll(List<String> uidds) throws SQLException {
@@ -54,23 +96,67 @@ public class Link implements DatabaseObject {
    * <p>Fetches a connection from the application connection pool and attempts to add this link to
    * the database. Will append the database generated id to this instance when successful.
    *
+   * <p><b>WARNING:</b> Will use a connection from the application pool.
+   *
    * @throws SQLException
    */
   @Override
   public void put() throws SQLException {
     Connection conn = FlinkApplication.getContext().pool.getConnection();
 
-    PreparedStatement statement = conn.prepareStatement(Link.INSERT_QUERY);
-    statement.setString(1, this.url);
-    statement.setString(2, this.tags);
-    statement.setBoolean(3, this.unread);
+    try {
+      this.put(conn);
+    } finally {
 
-    ResultSet rs = statement.executeQuery();
-    rs.next(); // Position the RS for the returned ID.
-    this.setId(rs.getObject("id", UUID.class));
+      FlinkApplication.getContext().pool.releaseConnection(conn);
+    }
+  }
 
-    statement.close();
-    FlinkApplication.getContext().pool.releaseConnection(conn);
+  /**
+   * Adds this link instance to the database.
+   *
+   * <p>Fetches a connection from the application connection pool and attempts to add this link to
+   * the database. Will append the database generated id to this instance when successful.
+   *
+   * @param conn The database connection to use.
+   * @throws SQLException
+   */
+  @Override
+  public void put(Connection conn) throws SQLException {
+
+    try (PreparedStatement statement = conn.prepareStatement(Link.INSERT_QUERY)) {
+
+      statement.setString(1, this.url);
+      statement.setString(2, this.tags);
+      statement.setBoolean(3, this.unread);
+
+      try (ResultSet rs = statement.executeQuery()) {
+
+        rs.next(); // Position the RS for the returned ID.
+        this.setId(rs.getObject("id", UUID.class));
+      }
+    }
+  }
+
+  /**
+   * Removes this link from the database.
+   *
+   * <p>Fetches a connection from the application connection pool and attempts to remove this link
+   * from the database.
+   *
+   * <p><b>WARNING:</b> Will use a connection from the application pool.
+   *
+   * @param id The id of the link to delete.
+   * @throws SQLException
+   */
+  public static void delete(String id) throws SQLException {
+    Connection conn = FlinkApplication.getContext().pool.getConnection();
+
+    try {
+      Link.delete(id, conn);
+    } finally {
+      FlinkApplication.getContext().pool.releaseConnection(conn);
+    }
   }
 
   /**
@@ -80,17 +166,15 @@ public class Link implements DatabaseObject {
    * from the database.
    *
    * @param id The id of the link to delete.
+   * @param conn The database connection to use.
    * @throws SQLException
    */
-  public static void delete(String id) throws SQLException {
-    Connection conn = FlinkApplication.getContext().pool.getConnection();
+  public static void delete(String id, Connection conn) throws SQLException {
 
-    PreparedStatement statement = conn.prepareStatement(Link.DELETE_QUERY);
-    statement.setString(1, id);
-    statement.execute();
-
-    statement.close();
-    FlinkApplication.getContext().pool.releaseConnection(conn);
+    try (PreparedStatement statement = conn.prepareStatement(Link.DELETE_QUERY)) {
+      statement.setString(1, id);
+      statement.execute();
+    }
   }
 
   /**
@@ -99,21 +183,40 @@ public class Link implements DatabaseObject {
    * <p>Fetches a connection from the application connection pool and attempts to update the current
    * link row in database.
    *
+   * <p><b>WARNING:</b> Will use a connection from the application pool.
+   *
    * @throws SQLException
    */
   @Override
   public void patch() throws SQLException {
+
     Connection conn = FlinkApplication.getContext().pool.getConnection();
+    try {
+      this.patch(conn);
+    } finally {
+      FlinkApplication.getContext().pool.releaseConnection(conn);
+    }
+  }
 
-    PreparedStatement statement = conn.prepareStatement(Link.UPDATE_QUERY);
-    statement.setString(1, this.url);
-    statement.setString(2, this.tags);
-    statement.setBoolean(3, this.unread);
-    statement.setObject(4, this.id);
-    statement.execute();
+  /**
+   * Updates the corresponding link row in the database to match this instance.
+   *
+   * <p>Fetches a connection from the application connection pool and attempts to update the current
+   * link row in database.
+   *
+   * @param conn The database connection to use.
+   * @throws SQLException
+   */
+  @Override
+  public void patch(Connection conn) throws SQLException {
 
-    statement.close();
-    FlinkApplication.getContext().pool.releaseConnection(conn);
+    try (PreparedStatement statement = conn.prepareStatement(Link.UPDATE_QUERY)) {
+      statement.setString(1, this.url);
+      statement.setString(2, this.tags);
+      statement.setBoolean(3, this.unread);
+      statement.setObject(4, this.id);
+      statement.execute();
+    }
   }
 
   /**
@@ -173,6 +276,15 @@ public class Link implements DatabaseObject {
     Link l = new Link(rs.getString("url"), rs.getString("tags"), rs.getBoolean("unread"));
     l.setId(rs.getObject("id", UUID.class));
     return l;
+  }
+
+  /**
+   * Ensures the Link contains valid data and can be safely committed to the database.
+   *
+   * @return Whether the Link is Valid or not.
+   */
+  public Boolean isValid() {
+    return urlValidator.isValid(this.url);
   }
 
   /**
