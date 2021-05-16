@@ -22,8 +22,9 @@ public class Link implements DatabaseObject {
   private static final UrlValidator urlValidator = new UrlValidator(URL_SCHEMES);
   private static final String INSERT_QUERY =
       "INSERT INTO links (url, tags, unread) VALUES (?,?,?) RETURNING id;";
-  private static final String DELETE_QUERY = "DELETE FROM links WHERE id=?;";
-  private static final String UPDATE_QUERY = "UPDATE links SET url=?, tags=?, unread=? WHERE id=? ";
+  private static final String DELETE_QUERY = "DELETE FROM links WHERE id::text=?;";
+  private static final String UPDATE_QUERY =
+      "UPDATE links SET url=?, tags=?, unread=? WHERE id::text=? ";
 
   /**
    * Construct a Link instance.

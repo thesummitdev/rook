@@ -7,7 +7,6 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -214,33 +213,19 @@ public class LinkHandler implements CrudHandler {
   public void delete(Context ctx, String resourceId) {
 
     Connection conn = ctx.use(Connection.class);
-    try (PreparedStatement checkIfExists =
-        conn.prepareStatement("SELECT COUNT(id) FROM LINKS where id::text = ?;")) {
+    Link l = Link.get(resourceId, conn);
 
-      checkIfExists.setString(1, resourceId);
-      log.log(Level.FINE, checkIfExists.toString());
-
-      boolean recordFound = false;
-      try (ResultSet rs = checkIfExists.executeQuery()) {
-        rs.next();
-        int count = rs.getInt(1);
-        recordFound = count > 0;
-      }
-
-      if (recordFound) {
-        try (PreparedStatement statement =
-            conn.prepareStatement("DELETE FROM LINKS where id::text = ?;")) {
-          statement.setString(1, resourceId);
-          log.log(Level.FINE, statement.toString());
-          statement.execute();
-        }
-      } else {
-        ctx.status(404);
-        ctx.result(String.format("Link with id %s does not exist.", resourceId));
+    if (l != null) {
+      try {
+        Link.delete(resourceId, conn); // Link exists, delete it.
+      } catch (SQLException e) {
+        ctx.status(500);
+        ctx.result(e.toString());
         return;
       }
-
-    } catch (SQLException e) {
+    } else {
+      ctx.status(404);
+      ctx.result(String.format("Link with id %s was not found.", resourceId));
     }
 
     ctx.status(200);
