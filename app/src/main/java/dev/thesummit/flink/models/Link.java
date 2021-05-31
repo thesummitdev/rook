@@ -6,7 +6,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
@@ -87,8 +89,54 @@ public class Link implements DatabaseObject {
     }
   }
 
-  public static List<Link> getAll(List<String> uidds) throws SQLException {
-    return null;
+  public static List<Link> getAll(Map<String, Object> params, Connection conn) throws SQLException {
+
+    StringBuilder sb = new StringBuilder("SELECT * FROM LINKS");
+    ArrayList<Link> results = new ArrayList<Link>();
+
+    if (!params.isEmpty()) {
+      sb.append("\n WHERE ");
+    }
+
+    int index = 1;
+    for (String field : params.keySet()) {
+      sb.append(field).append("=").append("?");
+
+      if (index == params.size()) {
+        sb.append(";");
+      } else {
+        sb.append("\n AND ");
+      }
+      index++;
+    }
+
+    String sql = sb.toString();
+    try (PreparedStatement statement = conn.prepareStatement(sql)) {
+
+      index = 1;
+      for (Map.Entry<String, Object> e : params.entrySet()) {
+        if (e.getValue() instanceof Boolean) {
+          boolean b = (boolean) e.getValue();
+          statement.setBoolean(index, b);
+        } else if (e.getValue() instanceof Integer) {
+          int i = (int) e.getValue();
+          statement.setInt(index, i);
+        } else {
+          statement.setString(index, e.getValue().toString());
+        }
+        index++;
+      }
+
+      try (ResultSet rs = statement.executeQuery()) {
+        while (rs.next()) {
+          results.add(Link.fromResultSet(rs));
+        }
+      }
+    } catch (SQLException e) {
+      System.out.println(e);
+      return null;
+    }
+    return results;
   }
 
   /**

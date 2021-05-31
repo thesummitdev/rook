@@ -1,5 +1,7 @@
 package dev.thesummit.flink.handlers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.thesummit.flink.FlinkApplication;
 import dev.thesummit.flink.models.Link;
 import io.javalin.apibuilder.CrudHandler;
@@ -7,10 +9,9 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,20 +41,23 @@ public class LinkHandler implements CrudHandler {
     JSONArray arr = new JSONArray();
 
     Connection conn = ctx.use(Connection.class);
-    try (Statement statement = conn.createStatement()) {
-      log.log(Level.FINE, statement.toString());
-      try (ResultSet rs = statement.executeQuery("SELECT * from links;")) {
-        while (rs.next()) {
-          Link l = Link.fromResultSet(rs);
-          arr.put(l.toJSONObject());
-        }
+    try {
+      HashMap<String, Object> params = new ObjectMapper().readValue(ctx.body(), HashMap.class);
+
+      List<Link> lns = Link.getAll(params, conn);
+      for (Link l : lns) {
+        arr.put(l.toJSONObject());
       }
+
+    } catch (JsonProcessingException e) {
+      ctx.status(401);
+      return;
     } catch (SQLException e) {
-      System.out.println(e);
+      ctx.status(501);
+      return;
     }
 
     String response = arr.toString();
-
     ctx.status(200);
     ctx.contentType("application/json");
     ctx.result(response);
