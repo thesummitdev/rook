@@ -31,6 +31,10 @@ gradlew
 # Ignore Gradle build output directory
 build
 
+# Webapp
+web/node_modules
+web/build
+
 # IDE
 .project
 .settings

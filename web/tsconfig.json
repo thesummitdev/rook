@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "forceConsistentCasingInFileNames": true,
+        "incremental": true,
+        "lib": [
+            "ES2016",
+            "ES2017",
+            "ESNext",
+            "dom"
+        ],
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "strict": true,
+        "target": "ES5"
+    }
+}
