@@ -10,6 +10,11 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+# Bazel
+bazel-*
+app/bin/*
+web/bin/*
+
 # Package Files #
 *.jar
 *.war

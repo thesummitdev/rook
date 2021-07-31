@@ -5,7 +5,7 @@ package dev.thesummit.flink;
 
 import dev.thesummit.flink.database.ConnectionPool;
 import dev.thesummit.flink.database.FlinkConnectionPool;
-import dev.thesummit.flink.handlers.LinkHandler;
+// import dev.thesummit.flink.handlers.LinkHandler;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.*;
 import java.io.IOException;
@@ -46,16 +46,17 @@ public class FlinkApplication {
         Javalin.create(
             config -> {
               config.enableDevLogging();
+              // config.addStaticFiles("static");
             });
     app.get("/", ctx -> ctx.result("Hello World"));
     app.routes(
         () -> {
-          ApiBuilder.crud("links/:id", new LinkHandler());
+          // ApiBuilder.crud("links/:id", new LinkHandler());
         });
-    app.before("links", (ctx) -> LinkHandler.before(ctx));
-    app.after("links", (ctx) -> LinkHandler.after(ctx));
-    app.before("links/*", (ctx) -> LinkHandler.before(ctx));
-    app.after("links/*", (ctx) -> LinkHandler.after(ctx));
+    // app.before("links", (ctx) -> LinkHandler.before(ctx));
+    // app.after("links", (ctx) -> LinkHandler.after(ctx));
+    // app.before("links/*", (ctx) -> LinkHandler.before(ctx));
+    // app.after("links/*", (ctx) -> LinkHandler.after(ctx));
 
     FlinkApplication.create(); // Init app and database pool.
     app.start(8000); // Start listening for http requests.
