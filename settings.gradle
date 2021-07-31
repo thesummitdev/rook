@@ -9,3 +9,6 @@
 
 rootProject.name = 'flink'
 include('app')
+
+include('web')
+project(':web').projectDir = file('web')

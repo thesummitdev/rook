@@ -9,11 +9,19 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    //id "com.github.node-gradle.node" version "3.1.0"
 }
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+}
+
+configurations {
+
+  prod
+  dev
+
 }
 
 dependencies {
@@ -35,9 +43,17 @@ dependencies {
     implementation 'commons-validator:commons-validator:1.7'
     // Jackson JSON to Map
     implementation 'com.fasterxml.jackson.core:jackson-core:2.12.3'
+
+    implementation project(':web')
+
 }
 
 application {
     // Define the main class for the application.
     mainClass = 'dev.thesummit.flink.FlinkApplication'
+}
+
+processResources {
+  from ("src/main/java/dev/thesummit/flink/web/build")
+  into 'static'
 }

@@ -1,0 +1,29 @@
+
+buildscript {
+    dependencies {
+        classpath "com.github.node-gradle:gradle-node-plugin:3.1.0"
+    }
+}
+
+plugins {
+  id "java"
+  id "com.github.node-gradle.node" version "3.1.0"
+}
+
+node {
+  download = false
+}
+
+task buildWeb(type: NpmTask){
+  args = ['run', 'build']
+}
+
+sourceSets{
+  java{
+    main{
+      resources{
+      srcDir(buildWeb)
+      }
+    }
+  }
+}
