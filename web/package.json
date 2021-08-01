@@ -24,7 +24,7 @@
     "devDependencies": {
         "@babel/core": "^7.14.3",
         "@babel/preset-env": "^7.14.4",
-        "@bazel/ibazel": "latest",
+        "@bazel/ibazel": "^0.15.10",
         "@bazel/typescript": "latest",
         "autoprefixer": "^10.2.6",
         "babel": "^6.23.0",

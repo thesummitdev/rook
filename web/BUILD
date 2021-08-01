@@ -16,5 +16,8 @@ ts_project(
 
 filegroup(
     name = "static_files",
-    srcs = ["index.html"],
+    srcs = [
+        "index.html",
+        "//web/styles",
+    ],
 )

@@ -10,13 +10,30 @@ RULES_JVM_EXTERNAL_TAG = "4.0"
 RULES_JVM_EXTERNAL_SHA = "31701ad93dbfe544d597dbe62c9a1fdd76d81d8a9150c2bf1ecf928ecdf97169"
 
 http_archive(
+    name = "build_bazel_rules_nodejs",
+    sha256 = "0fa2d443571c9e02fcb7363a74ae591bdcce2dd76af8677a95965edf329d778a",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/3.6.0/rules_nodejs-3.6.0.tar.gz"],
+)
+
+http_archive(
     name = "rules_jvm_external",
     sha256 = RULES_JVM_EXTERNAL_SHA,
     strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
+http_archive(
+    name = "io_bazel_rules_sass",
+    sha256 = "f2294af7e7de950c811b3544899576066136f3f7b75db97e509bc5e6bf9457d1",
+    strip_prefix = "rules_sass-1.37.0",
+    # Make sure to check for the latest version when you install
+    url = "https://github.com/bazelbuild/rules_sass/archive/1.37.0.zip",
+)
+
 load("@rules_jvm_external//:defs.bzl", "maven_install")
+load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "npm_install")
+load("@io_bazel_rules_sass//:package.bzl", "rules_sass_dependencies", "rules_sass_dev_dependencies")
+load("@io_bazel_rules_sass//:defs.bzl", "sass_repositories")
 
 maven_install(
     artifacts = [
@@ -36,18 +53,17 @@ maven_install(
     ],
 )
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-http_archive(
-    name = "build_bazel_rules_nodejs",
-    sha256 = "0fa2d443571c9e02fcb7363a74ae591bdcce2dd76af8677a95965edf329d778a",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/3.6.0/rules_nodejs-3.6.0.tar.gz"],
-)
-
-load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "npm_install")
-
 npm_install(
     name = "npm",
     package_json = "//web:package.json",
     package_lock_json = "//web:package-lock.json",
 )
+
+# Fetch required transitive dependencies. This is an optional step because you
+# can always fetch the required NodeJS transitive dependency on your own.
+#rules_sass_dependencies()
+
+#rules_sass_dev_dependencies()
+
+# Setup repositories which are needed for the Sass rules.
+sass_repositories()
