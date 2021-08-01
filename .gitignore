@@ -43,6 +43,7 @@ web/build
 # IDE
 .project
 .settings
+.classpath
 app/.classpath
 app/.project
 app/.settings/

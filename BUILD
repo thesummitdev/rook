@@ -1,4 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_binary")
+load("@bazel_common//tools/maven:pom_file.bzl", "pom_file")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -26,4 +27,10 @@ java_binary(
         "@maven//:org_postgresql_postgresql",
         "@maven//:org_slf4j_slf4j_simple",
     ],
+)
+
+pom_file(
+    name = "pom",
+    targets = [":flink"],
+    template_file = "pom.template",
 )
