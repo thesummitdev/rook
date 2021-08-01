@@ -46,9 +46,8 @@ public class FlinkApplication {
         Javalin.create(
             config -> {
               config.enableDevLogging();
-              // config.addStaticFiles("static");
+              config.addStaticFiles("web");
             });
-    app.get("/", ctx -> ctx.result("Hello World"));
     app.routes(
         () -> {
           // ApiBuilder.crud("links/:id", new LinkHandler());
