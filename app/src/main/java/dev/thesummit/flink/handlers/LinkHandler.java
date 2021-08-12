@@ -34,6 +34,7 @@ public class LinkHandler implements CrudHandler {
     JSONArray arr = new JSONArray();
 
     try {
+      @SuppressWarnings("unchecked") // TODO validate the incoming json body
       HashMap<String, Object> params = new ObjectMapper().readValue(ctx.body(), HashMap.class);
 
       List<Link> lns = this.dbService.getAll(Link.class, params);
@@ -125,8 +126,6 @@ public class LinkHandler implements CrudHandler {
   @Override
   public void update(Context ctx, String resourceId) {
 
-    // Connection conn = ctx.use(Connection.class);
-    // Link l = Link.get(resourceId, conn);
     Link l = this.dbService.get(Link.class, UUID.fromString(resourceId));
 
     if (l == null) {
@@ -172,7 +171,6 @@ public class LinkHandler implements CrudHandler {
     }
 
     this.dbService.patch(l);
-    // l.patch(conn); // Everything looks good, update the database.
 
     ctx.status(200);
     ctx.result(l.toJSONObject().toString());
