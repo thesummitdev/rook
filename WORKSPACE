@@ -37,14 +37,15 @@ load("@io_bazel_rules_sass//:defs.bzl", "sass_repositories")
 
 maven_install(
     artifacts = [
-        #"junit:junit:4.12.1",
         "com.fasterxml.jackson.core:jackson-core:2.12.3",
+        "com.fasterxml.jackson.core:jackson-databind:2.12.4",
+        "com.google.inject:guice:5.0.1",
         "commons-validator:commons-validator:1.7",
         "io.javalin:javalin-bundle:3.13.7",
         "io.javalin:javalin:3.3.0",
-        "org.slf4j:slf4j-simple:1.7.30",
-        "org.postgresql:postgresql:42.2.20.jre7",
         "org.json:json:20210307",
+        "org.postgresql:postgresql:42.2.20.jre7",
+        "org.slf4j:slf4j-simple:1.7.30",
     ],
     fetch_sources = True,
     repositories = [

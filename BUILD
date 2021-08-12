@@ -20,17 +20,27 @@ java_binary(
         "//web:static_files",
     ],
     deps = [
-        "//app/src/main/java/dev/thesummit/flink/database",
+        "//app/src/main/java/dev/thesummit/flink/database:database_module",
+        "//app/src/main/java/dev/thesummit/flink/handlers",
+        "//app/src/main/java/dev/thesummit/flink/models",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_google_inject_guice",
         "@maven//:commons_validator_commons_validator",
         "@maven//:io_javalin_javalin",
-        "@maven//:org_postgresql_postgresql",
         "@maven//:org_slf4j_slf4j_simple",
     ],
 )
 
 pom_file(
     name = "pom",
-    targets = [":flink"],
+    targets = [
+        ":flink",
+        "//app/src/main/java/dev/thesummit/flink/database:database_module",
+        "//app/src/main/java/dev/thesummit/flink/database:connection_pool",
+        "//app/src/main/java/dev/thesummit/flink/database:database_service",
+        "//app/src/main/java/dev/thesummit/flink/database:database_field",
+        "//app/src/main/java/dev/thesummit/flink/models",
+        "//app/src/main/java/dev/thesummit/flink/handlers",
+    ],
     template_file = "pom.template",
 )

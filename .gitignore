@@ -35,6 +35,7 @@ gradlew
 
 # Ignore Gradle build output directory
 build
+target
 
 # Webapp
 web/node_modules
@@ -47,3 +48,4 @@ web/build
 app/.classpath
 app/.project
 app/.settings/
+app/target*

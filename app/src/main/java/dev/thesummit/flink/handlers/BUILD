@@ -8,8 +8,12 @@ java_library(
         "LinkHandler.java",
     ],
     deps = [
+        "//app/src/main/java/dev/thesummit/flink/database:database_service",
         "//app/src/main/java/dev/thesummit/flink/models",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_google_inject_guice",
+        "@maven//:io_javalin_javalin",
         "@maven//:io_javalin_javalin_bundle",
         "@maven//:org_json_json",
     ],
