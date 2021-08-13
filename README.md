@@ -22,7 +22,7 @@ This project is still under development, and not yet ready for release.
 
 ## Contributing
 
-If this project interests you contact me on Twitter: [tylermsaunders@](https://twitter.com/tylermsaunders)
+If this project interests you contact me on Twitter: [_tylersaunders@](https://twitter.com/_tylersaunders)
 
 ## Licenses
 
