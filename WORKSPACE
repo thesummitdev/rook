@@ -31,9 +31,24 @@ http_archive(
 )
 
 load("@rules_jvm_external//:defs.bzl", "maven_install")
+load("@rules_jvm_external//:specs.bzl", "maven")
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "npm_install")
 load("@io_bazel_rules_sass//:package.bzl", "rules_sass_dependencies", "rules_sass_dev_dependencies")
 load("@io_bazel_rules_sass//:defs.bzl", "sass_repositories")
+load("//:app/src/test/junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
+
+# Install junit dependencies
+JUNIT_JUPITER_VERSION = "5.7.2"
+
+JUNIT_PLATFORM_VERSION = "1.7.2"
+
+junit_jupiter_java_repositories(
+    version = JUNIT_JUPITER_VERSION,
+)
+
+junit_platform_java_repositories(
+    version = JUNIT_PLATFORM_VERSION,
+)
 
 maven_install(
     artifacts = [
@@ -46,6 +61,24 @@ maven_install(
         "org.json:json:20210307",
         "org.postgresql:postgresql:42.2.20.jre7",
         "org.slf4j:slf4j-simple:1.7.30",
+        maven.artifact(
+            "org.junit.jupiter",
+            "junit-jupiter-api",
+            "5.5.0",
+            testonly = True,
+        ),
+        maven.artifact(
+            "org.junit.jupiter",
+            "junit-jupiter-params",
+            "5.7.0",
+            testonly = True,
+        ),
+        maven.artifact(
+            "org.mockito",
+            "mockito-core",
+            "3.2.4",
+            testonly = True,
+        ),
     ],
     fetch_sources = True,
     repositories = [

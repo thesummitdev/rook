@@ -33,6 +33,7 @@ java_binary(
 
 pom_file(
     name = "pom",
+    testonly = True,
     targets = [
         ":flink",
         "//app/src/main/java/dev/thesummit/flink/database:database_module",
@@ -41,6 +42,7 @@ pom_file(
         "//app/src/main/java/dev/thesummit/flink/database:database_field",
         "//app/src/main/java/dev/thesummit/flink/models",
         "//app/src/main/java/dev/thesummit/flink/handlers",
+        "//app/src/test/java/dev/thesummit/flink/handlers:LinkHandlerTest",
     ],
     template_file = "pom.template",
 )

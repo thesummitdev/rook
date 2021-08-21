@@ -4,9 +4,13 @@ import dev.thesummit.flink.database.DatabaseField;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
 
 public class Link implements BaseModel {
+
+  private static final String[] URL_SCHEMES = {"http", "https"};
+  private static final UrlValidator urlValidator = new UrlValidator(URL_SCHEMES);
 
   @DatabaseField(isId = true)
   public UUID id;
@@ -67,7 +71,12 @@ public class Link implements BaseModel {
     }
   }
 
+  /**
+   * Ensure the url is valid.
+   *
+   * @return whether the link object is valid.
+   */
   public Boolean isValid() {
-    return true;
+    return urlValidator.isValid(this.url);
   }
 }

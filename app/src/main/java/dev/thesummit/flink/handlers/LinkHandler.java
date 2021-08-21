@@ -92,19 +92,12 @@ public class LinkHandler implements CrudHandler {
       throw new BadRequestResponse("Missing Required fields: url");
     }
 
-    String url = "";
-    String tags = "";
-    Boolean unread = false;
-
     try {
-      url = body.getString("url");
-
-      if (body.has("tags")) {
-        tags = body.getString("tags");
-      }
-      if (body.has("unread")) {
-        unread = body.getBoolean("unread");
-      }
+      // Required Fields
+      String url = body.getString("url");
+      // Optional Fields
+      String tags = body.optString("tags", "");
+      Boolean unread = body.optBoolean("unread", false);
       l = new Link(url, tags, unread);
     } catch (JSONException e) {
       throw new BadRequestResponse("Bad Request: Could not parse Link object from request body.");
