@@ -60,7 +60,7 @@ maven_install(
         "io.javalin:javalin:3.3.0",
         "org.json:json:20210307",
         "org.postgresql:postgresql:42.2.20.jre7",
-        "org.slf4j:slf4j-simple:1.7.30",
+        "org.slf4j:slf4j-api:1.7.30",
         maven.artifact(
             "org.junit.jupiter",
             "junit-jupiter-api",

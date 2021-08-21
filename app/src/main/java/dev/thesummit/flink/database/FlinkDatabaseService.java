@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FlinkDatabaseService implements DatabaseService {
 
-  private static Logger log = Logger.getLogger(FlinkDatabaseService.class.getName());
+  private static Logger log = LoggerFactory.getLogger(FlinkDatabaseService.class);
   private ConnectionPool pool;
   private HashMap<Class<?>, String> tableMapping;
 
@@ -68,7 +68,10 @@ public class FlinkDatabaseService implements DatabaseService {
         }
       }
     } catch (SQLException e) {
-      log.log(Level.FINE, "Unable to create entity, SQL error occured.", e);
+      log.debug("Unable to create entity, SQL error occured.", e);
+    } finally {
+
+      this.pool.releaseConnection(conn);
     }
   }
 
@@ -88,8 +91,7 @@ public class FlinkDatabaseService implements DatabaseService {
             id = (UUID) f.get(entity);
 
           } catch (IllegalAccessException e) {
-            log.log(
-                Level.FINE,
+            log.debug(
                 "Field was not accessible, check fields marked with @DatbaseField are not private.",
                 e);
             return;
@@ -140,20 +142,18 @@ public class FlinkDatabaseService implements DatabaseService {
 
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
-          System.out.println(rs.getObject("id"));
           entity.setId(rs.getObject("id", UUID.class));
         }
       }
     } catch (IllegalAccessException e) {
-      log.log(
-          Level.FINE,
-          "Field was not accessible, check fields marked with @DatbaseField are not private.",
-          e);
+      log.debug(
+          "Field was not accessible, check fields marked with @DatbaseField are not private.", e);
       return;
     } catch (SQLException e) {
-      log.log(Level.FINE, "Unable to patch entity, SQL error occured.", e);
+      log.debug("Unable to patch entity, SQL error occured.", e);
+    } finally {
+      this.pool.releaseConnection(conn);
     }
-    this.pool.releaseConnection(conn);
   }
 
   @Override
@@ -169,10 +169,10 @@ public class FlinkDatabaseService implements DatabaseService {
       statement.setString(1, entity.getId().toString());
       statement.execute();
     } catch (SQLException e) {
-      log.log(Level.FINE, "Unable to delete entity, SQL error occured.", e);
+      log.debug("Unable to delete entity, SQL error occured.", e);
+    } finally {
+      this.pool.releaseConnection(conn);
     }
-
-    this.pool.releaseConnection(conn);
   }
 
   @Override
@@ -206,6 +206,8 @@ public class FlinkDatabaseService implements DatabaseService {
       }
     } catch (SQLException e) {
       return null;
+    } finally {
+      this.pool.releaseConnection(conn);
     }
     return null;
   }
@@ -235,7 +237,7 @@ public class FlinkDatabaseService implements DatabaseService {
     }
 
     String sql = query.toString();
-    System.out.println(sql);
+    log.debug(sql);
     Connection conn = this.pool.getConnection();
     try (PreparedStatement statement = conn.prepareStatement(sql)) {
 
@@ -269,6 +271,8 @@ public class FlinkDatabaseService implements DatabaseService {
       }
     } catch (SQLException e) {
       return null;
+    } finally {
+      this.pool.releaseConnection(conn);
     }
 
     return results;
@@ -323,8 +327,7 @@ public class FlinkDatabaseService implements DatabaseService {
         values.add(f.get(entity));
 
       } catch (IllegalAccessException e) {
-        log.log(
-            Level.FINE,
+        log.debug(
             "Field was not accessible, check fields marked with @DatabaseField are not private.",
             e);
       }

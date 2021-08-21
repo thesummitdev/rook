@@ -42,5 +42,6 @@ java_library(
         ":database_field",
         "//app/src/main/java/dev/thesummit/flink/models",
         "@maven//:com_google_inject_guice",
+        "@maven//:org_slf4j_slf4j_api",
     ],
 )

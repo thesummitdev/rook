@@ -16,6 +16,7 @@ java_binary(
     srcs = ["app/src/main/java/dev/thesummit/flink/FlinkApplication.java"],
     main_class = "dev.thesummit.flink.FlinkApplication",
     resources = [
+        "//app/src/main/resources",
         "//web:bundle",
         "//web:static_files",
     ],
@@ -27,7 +28,7 @@ java_binary(
         "@maven//:com_google_inject_guice",
         "@maven//:commons_validator_commons_validator",
         "@maven//:io_javalin_javalin",
-        "@maven//:org_slf4j_slf4j_simple",
+        "@maven//:org_slf4j_slf4j_api",
     ],
 )
 
