@@ -98,7 +98,7 @@ public class LinkHandler implements CrudHandler {
       // Optional Fields
       String tags = body.optString("tags", "");
       Boolean unread = body.optBoolean("unread", false);
-      l = new Link(url, tags, unread);
+      l = new Link(url, tags, unread, UUID.randomUUID());
     } catch (JSONException e) {
       throw new BadRequestResponse("Bad Request: Could not parse Link object from request body.");
     }

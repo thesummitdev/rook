@@ -52,6 +52,7 @@ junit_platform_java_repositories(
 
 maven_install(
     artifacts = [
+        "com.auth0:java-jwt:3.18.1",
         "com.fasterxml.jackson.core:jackson-core:2.12.3",
         "com.fasterxml.jackson.core:jackson-databind:2.12.4",
         "com.google.inject:guice:5.0.1",

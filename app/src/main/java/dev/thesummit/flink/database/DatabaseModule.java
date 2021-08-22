@@ -3,6 +3,7 @@ package dev.thesummit.flink.database;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import dev.thesummit.flink.models.Link;
+import dev.thesummit.flink.models.User;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -27,6 +28,7 @@ public class DatabaseModule extends AbstractModule {
 
     DatabaseModule.tableMapping = new HashMap<Class<?>, String>();
     DatabaseModule.tableMapping.put(Link.class, "LINKS");
+    DatabaseModule.tableMapping.put(User.class, "USERS");
 
     DatabaseModule.service =
         new FlinkDatabaseService(DatabaseModule.pool, DatabaseModule.tableMapping);

@@ -6,8 +6,10 @@ java_library(
     name = "handlers",
     srcs = [
         "LinkHandler.java",
+        "UserHandler.java",
     ],
     deps = [
+        "//app/src/main/java/dev/thesummit/flink/auth",
         "//app/src/main/java/dev/thesummit/flink/database:database_service",
         "//app/src/main/java/dev/thesummit/flink/models",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
@@ -16,5 +18,6 @@ java_library(
         "@maven//:io_javalin_javalin",
         "@maven//:io_javalin_javalin_bundle",
         "@maven//:org_json_json",
+        "@maven//:org_slf4j_slf4j_api",
     ],
 )

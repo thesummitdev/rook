@@ -15,5 +15,7 @@ public interface DatabaseService {
 
   public <T extends BaseModel> T get(Class<T> cls, UUID id);
 
+  public <T extends BaseModel> T get(Class<T> cls, String identifier);
+
   public <T extends BaseModel> List<T> getAll(Class<T> cls, Map<String, Object> params);
 }

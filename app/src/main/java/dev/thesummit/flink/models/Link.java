@@ -17,14 +17,19 @@ public class Link implements BaseModel {
 
   @DatabaseField() public String url;
 
-  @DatabaseField() public String tags;
+  @DatabaseField(whereOperator = " ~ ")
+  public String tags;
 
   @DatabaseField() public Boolean unread;
 
-  public Link(String url, String tags, Boolean unread) {
+  @DatabaseField(cast = "::text")
+  public UUID userId;
+
+  public Link(String url, String tags, Boolean unread, UUID userId) {
     this.url = url;
     this.tags = tags;
     this.unread = unread;
+    this.userId = userId;
   }
 
   public void setId(UUID id) {
@@ -36,7 +41,12 @@ public class Link implements BaseModel {
   }
 
   public static Link fromJSONObject(JSONObject obj) {
-    Link l = new Link(obj.getString("url"), obj.getString("tags"), obj.getBoolean("unread"));
+    Link l =
+        new Link(
+            obj.getString("url"),
+            obj.optString("tags", ""),
+            obj.optBoolean("unread", false),
+            UUID.fromString(obj.getString("userId")));
 
     if (obj.has("id")) {
       l.setId((UUID) obj.get("id"));
@@ -63,7 +73,12 @@ public class Link implements BaseModel {
 
   public static Link fromResultSet(ResultSet rs) {
     try {
-      Link l = new Link(rs.getString("url"), rs.getString("tags"), rs.getBoolean("unread"));
+      Link l =
+          new Link(
+              rs.getString("url"),
+              rs.getString("tags"),
+              rs.getBoolean("unread"),
+              rs.getObject("userId", UUID.class));
       l.setId(rs.getObject("id", UUID.class));
       return l;
     } catch (SQLException e) {
