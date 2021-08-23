@@ -25,9 +25,9 @@ public class FlinkPasswordManager implements PasswordManager {
       return null;
     }
 
-    String salt = user.usersalt;
+    String salt = user.userSalt;
     String calculatedHash = getEncryptedPassword(password, salt);
-    if (calculatedHash.equals(user.userencryptedpassword)) {
+    if (calculatedHash.equals(user.userEncryptedPassword)) {
       return user;
     }
 

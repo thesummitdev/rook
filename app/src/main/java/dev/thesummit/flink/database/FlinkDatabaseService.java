@@ -59,13 +59,16 @@ public class FlinkDatabaseService implements DatabaseService {
           statement.setInt(fieldIndex, (int) v);
         } else if (v instanceof Boolean) {
           statement.setBoolean(fieldIndex, (boolean) v);
-        } else {
+
+        } else if (v instanceof String) {
           statement.setString(fieldIndex, v.toString());
+        } else {
+          statement.setObject(fieldIndex, v);
         }
         fieldIndex++;
       }
 
-      log.debug(statement.toString());
+      log.debug("PUT SQL: ", statement.toString());
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
           entity.setId(rs.getObject("id", UUID.class));
@@ -314,19 +317,21 @@ public class FlinkDatabaseService implements DatabaseService {
         } else if (e.getValue() instanceof Integer) {
           int i = (int) e.getValue();
           statement.setInt(index, i);
-        } else {
+        } else if (e.getValue() instanceof String) {
           statement.setString(index, e.getValue().toString());
+        } else {
+          statement.setObject(index, e.getValue());
         }
         index++;
       }
 
+      log.info("GetAll SQL: ", statement.toString());
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
           try {
             Method m = cls.getMethod("fromResultSet", ResultSet.class);
             @SuppressWarnings("unchecked") // Cast the Object to T for it to be returned.
             T entity = (T) m.invoke(null, rs);
-            System.out.print(entity);
             results.add(entity);
           } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // Couldn't call fromResultSet
@@ -335,6 +340,7 @@ public class FlinkDatabaseService implements DatabaseService {
         }
       }
     } catch (SQLException e) {
+      log.debug("Database error during getAll", e);
       return null;
     } finally {
       this.pool.releaseConnection(conn);

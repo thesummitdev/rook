@@ -22,8 +22,7 @@ public class Link implements BaseModel {
 
   @DatabaseField() public Boolean unread;
 
-  @DatabaseField(cast = "::text")
-  public UUID userId;
+  @DatabaseField() public UUID userId;
 
   public Link(String url, String tags, Boolean unread, UUID userId) {
     this.url = url;
