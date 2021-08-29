@@ -39,8 +39,8 @@ public class UserHandler {
       throw new BadRequestResponse("Unable to parse JSON payload");
     }
 
-    Optional<String> username = Optional.ofNullable(body.getString("username"));
-    Optional<String> password = Optional.ofNullable(body.getString("password"));
+    Optional<String> username = Optional.ofNullable(body.optString("username", null));
+    Optional<String> password = Optional.ofNullable(body.optString("password", null));
 
     if (username.isPresent() && password.isPresent()) {
       User exists = this.dbService.get(User.class, username.get());
@@ -54,6 +54,7 @@ public class UserHandler {
 
       User newUser = new User(username.get(), userEncryptedPassword, salt);
 
+      log.debug(String.format("Creating new user %s", newUser.username));
       this.dbService.put(newUser);
 
       ctx.result(newUser.toJSONObject().toString());

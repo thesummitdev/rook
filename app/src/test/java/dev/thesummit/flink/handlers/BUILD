@@ -17,3 +17,20 @@ java_junit5_test(
         "@maven//:org_mockito_mockito_core",
     ],
 )
+
+java_junit5_test(
+    name = "UserHandlerTest",
+    srcs = ["UserHandlerTest.java"],
+    test_package = "dev.thesummit.flink",
+    use_testrunner = False,
+    deps = [
+        "//app/src/main/java/dev/thesummit/flink/auth",
+        "//app/src/main/java/dev/thesummit/flink/database:database_service",
+        "//app/src/main/java/dev/thesummit/flink/handlers",
+        "//app/src/main/java/dev/thesummit/flink/models",
+        "@maven//:io_javalin_javalin",
+        "@maven//:org_json_json",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_mockito_mockito_core",
+    ],
+)
