@@ -7,6 +7,7 @@ java_library(
     srcs = [
         "BaseModel.java",
         "Link.java",
+        "User.java",
     ],
     deps = [
         "//app/src/main/java/dev/thesummit/flink/database:database_field",

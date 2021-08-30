@@ -21,6 +21,7 @@ java_binary(
         "//web:static_files",
     ],
     deps = [
+        "//app/src/main/java/dev/thesummit/flink/auth",
         "//app/src/main/java/dev/thesummit/flink/database:database_module",
         "//app/src/main/java/dev/thesummit/flink/handlers",
         "//app/src/main/java/dev/thesummit/flink/models",
@@ -41,6 +42,7 @@ pom_file(
         "//app/src/main/java/dev/thesummit/flink/database:connection_pool",
         "//app/src/main/java/dev/thesummit/flink/database:database_service",
         "//app/src/main/java/dev/thesummit/flink/database:database_field",
+        "//app/src/main/java/dev/thesummit/flink/auth",
         "//app/src/main/java/dev/thesummit/flink/models",
         "//app/src/main/java/dev/thesummit/flink/handlers",
         "//app/src/test/java/dev/thesummit/flink/handlers:LinkHandlerTest",

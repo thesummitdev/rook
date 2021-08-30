@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import dev.thesummit.flink.database.FlinkDatabaseService;
 import dev.thesummit.flink.models.Link;
+import dev.thesummit.flink.models.User;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
@@ -25,6 +26,8 @@ public class LinkHandlerTest {
 
   @Mock private Context ctx;
   @Mock private FlinkDatabaseService dbService;
+  private final UUID MOCK_USER_UUID = UUID.randomUUID();
+  private final UUID MOCK_LINK_UUID = UUID.randomUUID();
 
   private LinkHandler handler;
 
@@ -32,6 +35,11 @@ public class LinkHandlerTest {
   public void init() {
     MockitoAnnotations.initMocks(this);
     handler = new LinkHandler(dbService);
+
+    User mockUser = new User("username", "userEncryptedPassword", "salt");
+    mockUser.setId(MOCK_USER_UUID);
+
+    when(ctx.sessionAttribute("current_user")).thenReturn(mockUser);
   }
 
   @Test
@@ -43,7 +51,7 @@ public class LinkHandlerTest {
 
   @Test
   public void GETONE_links() {
-    Link link = new Link("http://test.com", "test tags", false);
+    Link link = new Link("http://test.com", "test tags", false, MOCK_USER_UUID);
     UUID uuid = UUID.randomUUID();
     link.setId(uuid);
     when(dbService.get(Link.class, uuid)).thenReturn(link);
@@ -56,7 +64,7 @@ public class LinkHandlerTest {
 
   @Test
   public void GETONE_links_not_found() {
-    Link link = new Link("http://test.com", "test tags", false);
+    Link link = new Link("http://test.com", "test tags", false, MOCK_USER_UUID);
     UUID uuid = UUID.randomUUID();
     link.setId(uuid);
     when(dbService.get(Link.class, uuid)).thenReturn(null);
@@ -80,8 +88,8 @@ public class LinkHandlerTest {
 
   @Test
   public void GETALL_links() {
-    Link mockLink = new Link("http://test.com", "test tags", false);
-    Link mockLink2 = new Link("http://test2.com", "test2 tags", true);
+    Link mockLink = new Link("http://test.com", "test tags", false, MOCK_USER_UUID);
+    Link mockLink2 = new Link("http://test2.com", "test2 tags", true, MOCK_USER_UUID);
     ArrayList<Link> list = new ArrayList<Link>();
     list.add(mockLink);
     list.add(mockLink2);
@@ -111,7 +119,23 @@ public class LinkHandlerTest {
     JSONObject obj = new JSONObject(body);
     when(ctx.body()).thenReturn(body);
     Link expectedLink =
-        new Link(obj.getString("url"), obj.optString("tags", ""), obj.optBoolean("unread", false));
+        new Link(
+            obj.getString("url"),
+            obj.optString("tags", ""),
+            obj.optBoolean("unread", false),
+            MOCK_USER_UUID);
+    expectedLink.setId(MOCK_LINK_UUID);
+
+    // Handle the side effect of the databaseService.put setting the ID on the new Link with the id
+    // that was returned from the database.
+    doAnswer(
+            invocation -> {
+              Link l = invocation.getArgument(0);
+              l.setId(MOCK_LINK_UUID);
+              return null;
+            })
+        .when(dbService)
+        .put(any(Link.class));
 
     ArgumentCaptor<Link> arg = ArgumentCaptor.forClass(Link.class);
     handler.create(ctx);
