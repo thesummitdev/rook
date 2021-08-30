@@ -84,6 +84,7 @@ def java_junit5_test(name, srcs, test_package, deps = [], runtime_deps = [], **k
         use_testrunner = False,
         main_class = "org.junit.platform.console.ConsoleLauncher",
         args = junit_console_args,
+        tags = ["exclusive"],  # needed to prevent mockito failures.
         resources = [
             "//app/src/test/resources/mockito-extensions",
         ],

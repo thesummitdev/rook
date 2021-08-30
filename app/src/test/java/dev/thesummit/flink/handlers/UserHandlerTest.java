@@ -24,7 +24,7 @@ public class UserHandlerTest {
   @Mock private FlinkPasswordManager pwm;
 
   private final String MOCK_SALT = "salt";
-  private final String MOCK_ENCRYPTED_PASSWORD = "salt";
+  private final String MOCK_ENCRYPTED_PASSWORD = "password";
 
   private UserHandler handler;
 
@@ -46,7 +46,7 @@ public class UserHandlerTest {
       strings = {
         "{'username':'someuser', 'password':'testpassword'}",
       })
-  public void CREATE_link(String body) {
+  public void CREATE_link(String body) throws Exception {
 
     JSONObject obj = new JSONObject(body);
     when(ctx.body()).thenReturn(body);
@@ -55,11 +55,9 @@ public class UserHandlerTest {
     User expectedUser = new User(obj.getString("username"), MOCK_ENCRYPTED_PASSWORD, MOCK_SALT);
 
     ArgumentCaptor<User> arg = ArgumentCaptor.forClass(User.class);
-    try {
-      handler.create(ctx);
-    } catch (Exception e) {
 
-    }
+    handler.create(ctx);
+
     verify(dbService).put(arg.capture());
     // Ensure all fields match the input
     assertEquals(User.class, arg.getValue().getClass());

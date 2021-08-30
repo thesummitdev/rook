@@ -77,7 +77,7 @@ maven_install(
         maven.artifact(
             "org.mockito",
             "mockito-core",
-            "3.2.4",
+            "3.12.4",
             testonly = True,
         ),
     ],
