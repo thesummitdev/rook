@@ -15,6 +15,7 @@ public class AuthModule extends AbstractModule {
   private static final long ONE_HOUR = 3600000;
   private static final long ONE_DAY = ONE_HOUR * 24;
   private static final String ISSUER = "dev.thesummit.flink";
+  private static String SECRET_KEY = System.getenv("FLINK_SERVER_SECRET_KEY");
 
   public AuthModule() {}
 
@@ -33,7 +34,11 @@ public class AuthModule extends AbstractModule {
           return token.sign(alg);
         };
 
-    Algorithm algorithm = Algorithm.HMAC512("development_secret");
+    if (SECRET_KEY == null) {
+      SECRET_KEY = "flink_development_server";
+    }
+
+    Algorithm algorithm = Algorithm.HMAC512(SECRET_KEY);
     JWTVerifier verifier = JWT.require(algorithm).build();
     return new JWTProvider(algorithm, generator, verifier);
   }
