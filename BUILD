@@ -25,7 +25,6 @@ java_binary(
         "//app/src/main/java/dev/thesummit/flink/database:database_module",
         "//app/src/main/java/dev/thesummit/flink/handlers",
         "//app/src/main/java/dev/thesummit/flink/models",
-        "@maven//:com_auth0_java_jwt",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_google_inject_guice",
         "@maven//:commons_validator_commons_validator",
