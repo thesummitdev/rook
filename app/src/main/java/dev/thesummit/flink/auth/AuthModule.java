@@ -9,9 +9,12 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import dev.thesummit.flink.database.DatabaseService;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuthModule extends AbstractModule {
 
+  private static Logger log = LoggerFactory.getLogger(AuthModule.class);
   private static final long ONE_HOUR = 3600000;
   private static final long ONE_DAY = ONE_HOUR * 24;
   private static final String ISSUER = "dev.thesummit.flink";
@@ -35,6 +38,9 @@ public class AuthModule extends AbstractModule {
         };
 
     if (SECRET_KEY == null) {
+      log.info(
+          "$FLINK_SERVER_SECRET_KEY is unset. Consider setting this variable for improved server"
+              + " security.");
       SECRET_KEY = "flink_development_server";
     }
 
