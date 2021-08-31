@@ -37,6 +37,9 @@ gradlew
 build
 target
 
+# Worktrees
+worktree/
+
 # Webapp
 web/node_modules
 web/build
