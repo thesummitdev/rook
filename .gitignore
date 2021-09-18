@@ -41,8 +41,7 @@ target
 worktree/
 
 # Webapp
-web/node_modules
-web/build
+node_modules
 
 # IDE
 .project
