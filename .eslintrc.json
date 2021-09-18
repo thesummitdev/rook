@@ -4,7 +4,8 @@
     "es6": true
   },
   "extends": [
-    "google"
+    "google",
+    "plugin:@angular-eslint/recommended"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -26,4 +27,4 @@
       "comma-dangle": [2, "never"]
     }
   }]
-};
+}
