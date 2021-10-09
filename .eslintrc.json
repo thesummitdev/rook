@@ -1,30 +1,81 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true
-  },
-  "extends": [
-    "google",
-    "plugin:@angular-eslint/recommended"
+  "root": true,
+  "ignorePatterns": [
+    "projects/**/*"
   ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "@typescript-eslint"
-  ],
-  "rules": {},
   "overrides": [{
-    "files": ["*.json"],
-    "rules": {
-      "quotes": [2, "double"],
-      "comma-dangle": [2, "never"]
+      "files": [
+        "*.ts"
+      ],
+      "parserOptions": {
+        "project": [
+          "tsconfig.json",
+          "e2e/tsconfig.json"
+        ],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "google",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates"
+      ],
+      "rules": {
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ],
+        "new-cap": ["error", {
+          "capIsNew": true,
+          "capIsNewExceptions": [
+            "Component",
+            "Directive",
+            "HostBinding",
+            "HostListener",
+            "Inject",
+            "Injectable",
+            "Input",
+            "NgModule",
+            "Output",
+            "Pipe",
+            "SkipSelf",
+            "ViewChild",
+            "ViewChildren"
+          ],
+          "newIsCap": true,
+          "properties": true
+        }],
+        "no-multi-spaces": ["error", {
+          "ignoreEOLComments": true
+        }],
+        "require-jsdoc": ["warn"],
+        "valid-jsdoc": ["error", {
+          "requireParamDescription": false,
+          "requireParamType": false,
+          "requireReturn": false,
+          "requireReturnType": false
+        }]
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+        "plugin:@angular-eslint/template/recommended"
+      ],
+      "rules": {}
     }
-  }]
+  ]
 }

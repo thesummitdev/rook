@@ -30,7 +30,7 @@
               "web/src/assets"
             ],
             "styles": [
-              "web/src/styles.scss"
+              "web/src/styles/styles.scss"
             ],
             "scripts": [],
             "sourceMap": {
@@ -88,12 +88,14 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-
-            "lintFilePatterns": ["web/src/**/*"]
-          },
-        },
+            "lintFilePatterns": [
+              "web/src/**/*.ts",
+              "web/src/**/*.html"
+            ]
+          }
+        }
       }
-    },
+    }
   },
   "defaultProject": "frontend"
 }

@@ -87,6 +87,8 @@ filegroup(
 
 APPLICATION_DEPS = [
     ":common_deps",
+    "@npm//@angular/animations",
+    "@npm//@angular/cdk",
     "@npm//@angular/cli",
     "@npm//@angular/core",
     "@npm//@angular/router",

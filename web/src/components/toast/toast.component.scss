@@ -1,0 +1,27 @@
+@use 'web/src/styles/colors';
+
+.toast-container {
+
+  align-items: center;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  padding: 6px 12px;
+
+  &.info {
+    background: colors.$GREEN;
+    color: colors.$BLACK;
+  }
+
+  &.warn {
+    background: colors.$YELLOW;
+    color: colors.$BLACK;
+  }
+
+  &.error {
+    background: colors.$RED;
+    color: colors.$BRIGHT-FOREGROUND;
+  }
+
+}
