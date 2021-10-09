@@ -1,5 +1,7 @@
 package dev.thesummit.flink;
 
+import static io.javalin.apibuilder.ApiBuilder.*;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import dev.thesummit.flink.auth.AuthModule;
@@ -8,7 +10,6 @@ import dev.thesummit.flink.handlers.AuthHandler;
 import dev.thesummit.flink.handlers.LinkHandler;
 import dev.thesummit.flink.handlers.UserHandler;
 import io.javalin.Javalin;
-import io.javalin.apibuilder.*;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,19 +36,31 @@ public class FlinkApplication {
     // Other Routes
     app.routes(
         () -> {
-          ApiBuilder.path(
-              "/login",
+          path(
+              "login",
               () -> {
-                ApiBuilder.post(injector.getInstance(AuthHandler.class)::login);
+                post(injector.getInstance(AuthHandler.class)::login);
               });
-          ApiBuilder.path(
+          path(
               "users",
               () -> {
-                ApiBuilder.post(injector.getInstance(UserHandler.class)::create);
+                post(injector.getInstance(UserHandler.class)::create);
               });
 
           // Link Entity
-          ApiBuilder.crud("links/:id", injector.getInstance(LinkHandler.class));
+          path(
+              "links",
+              () -> {
+                post(injector.getInstance(LinkHandler.class)::getAll);
+                put(injector.getInstance(LinkHandler.class)::create);
+                path(
+                    "<id>",
+                    () -> {
+                      get(injector.getInstance(LinkHandler.class)::getOne);
+                      patch(injector.getInstance(LinkHandler.class)::update);
+                      delete(injector.getInstance(LinkHandler.class)::delete);
+                    });
+              });
         });
 
     app.start(8000); // Start listening for http requests.

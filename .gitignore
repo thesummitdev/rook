@@ -41,13 +41,13 @@ target
 worktree/
 
 # Webapp
-web/node_modules
-web/build
+node_modules
 
 # IDE
 .project
 .settings
 .classpath
+.metadata
 app/.classpath
 app/.project
 app/.settings/

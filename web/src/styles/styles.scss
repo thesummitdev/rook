@@ -1,0 +1,11 @@
+@use "colors";
+
+// Required for Angular CDK Overlay
+@import '~@angular/cdk/overlay-prebuilt.css';
+
+
+body {
+  background: colors.$BACKGROUND;
+  color: colors.$FOREGROUND;
+  margin: 0;
+}
