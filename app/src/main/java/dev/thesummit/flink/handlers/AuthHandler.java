@@ -53,7 +53,7 @@ public class AuthHandler {
       if (user != null) {
         // User is now authenticated, return a JWT token for future requests.
         String token = this.jwtProvider.generateToken(user);
-        ctx.json(new JWTResponse(token));
+        ctx.json(new JWTResponse(token, user.username));
         ctx.status(200);
         ctx.contentType("application/json");
         log.debug("User is successfully logged in.");

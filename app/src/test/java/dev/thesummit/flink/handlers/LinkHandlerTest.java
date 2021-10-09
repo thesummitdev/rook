@@ -55,8 +55,9 @@ public class LinkHandlerTest {
     UUID uuid = UUID.randomUUID();
     link.setId(uuid);
     when(dbService.get(Link.class, uuid)).thenReturn(link);
+    when(ctx.pathParam("id")).thenReturn(uuid.toString());
 
-    handler.getOne(ctx, uuid.toString());
+    handler.getOne(ctx);
     verify(ctx).result(link.toJSONObject().toString());
     verify(ctx).status(200);
     verify(ctx).contentType("application/json");
@@ -68,21 +69,24 @@ public class LinkHandlerTest {
     UUID uuid = UUID.randomUUID();
     link.setId(uuid);
     when(dbService.get(Link.class, uuid)).thenReturn(null);
+    when(ctx.pathParam("id")).thenReturn(uuid.toString());
 
     assertThrows(
         NotFoundResponse.class,
         () -> {
-          handler.getOne(ctx, uuid.toString());
+          handler.getOne(ctx);
         });
   }
 
   @Test
   public void GETONE_links_invalid_uuid_format() {
 
+    when(ctx.pathParam("id")).thenReturn("this-is-not-a-valid-uuid");
+
     assertThrows(
         BadRequestResponse.class,
         () -> {
-          handler.getOne(ctx, "this-is-not-a-valid-uuid");
+          handler.getOne(ctx);
         });
   }
 

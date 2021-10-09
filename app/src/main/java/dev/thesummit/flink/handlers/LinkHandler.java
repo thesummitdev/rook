@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import dev.thesummit.flink.database.DatabaseService;
 import dev.thesummit.flink.models.Link;
 import dev.thesummit.flink.models.User;
-import io.javalin.apibuilder.CrudHandler;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.InternalServerErrorResponse;
@@ -20,7 +19,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkHandler implements CrudHandler {
+public class LinkHandler {
 
   private static Logger log = LoggerFactory.getLogger(UserHandler.class);
   private DatabaseService dbService;
@@ -30,8 +29,7 @@ public class LinkHandler implements CrudHandler {
     this.dbService = dbService;
   }
 
-  /** Request handler for GET ${host}/links/ */
-  @Override
+  /** Request handler for POST ${host}/links/ */
   public void getAll(Context ctx) {
 
     User user = ctx.sessionAttribute("current_user");
@@ -59,8 +57,9 @@ public class LinkHandler implements CrudHandler {
   }
 
   /** Request handler for GET ${host}/links/{id} */
-  @Override
-  public void getOne(Context ctx, String resourceId) {
+  public void getOne(Context ctx) {
+
+    String resourceId = ctx.pathParam("id");
 
     try {
       User user = ctx.sessionAttribute("current_user");
@@ -80,8 +79,7 @@ public class LinkHandler implements CrudHandler {
     }
   }
 
-  /** Request handler for POST ${host}/links/ */
-  @Override
+  /** Request handler for PUT ${host}/links/ */
   public void create(Context ctx) {
 
     User user = ctx.sessionAttribute("current_user");
@@ -129,10 +127,10 @@ public class LinkHandler implements CrudHandler {
   }
 
   /** Request handler for PATCH ${host}/links/{id} */
-  @Override
-  public void update(Context ctx, String resourceId) {
+  public void update(Context ctx) {
 
     User user = ctx.sessionAttribute("current_user");
+    String resourceId = ctx.pathParam("id");
 
     Link link = this.dbService.get(Link.class, UUID.fromString(resourceId));
 
@@ -185,9 +183,9 @@ public class LinkHandler implements CrudHandler {
   }
 
   /** Request handler for DELETE ${host}/links/{id} */
-  @Override
-  public void delete(Context ctx, String resourceId) {
+  public void delete(Context ctx) {
 
+    String resourceId = ctx.pathParam("id");
     Link l = this.dbService.get(Link.class, UUID.fromString(resourceId));
 
     if (l != null) {
