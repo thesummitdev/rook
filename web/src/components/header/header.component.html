@@ -1,0 +1,15 @@
+<div class="header-panel">
+  <h1>f.link</h1>
+  <span>
+    <div class="login-panel">
+      <ng-container *ngIf="user$|async as user; else login">
+        <span>{{user.username}}</span>
+        <span aria-label="Sign out" role="button">sign out</span>
+      </ng-container>
+      <ng-template #login>
+        <span aria-label="Login" role="button">login</span>
+        <span aria-label="Create a new account" role="button">create account</span>
+      </ng-template>
+    </div>
+  </span>
+</div>

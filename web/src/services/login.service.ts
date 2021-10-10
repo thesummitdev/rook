@@ -14,7 +14,10 @@ export class LoginService {
   constructor(
       private readonly http: HttpClient,
       private readonly toast: ToastService,
-  ) {}
+  ) {
+    this.token.next(undefined);
+    this.user.next(undefined);
+  }
 
   /**
    * Attempts to sign the user in with the given credentials.

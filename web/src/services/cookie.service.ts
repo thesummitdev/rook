@@ -16,7 +16,9 @@ export class CookieService implements OnDestroy {
 
     // Pass the stored token to the login service.
     this.login.setToken(storedToken);
-    this.login.setUser({username: storedUser});
+    if (storedUser) {
+      this.login.setUser({username: storedUser});
+    }
 
     // On future token updates, set the cookie.
     this.login.getTokenAsObservable()
