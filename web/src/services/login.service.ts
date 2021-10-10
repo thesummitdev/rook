@@ -2,13 +2,14 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable, of, ReplaySubject} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
+import {User} from 'web/src/models/user';
 import {ToastService} from './toast.service';
 
 @Injectable({providedIn: 'root'})
 /** Login service that manages the user logged in state. */
 export class LoginService {
   private token = new ReplaySubject<string|undefined>(1);
-  private user = new ReplaySubject<string|undefined>(1);
+  private user = new ReplaySubject<User|undefined>(1);
 
   constructor(
       private readonly http: HttpClient,
@@ -21,26 +22,30 @@ export class LoginService {
    * @param password
    * @return Observable with the username
    */
-  attemptSignIn(username: string, password: string): Observable<string> {
+  attemptSignIn(username: string, password: string):
+      Observable<User|undefined> {
     return this.http.post('/login', {username, password})
         .pipe(
             map((resp: {jwt: string, username: string}) => {
               this.token.next(resp.jwt);
-              this.user.next(resp.username);
+              const user: User = {username};
+              this.user.next(user);
               this.toast.showMessage(`Welcome back, ${username}!`);
-              return resp.username;
+              return user;
             }),
-            catchError((err: HttpErrorResponse, caught: Observable<string>) => {
-              console.log(err, caught);
+            catchError(
+                (err: HttpErrorResponse,
+                 caught: Observable<User|undefined>) => {
+                  console.log(err, caught);
 
-              if (err.status === 401) {
-                this.toast.showError('Invalid username and password.');
-              } else {
-                this.toast.showError(
-                    'Unable to log you in, there was an unknown error.');
-              }
-              return of('');
-            }),
+                  if (err.status === 401) {
+                    this.toast.showError('Invalid username and password.');
+                  } else {
+                    this.toast.showError(
+                        'Unable to log you in, there was an unknown error.');
+                  }
+                  return of(undefined);
+                }),
         );
   }
 
@@ -51,7 +56,7 @@ export class LoginService {
    */
   signOut(): void {
     this.token.next('');  // This will cause CookieService to clear the cookie.
-    this.user.next('');
+    this.user.next(undefined);
   }
 
   /**
@@ -66,7 +71,7 @@ export class LoginService {
    * Returns the current user as an observable.
    * @return Observable of the user.
    */
-  getUserAsObservable(): Observable<string|undefined> {
+  getUserAsObservable(): Observable<User|undefined> {
     return this.user.asObservable();
   }
 
@@ -82,7 +87,7 @@ export class LoginService {
    * Sets the current user and broadcasts to all subscribers.
    * @param user
    */
-  setUser(user: string|undefined): void {
+  setUser(user: User): void {
     this.user.next(user);
   }
 }

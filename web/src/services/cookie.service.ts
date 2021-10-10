@@ -1,6 +1,7 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {Subject} from 'rxjs';
 import {skip, takeUntil} from 'rxjs/operators';
+import {User} from 'web/src/models/user';
 import {LoginService} from './login.service';
 
 @Injectable({providedIn: 'root'})
@@ -15,7 +16,7 @@ export class CookieService implements OnDestroy {
 
     // Pass the stored token to the login service.
     this.login.setToken(storedToken);
-    this.login.setUser(storedUser);
+    this.login.setUser({username: storedUser});
 
     // On future token updates, set the cookie.
     this.login.getTokenAsObservable()
@@ -29,7 +30,8 @@ export class CookieService implements OnDestroy {
         .pipe(
             skip(1),  // Ignore first value since this is a ReplaySubject.
             takeUntil(this.unsubscribe))
-        .subscribe((user: string|undefined) => this.setCookie('user', user, 1));
+        .subscribe(
+            (user: User|undefined) => this.setCookie('user', user.username, 1));
   }
 
   ngOnDestroy(): void {

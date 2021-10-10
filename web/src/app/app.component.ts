@@ -20,7 +20,8 @@ export class AppComponent {
       private readonly cookie: CookieService,
   ) {
     this.username = this.login.getUserAsObservable().pipe(
-        filter((username) => username !== undefined));
+        filter((user) => user.username !== undefined),
+        map((user) => user.username));
 
     this.login.attemptSignIn('tyler', '12w3').subscribe(() => {
       this.data.getLinks().subscribe(console.log);
