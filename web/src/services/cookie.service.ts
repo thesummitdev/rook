@@ -26,14 +26,18 @@ export class CookieService implements OnDestroy {
             skip(1),  // Ignore first value since this is a ReplaySubject.
             takeUntil(this.unsubscribe))
         .subscribe(
-            (token: string|undefined) => this.setCookie('jwt', token, 1));
+            (token: string|undefined) => token ?
+                this.setCookie('jwt', token, 1) :
+                this.removeCookie('jwt'));
 
     this.login.getUserAsObservable()
         .pipe(
             skip(1),  // Ignore first value since this is a ReplaySubject.
             takeUntil(this.unsubscribe))
         .subscribe(
-            (user: User|undefined) => this.setCookie('user', user.username, 1));
+            (user: User|undefined) => user ?
+                this.setCookie('user', user.username, 1) :
+                this.removeCookie('user'));
   }
 
   ngOnDestroy(): void {
@@ -67,12 +71,18 @@ export class CookieService implements OnDestroy {
    * */
   setCookie(name: string, value: string, expireDays: number, path: string = ''):
       void {
-    console.log(name, value);
     const d: Date = new Date();
     d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
     const expires: string = `expires=${d.toUTCString()}`;
     const cpath: string = path ? `; path=${path}` : '';
     document.cookie =
         `${name}=${value}; ${expires}${cpath}; SameSite=Strict; Secure;`;
+  }
+
+  removeCookie(name: string): void {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + 1000);
+    document.cookie =
+        `${name}=${''}; ${expires}${''}; SameSite=Strict; Secure;`;
   }
 }

@@ -2,6 +2,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {DialogModule} from 'web/src/components/dialog/dialog.module';
 import {HeaderComponent} from 'web/src/components/header/header.component';
 import {ToastModule} from 'web/src/components/toast/toast.module';
 
@@ -14,6 +15,7 @@ import {AppComponent} from './app.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
+    DialogModule,
     HttpClientModule,
     ToastModule,
   ],

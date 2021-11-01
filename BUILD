@@ -91,6 +91,7 @@ APPLICATION_DEPS = [
     "@npm//@angular/cdk",
     "@npm//@angular/cli",
     "@npm//@angular/core",
+    "@npm//@angular/forms",
     "@npm//@angular/router",
     "@npm//@angular/platform-browser-dynamic",
     "@npm//@angular-devkit/build-angular",
