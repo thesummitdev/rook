@@ -3,7 +3,8 @@
   "ignorePatterns": [
     "projects/**/*"
   ],
-  "overrides": [{
+  "overrides": [
+    {
       "files": [
         "*.ts"
       ],
@@ -36,36 +37,47 @@
             "style": "kebab-case"
           }
         ],
-        "new-cap": ["error", {
-          "capIsNew": true,
-          "capIsNewExceptions": [
-            "Component",
-            "Directive",
-            "HostBinding",
-            "HostListener",
-            "Inject",
-            "Injectable",
-            "Input",
-            "NgModule",
-            "Output",
-            "Pipe",
-            "SkipSelf",
-            "ViewChild",
-            "ViewChildren"
-          ],
-          "newIsCap": true,
-          "properties": true
-        }],
-        "no-multi-spaces": ["error", {
-          "ignoreEOLComments": true
-        }],
-        "require-jsdoc": ["warn"],
-        "valid-jsdoc": ["error", {
-          "requireParamDescription": false,
-          "requireParamType": false,
-          "requireReturn": false,
-          "requireReturnType": false
-        }]
+        "new-cap": [
+          "error",
+          {
+            "capIsNew": true,
+            "capIsNewExceptions": [
+              "Component",
+              "Directive",
+              "HostBinding",
+              "HostListener",
+              "Inject",
+              "Injectable",
+              "Input",
+              "NgModule",
+              "Output",
+              "Pipe",
+              "SkipSelf",
+              "ViewChild",
+              "ViewChildren"
+            ],
+            "newIsCap": true,
+            "properties": true
+          }
+        ],
+        "no-multi-spaces": [
+          "error",
+          {
+            "ignoreEOLComments": true
+          }
+        ],
+        "require-jsdoc": [
+          "warn"
+        ],
+        "valid-jsdoc": [
+          "error",
+          {
+            "requireParamDescription": false,
+            "requireParamType": false,
+            "requireReturn": false,
+            "requireReturnType": false
+          }
+        ]
       }
     },
     {
