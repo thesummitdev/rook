@@ -100,7 +100,6 @@ load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install
 
 yarn_install(
     name = "npm",
-    data = ["//:web/patches/@angular-devkit+architect-cli+0.1102.2.patch"],
     package_json = "//:package.json",
     symlink_node_modules = False,
     yarn_lock = "//:yarn.lock",
