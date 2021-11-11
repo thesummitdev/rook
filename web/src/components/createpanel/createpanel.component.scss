@@ -1,0 +1,30 @@
+@use 'web/src/styles/colors';
+
+.create-panel {
+  border: 1px solid colors.$DIM-WHITE;
+  padding: 8px 0;
+}
+
+.create-form {
+  display: flex;
+  flex-flow: column;
+
+  .input-wrapper {
+    border-radius: 40px;
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 8px;
+
+    &:hover {
+      background-color: colors.$DIM-BACKGROUND;
+    }
+  }
+
+  .action-row {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: end;
+    padding: 8px 12px;
+  }
+
+}

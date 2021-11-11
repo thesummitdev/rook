@@ -1,0 +1,13 @@
+<div class="link-list">
+
+  <ul class="links-ul" *ngIf="links$ | async as links">
+
+    <li *ngFor="let link of links">
+      <app-link [link]="link"></app-link>
+    </li>
+
+  </ul>
+
+
+
+</div>

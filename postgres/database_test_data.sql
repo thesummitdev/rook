@@ -1,23 +1,58 @@
 INSERT INTO USERS (username) VALUES ('flink_system');
 INSERT INTO USERS (username) VALUES ('tyler');
 
-INSERT INTO LINKS (url, tags, unread, userId) 
-  VALUES ('https://www.google.com', 
+INSERT INTO LINKS (title, url, tags, userId) 
+  VALUES ('google',
+          'https://www.google.com', 
           'google', 
-          true, 
           (SELECT id from USERS where username='tyler')
          );
 
-INSERT INTO LINKS (url, tags, unread, userId) 
-  VALUES ('https://www.google.com/maps', 
+INSERT INTO LINKS (title, url, tags, userId) 
+  VALUES ('google maps',
+          'https://www.google.com/maps', 
           'google maps', 
-          true, 
           (SELECT id from USERS where username='tyler')
          );
 
-INSERT INTO LINKS (url, tags, unread, userId) 
-  VALUES ('https://www.arstechnica.com', 
+INSERT INTO LINKS (title, url, tags, userId) 
+  VALUES ('arstechnica',
+          'https://www.arstechnica.com', 
           'tech', 
-          false, 
+          (SELECT id from USERS where username='tyler')
+         );
+
+INSERT INTO LINKS (title, url, tags, userId) 
+  VALUES ('tweetdeck',
+          'https://tweetdeck.twitter.com', 
+          'social tech', 
+          (SELECT id from USERS where username='tyler')
+         );
+
+INSERT INTO LINKS (title, url, tags, userId) 
+  VALUES ('home.bld',
+          'http://home.bld', 
+          'homelab bld', 
+          (SELECT id from USERS where username='tyler')
+         );
+
+INSERT INTO LINKS (title, url, tags, userId) 
+  VALUES ('news',
+          'https://news.google.com', 
+          'news feeds tech google', 
+          (SELECT id from USERS where username='tyler')
+         );
+
+INSERT INTO LINKS (title, url, tags, userId) 
+  VALUES ('github',
+          'https://www.github.com', 
+          'tech dev code git', 
+          (SELECT id from USERS where username='tyler')
+         );
+
+INSERT INTO LINKS (title, url, tags, userId) 
+  VALUES ('rapha',
+          'https://www.rapha.cc', 
+          'cycling', 
           (SELECT id from USERS where username='tyler')
          );

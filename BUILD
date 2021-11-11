@@ -21,6 +21,7 @@ java_binary(
         [
             ":web_bundle",
             "//app/src/main/resources",
+            "//web/src/assets:static_assets",
         ],
     deps = [
         "//app/src/main/java/dev/thesummit/flink/auth",
@@ -45,6 +46,7 @@ java_binary(
         [
             ":web_bundle_dev",
             "//app/src/main/resources",
+            "//web/src/assets:static_assets",
         ],
     deps = [
         "//app/src/main/java/dev/thesummit/flink/auth",

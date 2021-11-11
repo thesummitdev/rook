@@ -20,15 +20,15 @@ public class Link implements BaseModel {
   @DatabaseField(whereOperator = " ~ ")
   public String tags;
 
-  @DatabaseField() public Boolean unread;
+  @DatabaseField() public String title;
 
   @DatabaseField() public UUID userId;
 
-  public Link(String url, String tags, Boolean unread, UUID userId) {
+  public Link(String title, String url, String tags, UUID userId) {
     this.url = url;
     this.tags = tags;
-    this.unread = unread;
     this.userId = userId;
+    this.title = title;
   }
 
   public void setId(UUID id) {
@@ -42,9 +42,9 @@ public class Link implements BaseModel {
   public static Link fromJSONObject(JSONObject obj) {
     Link l =
         new Link(
+            obj.getString("title"),
             obj.getString("url"),
             obj.optString("tags", ""),
-            obj.optBoolean("unread", false),
             UUID.fromString(obj.getString("userId")));
 
     if (obj.has("id")) {
@@ -63,9 +63,9 @@ public class Link implements BaseModel {
     JSONObject obj =
         new JSONObject()
             .put("id", this.id)
+            .put("title", this.title)
             .put("url", this.url)
-            .put("tags", this.tags)
-            .put("unread", this.unread);
+            .put("tags", this.tags);
 
     return obj;
   }
@@ -74,9 +74,9 @@ public class Link implements BaseModel {
     try {
       Link l =
           new Link(
+              rs.getString("title"),
               rs.getString("url"),
               rs.getString("tags"),
-              rs.getBoolean("unread"),
               rs.getObject("userId", UUID.class));
       l.setId(rs.getObject("id", UUID.class));
       return l;

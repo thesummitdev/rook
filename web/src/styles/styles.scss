@@ -9,3 +9,50 @@ body {
   color: colors.$FOREGROUND;
   margin: 0;
 }
+
+a {
+  color: colors.$RED;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+input[type=text] {
+  background: inherit;
+  border: none;
+  color: colors.$BRIGHT-WHITE;
+  font-family: 'Fira Mono', monospace;
+  outline: none;
+  width: 100%;
+
+  &::placeholder {
+    color: colors.$DIM-WHITE;
+  }
+
+  &:focus {
+    border-bottom: 1px solid colors.$YELLOW;
+  }
+}
+
+button {
+  background-color: colors.$DIM_BACKGROUND;
+  border-radius: 45px;
+  border: none;
+  color: colors.$DIM_FOREGROUND;
+  cursor: pointer;
+  font-family: 'Fira Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  padding: 8px;
+  text-transform: lowercase;
+  transition: all 0.3s ease 0s;
+
+  &:hover {
+
+    background-color: colors.$GREEN;
+    color: colors.$BRIGHT_FOREGROUND;
+
+  }
+}

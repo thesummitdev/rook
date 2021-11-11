@@ -100,11 +100,11 @@ public class LinkHandler {
 
     try {
       // Required Fields
+      String title = body.getString("title");
       String url = body.getString("url");
       // Optional Fields
       String tags = body.optString("tags", "");
-      Boolean unread = body.optBoolean("unread", false);
-      l = new Link(url, tags, unread, user.getId());
+      l = new Link(title, url, tags, user.getId());
     } catch (JSONException e) {
       throw new BadRequestResponse("Bad Request: Could not parse Link object from request body.");
     }
@@ -148,11 +148,15 @@ public class LinkHandler {
       throw new BadRequestResponse("Unable to parse JSON payload");
     }
 
+    String newTitle = null;
     String newUrl = null;
     String newTags = null;
-    Boolean newUnread = null;
 
     try {
+      if (body.has("title")) {
+        newTitle = body.getString("title");
+        link.title = newTitle;
+      }
       if (body.has("url")) {
         newUrl = body.getString("url");
         link.url = newUrl;
@@ -160,10 +164,6 @@ public class LinkHandler {
       if (body.has("tags")) {
         newTags = body.getString("tags");
         link.tags = newTags;
-      }
-      if (body.has("unread")) {
-        newUnread = body.getBoolean("unread");
-        link.unread = newUnread;
       }
     } catch (JSONException e) {
       ctx.status(400);

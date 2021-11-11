@@ -1,0 +1,29 @@
+  <div class="link-container">
+    <div class="link-content">
+      <div>
+        <a class="link-title" href="{{link.url}}" target="_blank">
+          {{link.title}}
+        </a>
+      </div>
+      <div class="details-container">
+        <span class="link-anchor-container">
+          <a class="link-anchor" href="{{link.url}}" target="_blank">{{link.url}}</a>
+        </span>
+        <div class="link-tags">
+          <span class="tag" *ngFor="let tag of tags">{{tag}}</span>
+          <span class="add-tag-icon">+</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions-row">
+      <span>
+        <span class="action-item">copy url</span>
+      </span>
+      <span>
+        <span class="action-item">edit</span>
+      </span>
+      <span>
+        <span class="action-item">delete</span>
+      </span>
+    </div>
+  </div>

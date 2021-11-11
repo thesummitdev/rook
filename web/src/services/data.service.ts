@@ -2,6 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
+import {Link} from '../models/link';
 
 import {LoginService} from './login.service';
 
@@ -14,9 +15,9 @@ export class DataService {
   ) {}
 
 
-  getLinks(): Observable<object> {
+  getLinks(): Observable<Link[]> {
     return this.login.getTokenAsObservable().pipe(
-        switchMap((token) => this.http.request('POST', '/links', {
+        switchMap((token) => this.http.request<Link[]>('POST', '/links', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',

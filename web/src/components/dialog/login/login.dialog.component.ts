@@ -14,8 +14,8 @@ interface LoginData {
 
 /** The data shape of the login form. */
 interface LoginForm {
-  username: AbstractControl;
-  password: AbstractControl;
+  username: FormControl;
+  password: FormControl;
 }
 
 @Component({

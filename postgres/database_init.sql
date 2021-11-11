@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 CREATE TABLE IF NOT EXISTS links(
   id      uuid            NOT NULL DEFAULT uuid_generate_v4(),
+  title   varchar(1000)   NOT NULL,
   url     varchar(1000)   NOT NULL,
   tags    varchar(1000)   NULL,
   unread  boolean         NOT NULL DEFAULT false,

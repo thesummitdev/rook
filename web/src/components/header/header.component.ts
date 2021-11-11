@@ -21,7 +21,7 @@ export class HeaderComponent {
     this.user$ = this.login.getUserAsObservable();
   }
 
-  showLogin(event: PointerEvent): void {
+  showLogin(event: MouseEvent): void {
     event.stopPropagation();
     this.dialog.showLoginDialog().resultAsObservable().subscribe((result) => {
       if (!result.cancelled) {

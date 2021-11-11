@@ -27,6 +27,7 @@ public class FlinkApplication {
             config -> {
               config.enableDevLogging();
               config.addStaticFiles("web");
+              config.addStaticFiles("assets");
             });
 
     // Protected routes that require a User to be logged in and pass a bearer token.
@@ -44,7 +45,7 @@ public class FlinkApplication {
           path(
               "users",
               () -> {
-                post(injector.getInstance(UserHandler.class)::create);
+                put(injector.getInstance(UserHandler.class)::create);
               });
 
           // Link Entity
