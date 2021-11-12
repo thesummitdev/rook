@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS links(
   title   varchar(1000)   NOT NULL,
   url     varchar(1000)   NOT NULL,
   tags    varchar(1000)   NULL,
-  unread  boolean         NOT NULL DEFAULT false,
   userId  uuid            NOT NULL,
   PRIMARY KEY ( id ),
   CONSTRAINT fk_userid FOREIGN KEY ( userId ) REFERENCES users(id)
