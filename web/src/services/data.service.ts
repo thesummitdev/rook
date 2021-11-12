@@ -26,4 +26,14 @@ export class DataService {
         })),
     );
   }
+
+  getTags(): Observable<String[]> {
+    return this.login.getTokenAsObservable().pipe(
+        switchMap((token) => this.http.get<String[]>('/tags', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })));
+  }
 }

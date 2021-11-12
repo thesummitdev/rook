@@ -8,6 +8,7 @@ import dev.thesummit.flink.auth.AuthModule;
 import dev.thesummit.flink.database.DatabaseModule;
 import dev.thesummit.flink.handlers.AuthHandler;
 import dev.thesummit.flink.handlers.LinkHandler;
+import dev.thesummit.flink.handlers.TagHandler;
 import dev.thesummit.flink.handlers.UserHandler;
 import io.javalin.Javalin;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class FlinkApplication {
     // Protected routes that require a User to be logged in and pass a bearer token.
     app.before("/links", injector.getInstance(AuthHandler.class)::fetchUserContext);
     app.before("/links/*", injector.getInstance(AuthHandler.class)::fetchUserContext);
+    app.before("/tags", injector.getInstance(AuthHandler.class)::fetchUserContext);
 
     // Other Routes
     app.routes(
@@ -61,6 +63,12 @@ public class FlinkApplication {
                       patch(injector.getInstance(LinkHandler.class)::update);
                       delete(injector.getInstance(LinkHandler.class)::delete);
                     });
+              });
+
+          path(
+              "tags",
+              () -> {
+                get(injector.getInstance(TagHandler.class)::getAll);
               });
         });
 

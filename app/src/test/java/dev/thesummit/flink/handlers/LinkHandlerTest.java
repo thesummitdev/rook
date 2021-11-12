@@ -51,7 +51,7 @@ public class LinkHandlerTest {
 
   @Test
   public void GETONE_links() {
-    Link link = new Link("http://test.com", "test tags", false, MOCK_USER_UUID);
+    Link link = new Link("Test Link", "http://test.com", "test tags", MOCK_USER_UUID);
     UUID uuid = UUID.randomUUID();
     link.setId(uuid);
     when(dbService.get(Link.class, uuid)).thenReturn(link);
@@ -65,7 +65,7 @@ public class LinkHandlerTest {
 
   @Test
   public void GETONE_links_not_found() {
-    Link link = new Link("http://test.com", "test tags", false, MOCK_USER_UUID);
+    Link link = new Link("Test Link", "http://test.com", "test tags", MOCK_USER_UUID);
     UUID uuid = UUID.randomUUID();
     link.setId(uuid);
     when(dbService.get(Link.class, uuid)).thenReturn(null);
@@ -92,8 +92,8 @@ public class LinkHandlerTest {
 
   @Test
   public void GETALL_links() {
-    Link mockLink = new Link("http://test.com", "test tags", false, MOCK_USER_UUID);
-    Link mockLink2 = new Link("http://test2.com", "test2 tags", true, MOCK_USER_UUID);
+    Link mockLink = new Link("First Link", "http://test.com", "test tags", MOCK_USER_UUID);
+    Link mockLink2 = new Link("Second Link", "http://test2.com", "test2 tags", MOCK_USER_UUID);
     ArrayList<Link> list = new ArrayList<Link>();
     list.add(mockLink);
     list.add(mockLink2);
@@ -114,9 +114,8 @@ public class LinkHandlerTest {
   @ParameterizedTest
   @ValueSource(
       strings = {
-        "{'url':'http://test.com', 'tags':'test tags', 'unread':false}",
-        "{'url':'http://test.com', 'unread':false}",
-        "{'url':'http://test.com'}",
+        "{'title': 'First Link','url':'http://test.com', 'tags':'test tags'}",
+        "{'title': 'Second Link','url':'http://test.com'}",
       })
   public void CREATE_link(String body) {
 
@@ -124,9 +123,9 @@ public class LinkHandlerTest {
     when(ctx.body()).thenReturn(body);
     Link expectedLink =
         new Link(
+            obj.getString("title"),
             obj.getString("url"),
             obj.optString("tags", ""),
-            obj.optBoolean("unread", false),
             MOCK_USER_UUID);
     expectedLink.setId(MOCK_LINK_UUID);
 
@@ -146,8 +145,8 @@ public class LinkHandlerTest {
     verify(dbService).put(arg.capture());
     // Ensure all fields match the input
     assertEquals(Link.class, arg.getValue().getClass());
+    assertEquals(expectedLink.title, arg.getValue().title);
     assertEquals(expectedLink.tags, arg.getValue().tags);
-    assertEquals(expectedLink.unread, arg.getValue().unread);
     assertEquals(expectedLink.url, arg.getValue().url);
     assertEquals(expectedLink.getId(), arg.getValue().getId());
   }
@@ -157,7 +156,7 @@ public class LinkHandlerTest {
       strings = {
         "",
         "{}",
-        "{'tags':'test tags', 'unread':false}",
+        "{'tags':'test tags'}",
         "{123:45}",
         "{'url':'notaurl'}",
       })
