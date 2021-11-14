@@ -292,14 +292,55 @@ public class FlinkDatabaseService implements DatabaseService {
     for (String field : params.keySet()) {
 
       Field dbField = fieldsMap.getOrDefault(field, null);
+      if (dbField == null) {
+        // params don't match a known db field, so continue with params.
+        continue;
+      }
       DatabaseField annotation = dbField.getAnnotation(DatabaseField.class);
+      DatabaseArrayField arrayAnnotation = dbField.getAnnotation(DatabaseArrayField.class);
 
-      query.append(field).append(annotation.cast()).append(annotation.whereOperator()).append("?");
+      if (arrayAnnotation != null) {
+        // Handle Array fields differently.
 
-      if (index == params.size()) {
-        query.append(";");
+        // Param value is empty, so skip the field.
+        if (params.get(field) == "") {
+          log.info("Array field with empty string value");
+          if (index == params.size()) {
+            query.append(";"); // End the Query
+          }
+          index++; // skip this field;
+          log.info("Continuing...");
+          continue;
+        }
+
+        if (index <= params.size() && index != 1) {
+          query.append("\n AND ");
+        }
+
+        query
+            .append(arrayAnnotation.arrayFuncton())
+            .append(arrayAnnotation.arrayCompareOperator())
+            .append("?");
+
+        if (index == params.size()) {
+          query.append(";"); // End the Query
+        }
+
       } else {
-        query.append("\n AND ");
+
+        if (index <= params.size() && index != 1) {
+          query.append("\n AND ");
+        }
+
+        query
+            .append(field)
+            .append(annotation.cast())
+            .append(annotation.whereOperator())
+            .append("?");
+
+        if (index == params.size()) {
+          query.append(";"); // End the Query
+        }
       }
       index++;
     }
@@ -311,6 +352,13 @@ public class FlinkDatabaseService implements DatabaseService {
 
       index = 1;
       for (Map.Entry<String, Object> e : params.entrySet()) {
+        Field dbField = fieldsMap.getOrDefault(e.getKey(), null);
+        if (dbField == null) {
+          // params don't match a known db field, so continue with params.
+          continue;
+        }
+        DatabaseField annotation = dbField.getAnnotation(DatabaseField.class);
+        DatabaseArrayField arrayAnnotation = dbField.getAnnotation(DatabaseArrayField.class);
         if (e.getValue() instanceof Boolean) {
           boolean b = (boolean) e.getValue();
           statement.setBoolean(index, b);
@@ -318,14 +366,29 @@ public class FlinkDatabaseService implements DatabaseService {
           int i = (int) e.getValue();
           statement.setInt(index, i);
         } else if (e.getValue() instanceof String) {
-          statement.setString(index, e.getValue().toString());
+
+          // Check if the string field should be compared as an array.
+          if (arrayAnnotation != null) {
+            String value = (String) e.getValue();
+            if (value.length() == 0) {
+              log.info("Skipping empty array field in value setter.");
+              index++;
+              continue;
+            }
+            statement.setArray(
+                index, conn.createArrayOf("TEXT", value.split(arrayAnnotation.arraySeperator())));
+          } else {
+
+            statement.setString(index, e.getValue().toString());
+          }
+
         } else {
           statement.setObject(index, e.getValue());
         }
         index++;
       }
 
-      log.info("GetAll SQL: ", statement.toString());
+      log.info("GetAll SQL: {}", statement.toString());
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
           try {
@@ -340,7 +403,7 @@ public class FlinkDatabaseService implements DatabaseService {
         }
       }
     } catch (SQLException e) {
-      log.debug("Database error during getAll", e);
+      log.info("Database error during getAll", e);
       return null;
     } finally {
       this.pool.releaseConnection(conn);
@@ -378,11 +441,11 @@ public class FlinkDatabaseService implements DatabaseService {
   }
 
   /**
-   * Generates a list of database queriable fields as a comma seprated list.
+   * Generates a map of Field names to class fields.
    *
    * @param cls - The class to inspect.
    * @param includeId - whether to include the UUID field for this entity.
-   * @return fields - Comma seperated list of fields. i.e. id,field1,field2
+   * @return fields - Map of string name to actual class field.
    */
   private <T extends BaseModel> HashMap<String, Field> getQueryFieldsMap(
       Class<T> cls, Boolean includeId) {

@@ -28,7 +28,10 @@ java_library(
 
 java_library(
     name = "database_field",
-    srcs = ["DatabaseField.java"],
+    srcs = [
+        "DatabaseArrayField.java",
+        "DatabaseField.java",
+    ],
 )
 
 java_library(

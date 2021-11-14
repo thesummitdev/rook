@@ -1,5 +1,6 @@
 package dev.thesummit.flink.models;
 
+import dev.thesummit.flink.database.DatabaseArrayField;
 import dev.thesummit.flink.database.DatabaseField;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +18,11 @@ public class Link implements BaseModel {
 
   @DatabaseField() public String url;
 
-  @DatabaseField(whereOperator = " ~ ")
+  @DatabaseField()
+  @DatabaseArrayField(
+      arrayFuncton = "string_to_array(tags, ' ')",
+      arrayCompareOperator = " @> ",
+      arraySeperator = " ")
   public String tags;
 
   @DatabaseField() public String title;
