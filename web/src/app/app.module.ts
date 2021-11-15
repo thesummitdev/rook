@@ -9,6 +9,8 @@ import {CreatePanelComponent} from '../components/createpanel/createpanel.compon
 import {FilterPanelComponent} from '../components/filterpanel/filterpanel.component';
 import {LinkComponent} from '../components/link/link.component';
 import {LinkListComponent} from '../components/linklist/linklist.component';
+import {UiModule} from '../components/ui/ui.module';
+import {PipesModule} from '../pipes/pipes.module';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -28,7 +30,9 @@ import {AppComponent} from './app.component';
     BrowserModule,
     DialogModule,
     HttpClientModule,
+    PipesModule,
     ToastModule,
+    UiModule,
   ],
   bootstrap: [AppComponent],
 })

@@ -69,20 +69,22 @@ export class CookieService implements OnDestroy {
    * @param expireDays number of days until the cookie expires
    * @param path the cookie path
    * */
-  setCookie(name: string, value: string, expireDays: number, path: string = ''):
-      void {
+  setCookie(
+      name: string,
+      value: string,
+      expireDays: number,
+      path: string = '/',
+      ): void {
     const d: Date = new Date();
     d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
     const expires: string = `expires=${d.toUTCString()}`;
     const cpath: string = path ? `; path=${path}` : '';
-    document.cookie =
-        `${name}=${value}; ${expires}${cpath}; SameSite=Strict; Secure;`;
+    document.cookie = `${name}=${value}; ${expires}${cpath}; SameSite=Strict;`;
   }
 
   removeCookie(name: string): void {
     const expires = new Date();
     expires.setTime(expires.getTime() + 1000);
-    document.cookie =
-        `${name}=${''}; ${expires}${''}; SameSite=Strict; Secure;`;
+    document.cookie = `${name}=${''}; ${expires}${''}; SameSite=Strict;`;
   }
 }

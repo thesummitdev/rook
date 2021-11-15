@@ -5,23 +5,16 @@
   flex-flow: column;
   justify-content: start;
 
-  .top-section {
-    padding-right: 35px;
-  }
 }
 
 .search-bar {
 
-  border-radius: 40px;
   display: flex;
   flex-flow: row nowrap;
   padding: 8px;
 
-  &:hover {
-    background-color: colors.$DIM-BACKGROUND;
-  }
-
   .search-bar-internal-wrapper {
+    align-items: center;
     display: flex;
     width: 100%;
 
@@ -32,8 +25,8 @@
 
   .search-icon {
     fill: colors.$BRIGHT-WHITE;
-    height: 18px;
-    width: 18px;
+    height: 14px;
+    width: 14px;
     margin-right: 6px;
   }
 
@@ -57,74 +50,11 @@
 .active-filters {
 
   display: flex;
-  flex-flow: row wrap;
-  margin-top: 16px;
-  justify-content: space-between;
+  flex-flow: column;
 
-
-  .checkbox-container {
-    color: colors.$YELLOW;
-    cursor: pointer;
+  .selected-tags {
     display: flex;
-    font-family: 'Fira Mono', monospace;
-    font-size: 13px;
-    margin-bottom: 12px;
-    min-width: 100px;
-    padding-left: 22px;
-    padding-right: 10px;
-    position: relative;
-    user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-
-    input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-      height: 0;
-      width: 0;
-    }
-
-    .checkmark {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 13px;
-      width: 13px;
-      background-color: inherit;
-      border: 1px solid colors.$YELLOW;
-
-      &::after {
-        content: "X";
-        position: absolute;
-        display: none;
-      }
-    }
-
-    &:hover input~.checkmark {
-      background-color: colors.$DIM-YELLOW;
-    }
-
-    & input:checked~.checkmark {
-      background-color: colors.$YELLOW;
-    }
-
-    & input:checked~.checkmark {
-      display: block;
-    }
-
-    & .checkmark::after {
-      left: 9px;
-      top: 5px;
-      width: 5px;
-      height: 10px;
-      border: solid white;
-      border-width: 0 3px 3px 0;
-      -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-      transform: rotate(45deg);
-    }
+    flex-flow: row wrap;
   }
 
 }

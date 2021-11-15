@@ -1,0 +1,67 @@
+@use 'web/src/styles/colors';
+
+.app-select-wrapper {
+  position: relative;
+}
+
+.app-select-input-wrapper {
+  align-items: center;
+  border-bottom: 1px solid transparent;
+  display: flex;
+  padding: 6px 0 6px 6px;
+
+  &:focus-within {
+    border-bottom: 1px solid colors.$YELLOW;
+  }
+
+  span {
+    display: flex;
+  }
+}
+
+.text-input {
+  border: none;
+  padding: 0 8px;
+
+  &:focus {
+    border-bottom: none;
+  }
+}
+
+.icon {
+  fill: colors.$WHITE;
+  height: 14px;
+  width: 14px;
+}
+
+.options-list {
+
+  background-color: colors.$DIM-BACKGROUND;
+  position: absolute;
+  width: 100%;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin: 0;
+      padding: 12px 12px 12px 35px;
+      font-family: 'Fira Mono', monospace;
+      font-size: 14px;
+      line-height: 14px;
+      color: colors.$YELLOW;
+
+      &:hover {
+        background-color: colors.$YELLOW;
+        color: colors.$BLACK;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}

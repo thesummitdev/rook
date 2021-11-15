@@ -1,0 +1,35 @@
+@use 'web/src/styles/colors';
+
+.pill {
+
+  background-color: colors.$DIM-BACKGROUND;
+  border-radius: 20px;
+  color: colors.$YELLOW;
+  font-family: 'Fira Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  margin: 4px 4px 4px 0;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+
+  .remove-wrapper {
+    margin-left: 6px;
+    display: flex;
+    align-items: center;
+
+    .remove-icon {
+      width: 16px;
+      height: 16px;
+      fill: colors.$YELLOW;
+
+      &:hover {
+        cursor: pointer;
+        fill: colors.$DIM-YELLOW;
+      }
+    }
+
+  }
+
+}
