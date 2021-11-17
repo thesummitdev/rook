@@ -20,6 +20,6 @@ export class LinkListComponent {
       private readonly filters: FilterService,
   ) {
     this.links$ = this.filters.getTagsAsObservable().pipe(
-        switchMap(() => this.data.getFilteredLinks()));
+        switchMap(() => this.data.getLinks()));
   }
 }

@@ -1,56 +1,42 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {switchMap, withLatestFrom} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 import {Link} from '../models/link';
 import {FilterService} from './filters.service';
-
-import {LoginService} from './login.service';
 
 @Injectable({providedIn: 'root'})
 /** Data service that fetches data from the flink api. */
 export class DataService {
   constructor(
       private readonly http: HttpClient,
-      private readonly login: LoginService,
       private readonly filters: FilterService,
   ) {}
 
-
+  /**
+   * Fetches the links from the backend, and includes applied filters as request
+   * parameters.
+   * NOTE: this requires the user to be logged in.
+   * TODO: handle calls that don't have a logged in user, instead of erroring.
+   * @returns Http observable of the list of returned links. Can be empty an
+   *     empty list.
+   */
   getLinks(): Observable<Link[]> {
-    return this.login.getTokenAsObservable().pipe(
-        switchMap((token) => this.http.request<Link[]>('POST', '/links', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({}),
+    return this.filters.getTagsAsObservable().pipe(
+        switchMap((tags) => this.http.request<Link[]>('POST', '/links', {
+          body: JSON.stringify({tags: [...tags].join(' ')}),
         })),
     );
   }
 
-  getFilteredLinks(): Observable<Link[]> {
-    return this.login.getTokenAsObservable().pipe(
-        withLatestFrom(this.filters.getTagsAsObservable()),
-        switchMap(
-            ([token, tags]) => this.http.request<Link[]>('POST', '/links', {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({tags: [...tags].join(' ')}),
-            })),
-
-    );
-  }
-
+  /**
+   * Fetches a list of the users tags from the backend.
+   * NOTE: this requires the user to be logged in.
+   * TODO: handle calls that don't have a logged in user, instead of erroring.
+   * @returns Http observable of the list of returned tags. Can be empty an
+   *     empty list.
+   */
   getTags(): Observable<string[]> {
-    return this.login.getTokenAsObservable().pipe(
-        switchMap((token) => this.http.get<string[]>('/tags', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        })));
+    return this.http.get<string[]>('/tags');
   }
 }
