@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Observable} from 'rxjs';
+import {shareReplay} from 'rxjs/operators';
 import {User} from 'web/src/models/user';
 import {DialogService} from 'web/src/services/dialog.service';
 import {LoginService} from 'web/src/services/login.service';
@@ -18,7 +19,9 @@ export class HeaderComponent {
       private readonly login: LoginService,
       private readonly dialog: DialogService,
   ) {
-    this.user$ = this.login.getUserAsObservable();
+    this.user$ = this.login.getUserAsObservable().pipe(
+        shareReplay(),
+    );
   }
 
   showLogin(event: MouseEvent): void {
