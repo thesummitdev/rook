@@ -1,5 +1,29 @@
+@use 'web/src/styles/colors';
+
 .links-ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
+}
+
+.empty-state {
+  align-items: center;
+  display: flex;
+  flex-flow: column;
+  min-width: 350px;
+
+  p {
+    color: colors.$DIM_FOREGROUND;
+    font-family: 'Fira Sans';
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 22px;
+    text-transform: lowercase;
+  }
+
+  .link-icon {
+    fill: colors.$DIM_BACKGROUND;
+    height: 100px;
+    width: 100px;
+  }
 }
