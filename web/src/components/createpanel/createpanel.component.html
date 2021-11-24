@@ -1,17 +1,54 @@
-<div class="create-panel">
+<div class="create-panel"
+     *ngIf="show | async">
   <div class="create-form-wrapper">
-    <form class="create-form">
+    <form #form="ngForm"
+          (ngSubmit)="onSubmit()"
+          class="create-form">
       <div class="input-wrapper">
-        <input type="url" placeholder="title for your new link">
+        <input [(ngModel)]="model.title"
+               #title="ngModel"
+               [class.invalid]="title.errors?.['strictRequired'] && (title.dirty || title.touched)"
+               autocomplete="off"
+               name="title"
+               strictRequired
+               type="text"
+               placeholder="title">
+        <span class="error-container">
+          <span class="error"
+                [@formErrorMessage]
+                *ngIf="title.errors?.['strictRequired'] && (title.dirty || title.touched)">
+            Add a title
+          </span>
+        </span>
       </div>
       <div class="input-wrapper">
-        <input type="url" placeholder="gimme a url to remember">
+        <input [(ngModel)]="model.url"
+               #url="ngModel"
+               [class.invalid]="url.errors?.['urlRequired'] && (url.dirty || url.touched)"
+               autocomplete="off"
+               name="url"
+               urlRequired
+               type="url"
+               placeholder="url">
+        <span class="error-container">
+          <span class="error"
+                [@formErrorMessage]
+                *ngIf="url.errors?.['urlRequired'] && (url.dirty || url.touched)">
+            Must be a valid web address
+          </span>
+        </span>
       </div>
       <div class="input-wrapper">
-        <input type="text" placeholder="add some tags">
+        <input [(ngModel)]="model.tags"
+               autocomplete="off"
+               name="tags"
+               type="text"
+               placeholder="tags">
       </div>
       <div class="action-row">
-        <button type="button">add</button>
+        <button (click)="onClose($event)">close</button>
+        <button type="submit"
+                [disabled]="!form.form.valid">add</button>
       </div>
     </form>
   </div>

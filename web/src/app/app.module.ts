@@ -1,5 +1,6 @@
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DialogModule} from 'web/src/components/dialog/dialog.module';
@@ -11,6 +12,8 @@ import {FilterPanelComponent} from '../components/filterpanel/filterpanel.compon
 import {LinkComponent} from '../components/link/link.component';
 import {LinkListComponent} from '../components/linklist/linklist.component';
 import {UiModule} from '../components/ui/ui.module';
+import {StrictRequiredDirective} from '../directives/strictrequired.directive';
+import {UrlRequiredDirective} from '../directives/urlrequired.directive';
 import {AuthRequiredInterceptor} from '../interceptors/authrequired.interceptor';
 import {PipesModule} from '../pipes/pipes.module';
 
@@ -25,11 +28,14 @@ import {AppComponent} from './app.component';
     HeaderComponent,
     LinkComponent,
     LinkListComponent,
+    StrictRequiredDirective,
+    UrlRequiredDirective,
   ],
   imports: [
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
+    FormsModule,
     DialogModule,
     HttpClientModule,
     PipesModule,

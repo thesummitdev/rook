@@ -1,9 +1,11 @@
 <div class="header-wrapper">
   <div class="header-panel">
     <ng-container *ngIf="user$|async else empty">
-      <div>
-        add link
-      </div>
+      <ng-container *ngIf="!( createPanelVisible$ | async ) else empty">
+        <span (click)="showCreate($event)">
+          add a bookmark
+        </span>
+      </ng-container>
     </ng-container>
     <ng-template #empty>
       <span></span>

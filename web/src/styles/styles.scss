@@ -19,9 +19,11 @@ a {
   }
 }
 
-input[type=text] {
+input[type=text],
+input[type=url] {
   background: inherit;
   border: none;
+  border-bottom: 1px solid transparent;
   color: colors.$BRIGHT-WHITE;
   font-family: 'Fira Mono', monospace;
   font-size: 14px;
@@ -39,7 +41,7 @@ input[type=text] {
 }
 
 button {
-  background-color: colors.$DIM_BACKGROUND;
+  background: colors.$DIM_BACKGROUND;
   border-radius: 45px;
   border: none;
   color: colors.$DIM_FOREGROUND;
@@ -51,10 +53,17 @@ button {
   text-transform: lowercase;
   transition: all 0.3s ease 0s;
 
-  &:hover {
+  &:hover:not(:disabled) {
 
-    background-color: colors.$GREEN;
+    background: colors.$GREEN;
     color: colors.$BRIGHT_FOREGROUND;
 
   }
+
+  &:hover:disabled {
+    background: colors.$DIM_RED;
+    color: colors.$BRIGHT_FOREGROUND;
+    cursor: default;
+  }
+
 }

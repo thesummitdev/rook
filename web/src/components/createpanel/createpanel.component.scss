@@ -2,6 +2,7 @@
 
 .create-panel {
   border: 1px solid colors.$DIM-WHITE;
+  background: colors.$DIM_BACKGROUND;
   padding: 8px 0;
 }
 
@@ -10,21 +11,33 @@
   flex-flow: column;
 
   .input-wrapper {
-    border-radius: 40px;
-    display: flex;
-    flex-flow: row nowrap;
-    padding: 8px;
+    margin: 2px;
+    padding: 4px;
 
-    &:hover {
-      background-color: colors.$DIM-BACKGROUND;
+    .invalid {
+      border-left: 2px solid colors.$RED;
     }
+  }
+
+  .error-container {
+    display: block;
+    min-height: 16px;
+    line-height: 14px;
+  }
+
+  .error {
+    color: colors.$RED;
+    font-family: 'Fira Mono', monospace;
+    font-size: 13px;
+    margin-left: 4px;
   }
 
   .action-row {
     display: flex;
     flex-flow: row nowrap;
-    justify-content: end;
+    justify-content: flex-end;
     padding: 8px 12px;
+
   }
 
 }

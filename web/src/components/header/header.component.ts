@@ -4,6 +4,7 @@ import {shareReplay} from 'rxjs/operators';
 import {User} from 'web/src/models/user';
 import {DialogService} from 'web/src/services/dialog.service';
 import {LoginService} from 'web/src/services/login.service';
+import {UiService} from 'web/src/services/ui.service';
 
 
 @Component({
@@ -13,15 +14,17 @@ import {LoginService} from 'web/src/services/login.service';
 })
 export class HeaderComponent {
   user$: Observable<User|undefined>;
-
+  createPanelVisible$: Observable<boolean>;
 
   constructor(
       private readonly login: LoginService,
       private readonly dialog: DialogService,
+      private readonly ui: UiService,
   ) {
     this.user$ = this.login.getUserAsObservable().pipe(
         shareReplay(),
     );
+    this.createPanelVisible$ = this.ui.getCreatePanelAsObservable();
   }
 
   showLogin(event: MouseEvent): void {
@@ -32,6 +35,11 @@ export class HeaderComponent {
         this.login.attemptSignIn(username, password).subscribe(console.log);
       }
     });
+  }
+
+  showCreate(event: MouseEvent): void {
+    event.stopPropagation();
+    this.ui.setCreatePanelVisible(true);
   }
 
   signOut(): void {
