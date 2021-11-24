@@ -1,5 +1,6 @@
 INSERT INTO USERS (username) VALUES ('flink_system');
-INSERT INTO USERS (username) VALUES ('tyler');
+INSERT INTO USERS (username, userencryptedpassword, usersalt) 
+  VALUES ('tyler', 'GDDhPB/h//hXtcCbme45iS6/KgA=','OLnkz/DcTKM=');
 
 INSERT INTO LINKS (title, url, tags, userId) 
   VALUES ('google',
