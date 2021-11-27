@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +35,10 @@ public class FlinkDatabaseService implements DatabaseService {
   public void put(BaseModel entity) {
     String tableName = this.tableMapping.get(entity.getClass());
 
-    String fields = this.getQueryFieldsString(entity.getClass(), /*includeId= */ false);
-    ArrayList<Object> values = this.getQueryFieldValues(entity, /*includeId= */ false);
+    String fields =
+        this.getQueryFieldsString(
+            entity.getClass(), /*includeId= */ false, /* includeFieldsSetByDatabase= */ false);
+    ArrayList<Object> values = this.getQueryFieldValues(entity, /*includeId= */ false, false);
     String valuePlaceholders = "?";
     if (values.size() > 1) {
       valuePlaceholders = "?,".repeat(values.size() - 1) + "?";
@@ -44,10 +47,10 @@ public class FlinkDatabaseService implements DatabaseService {
     StringBuilder query =
         new StringBuilder(
             String.format(
-                "INSERT into %s (%s) VALUES (%s) returning id;",
+                "INSERT into %s (%s) VALUES (%s) returning *;",
                 tableName, fields, valuePlaceholders));
-    log.debug(query.toString());
-    log.debug(values.toString());
+    log.info(query.toString());
+    log.info(values.toString());
 
     Connection conn = this.pool.getConnection();
     try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
@@ -72,10 +75,28 @@ public class FlinkDatabaseService implements DatabaseService {
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
           entity.setId(rs.getObject("id", UUID.class));
+
+          for (Field f : entity.getClass().getDeclaredFields()) {
+
+            DatabaseField annotation = f.getAnnotation(DatabaseField.class);
+            if (annotation == null) {
+              continue;
+            }
+            if (annotation.isSetByDatabase()) {
+              try {
+                f.set(entity, rs.getObject(f.getName(), f.getType()));
+              } catch (IllegalAccessException e) {
+                log.debug(
+                    "Field was not accessible, check fields marked with @DatabaseField are not"
+                        + " private.",
+                    e);
+              }
+            }
+          }
         }
       }
     } catch (SQLException e) {
-      log.debug("Unable to create entity, SQL error occured.", e);
+      log.info("Unable to create entity, SQL error occured.", e);
     } finally {
 
       this.pool.releaseConnection(conn);
@@ -92,7 +113,7 @@ public class FlinkDatabaseService implements DatabaseService {
     for (Field f : entity.getClass().getDeclaredFields()) {
 
       DatabaseField annotation = f.getAnnotation(DatabaseField.class);
-      if (annotation == null || annotation.ignore() || annotation.isId()) {
+      if (annotation == null) {
         if (annotation.isId()) {
           try {
             id = (UUID) f.get(entity);
@@ -133,7 +154,7 @@ public class FlinkDatabaseService implements DatabaseService {
       fieldIndex = 0;
       for (Field f : entity.getClass().getDeclaredFields()) {
         DatabaseField annotation = f.getAnnotation(DatabaseField.class);
-        if (annotation == null || annotation.ignore() || annotation.isId()) {
+        if (annotation == null || annotation.isId()) {
           fieldIndex++;
           continue;
         }
@@ -188,7 +209,9 @@ public class FlinkDatabaseService implements DatabaseService {
     String tableName = this.tableMapping.get(cls);
     Connection conn = this.pool.getConnection();
 
-    String fields = this.getQueryFieldsString(cls, true);
+    String fields =
+        this.getQueryFieldsString(
+            cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
     HashMap<String, Field> fieldMap = this.getQueryFieldsMap(cls, true);
     String identifierField = null;
 
@@ -244,7 +267,9 @@ public class FlinkDatabaseService implements DatabaseService {
     String tableName = this.tableMapping.get(cls);
     Connection conn = this.pool.getConnection();
 
-    String fields = this.getQueryFieldsString(cls, true);
+    String fields =
+        this.getQueryFieldsString(
+            cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
 
     StringBuilder query =
         new StringBuilder(
@@ -277,7 +302,9 @@ public class FlinkDatabaseService implements DatabaseService {
   @Override
   public <T extends BaseModel> List<T> getAll(Class<T> cls, Map<String, Object> params) {
 
-    String fieldsString = this.getQueryFieldsString(cls, /* includeId= */ true);
+    String fieldsString =
+        this.getQueryFieldsString(
+            cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
     String tableName = this.tableMapping.get(cls);
     StringBuilder query =
         new StringBuilder(String.format("SELECT %s FROM %s", fieldsString, tableName));
@@ -417,24 +444,22 @@ public class FlinkDatabaseService implements DatabaseService {
    *
    * @param cls - The class to inspect.
    * @param includeId - whether to include the UUID field for this entity.
+   * @param includeFieldsSetByDatabase - whether to include fields that the database sets.
    * @return fields - Comma seperated list of fields. i.e. id,field1,field2
    */
-  private <T extends BaseModel> String getQueryFieldsString(Class<T> cls, Boolean includeId) {
-    StringBuilder fields = new StringBuilder();
+  private <T extends BaseModel> String getQueryFieldsString(
+      Class<T> cls, Boolean includeId, Boolean includeFieldsSetByDatabase) {
+    StringJoiner fields = new StringJoiner(",");
 
-    int fieldIndex = 1;
     for (Field f : cls.getDeclaredFields()) {
 
       DatabaseField annotation = f.getAnnotation(DatabaseField.class);
-      if ((annotation == null || annotation.ignore()) || (!includeId && annotation.isId())) {
-        fieldIndex++;
+      if (annotation == null
+          || (!includeId && annotation.isId())
+          || (!includeFieldsSetByDatabase && annotation.isSetByDatabase())) {
         continue;
       }
-      fields.append(f.getName());
-      if (fieldIndex != cls.getDeclaredFields().length) {
-        fields.append(",");
-        fieldIndex++;
-      }
+      fields.add(f.getName());
     }
 
     return fields.toString();
@@ -454,7 +479,7 @@ public class FlinkDatabaseService implements DatabaseService {
     for (Field f : cls.getDeclaredFields()) {
 
       DatabaseField annotation = f.getAnnotation(DatabaseField.class);
-      if ((annotation == null || annotation.ignore()) || (!includeId && annotation.isId())) {
+      if (annotation == null || (!includeId && annotation.isId())) {
         continue;
       }
       fields.put(f.getName(), f);
@@ -470,13 +495,16 @@ public class FlinkDatabaseService implements DatabaseService {
    * @param includeId - whether to include the UUID field for this entity.
    * @return values - List of values for database fields on that entity.
    */
-  private <T extends BaseModel> ArrayList<Object> getQueryFieldValues(T entity, Boolean includeId) {
+  private <T extends BaseModel> ArrayList<Object> getQueryFieldValues(
+      T entity, Boolean includeId, Boolean includeFieldsSetByDatabase) {
 
     ArrayList<Object> values = new ArrayList<Object>();
 
     for (Field f : entity.getClass().getDeclaredFields()) {
       DatabaseField annotation = f.getAnnotation(DatabaseField.class);
-      if ((annotation == null || annotation.ignore()) || (!includeId && annotation.isId())) {
+      if (annotation == null
+          || (!includeId && annotation.isId())
+          || (!includeFieldsSetByDatabase && annotation.isSetByDatabase())) {
         continue;
       }
 

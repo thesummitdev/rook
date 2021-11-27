@@ -1,6 +1,5 @@
 package dev.thesummit.flink.handlers;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import dev.thesummit.flink.database.FlinkDatabaseService;
@@ -13,9 +12,11 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class TagHandlerTest {
 
   @Mock private Context ctx;
@@ -26,13 +27,12 @@ public class TagHandlerTest {
 
   @BeforeEach
   public void init() {
-    MockitoAnnotations.initMocks(this);
     handler = new TagHandler(dbService);
 
     User mockUser = new User("username", "userEncryptedPassword", "salt");
     mockUser.setId(MOCK_USER_UUID);
 
-    when(ctx.sessionAttribute("current_user")).thenReturn(mockUser);
+    doReturn(mockUser).when(ctx).sessionAttribute("current_user");
   }
 
   @Test
@@ -44,7 +44,7 @@ public class TagHandlerTest {
     list.add(mockLink);
     list.add(mockLink2);
 
-    when(dbService.getAll(any(Class.class), any(HashMap.class))).thenReturn(list);
+    doReturn(list).when(dbService).getAll(any(Class.class), any(HashMap.class));
 
     JSONArray expectedResult = new JSONArray();
     expectedResult.put("tags");

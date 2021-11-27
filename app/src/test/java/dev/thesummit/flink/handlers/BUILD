@@ -15,6 +15,7 @@ java_junit5_test(
         "@maven//:org_json_json",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
         "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
     ],
 )
 
@@ -31,6 +32,7 @@ java_junit5_test(
         "@maven//:org_json_json",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
         "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
     ],
 )
 
@@ -48,6 +50,7 @@ java_junit5_test(
         "@maven//:org_json_json",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
         "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
     ],
 )
 
@@ -66,5 +69,6 @@ java_junit5_test(
         "@maven//:org_json_json",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
         "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
     ],
 )

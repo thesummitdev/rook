@@ -74,6 +74,9 @@ pom_file(
         "//app/src/main/java/dev/thesummit/flink/models",
         "//app/src/main/java/dev/thesummit/flink/handlers",
         "//app/src/test/java/dev/thesummit/flink/handlers:LinkHandlerTest",
+        "//app/src/test/java/dev/thesummit/flink/handlers:AuthHandlerTest",
+        "//app/src/test/java/dev/thesummit/flink/handlers:TagHandlerTest",
+        "//app/src/test/java/dev/thesummit/flink/handlers:UserHandlerTest",
     ],
     template_file = "pom.template",
 )

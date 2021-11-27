@@ -36,8 +36,8 @@ maven_install(
         "com.fasterxml.jackson.core:jackson-databind:2.12.4",
         "com.google.inject:guice:5.0.1",
         "commons-validator:commons-validator:1.7",
-        "io.javalin:javalin-bundle:3.13.7",
-        "io.javalin:javalin:3.3.0",
+        "io.javalin:javalin-bundle:4.1.1",
+        "io.javalin:javalin:4.1.1",
         "org.json:json:20210307",
         "org.postgresql:postgresql:42.2.20.jre7",
         "org.slf4j:slf4j-api:1.7.30",
@@ -56,6 +56,12 @@ maven_install(
         maven.artifact(
             "org.mockito",
             "mockito-core",
+            "3.12.4",
+            testonly = True,
+        ),
+        maven.artifact(
+            "org.mockito",
+            "mockito-junit-jupiter",
             "3.12.4",
             testonly = True,
         ),

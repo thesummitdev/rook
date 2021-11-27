@@ -1,6 +1,5 @@
 package dev.thesummit.flink.handlers;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.auth0.jwt.interfaces.Claim;
@@ -16,10 +15,11 @@ import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class AuthHandlerTest {
 
   @Mock private Context ctx;
@@ -33,7 +33,6 @@ public class AuthHandlerTest {
 
   @BeforeEach
   public void init() {
-    MockitoAnnotations.initMocks(this);
     handler = new AuthHandler(pwm, dbService, jwtProvider);
 
     mockUser = new User("testuser", "testpassword", "testsalt");
@@ -46,18 +45,11 @@ public class AuthHandlerTest {
   }
 
   @Test
-  public void can_be_created() {
-    assertNotNull(handler);
-    assertNotNull(ctx);
-    assertNotNull(dbService);
-  }
-
-  @Test
   public void login_AUTH() throws Exception {
 
-    when(ctx.body()).thenReturn("{'username':'testuser', 'password':'testpassword'}");
-    when(pwm.authenticateUser("testuser", "testpassword")).thenReturn(mockUser);
-    when(jwtProvider.generateToken(any(User.class))).thenReturn("mockjwttoken");
+    doReturn("{'username':'testuser', 'password':'testpassword'}").when(ctx).body();
+    doReturn(mockUser).when(pwm).authenticateUser("testuser", "testpassword");
+    doReturn("mockjwttoken").when(jwtProvider).generateToken(any(User.class));
 
     handler.login(ctx);
     verify(pwm).authenticateUser("testuser", "testpassword");
@@ -72,14 +64,12 @@ public class AuthHandlerTest {
     DecodedJWT mockJWT = mock(DecodedJWT.class);
     Claim mockClaim = mock(Claim.class);
 
-    // See https://github.com/mockito/mockito/issues/1943
-    // Mockito can't mock the correct method without the type hint.
-    Mockito.<String>when(ctx.header("Authorization")).thenReturn("Bearer jwttoken");
+    doReturn("Bearer jwttoken").when(ctx).header("Authorization");
 
-    when(mockClaim.asString()).thenReturn("testuser");
-    when(mockJWT.getClaim("username")).thenReturn(mockClaim);
-    when(jwtProvider.validateToken("jwttoken")).thenReturn(Optional.of(mockJWT));
-    when(dbService.get(User.class, "testuser")).thenReturn(mockUser);
+    doReturn("testuser").when(mockClaim).asString();
+    doReturn(mockClaim).when(mockJWT).getClaim("username");
+    doReturn(Optional.of(mockJWT)).when(jwtProvider).validateToken("jwttoken");
+    doReturn(mockUser).when(dbService).get(User.class, "testuser");
 
     handler.fetchUserContext(ctx);
     verify(ctx).sessionAttribute("current_user", mockUser);

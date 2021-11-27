@@ -10,13 +10,14 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class UserHandlerTest {
 
   @Mock private Context ctx;
@@ -30,15 +31,7 @@ public class UserHandlerTest {
 
   @BeforeEach
   public void init() {
-    MockitoAnnotations.initMocks(this);
     handler = new UserHandler(pwm, dbService);
-  }
-
-  @Test
-  public void can_be_created() {
-    assertNotNull(handler);
-    assertNotNull(ctx);
-    assertNotNull(dbService);
   }
 
   @ParameterizedTest
@@ -49,9 +42,9 @@ public class UserHandlerTest {
   public void CREATE_link(String body) throws Exception {
 
     JSONObject obj = new JSONObject(body);
-    when(ctx.body()).thenReturn(body);
-    when(pwm.getNewSalt()).thenReturn(MOCK_SALT);
-    when(pwm.getEncryptedPassword(anyString(), anyString())).thenReturn(MOCK_ENCRYPTED_PASSWORD);
+    doReturn(body).when(ctx).body();
+    doReturn(MOCK_SALT).when(pwm).getNewSalt();
+    doReturn(MOCK_ENCRYPTED_PASSWORD).when(pwm).getEncryptedPassword(anyString(), anyString());
     User expectedUser = new User(obj.getString("username"), MOCK_ENCRYPTED_PASSWORD, MOCK_SALT);
 
     ArgumentCaptor<User> arg = ArgumentCaptor.forClass(User.class);
@@ -76,7 +69,7 @@ public class UserHandlerTest {
         "{'password':'somepassword'}",
       })
   public void CREATE_link_invalid_body(String body) {
-    when(ctx.body()).thenReturn(body);
+    doReturn(body).when(ctx).body();
     assertThrows(
         BadRequestResponse.class,
         () -> {

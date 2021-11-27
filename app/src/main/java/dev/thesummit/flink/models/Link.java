@@ -4,6 +4,7 @@ import dev.thesummit.flink.database.DatabaseArrayField;
 import dev.thesummit.flink.database.DatabaseField;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.UUID;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
@@ -28,6 +29,9 @@ public class Link implements BaseModel {
   @DatabaseField() public String title;
 
   @DatabaseField() public UUID userId;
+
+  @DatabaseField(isSetByDatabase = true)
+  public Timestamp modified;
 
   public Link(String title, String url, String tags, UUID userId) {
     this.url = url;
@@ -72,6 +76,10 @@ public class Link implements BaseModel {
             .put("url", this.url)
             .put("tags", this.tags);
 
+    if (this.modified != null) {
+      obj.put("modified", this.modified.getTime());
+    }
+
     return obj;
   }
 
@@ -84,6 +92,8 @@ public class Link implements BaseModel {
               rs.getString("tags"),
               rs.getObject("userId", UUID.class));
       l.setId(rs.getObject("id", UUID.class));
+      l.modified = rs.getTimestamp("modified");
+      System.out.println(l.modified.toString());
       return l;
     } catch (SQLException e) {
       return null;

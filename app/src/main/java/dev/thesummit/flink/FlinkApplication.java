@@ -11,7 +11,9 @@ import dev.thesummit.flink.handlers.LinkHandler;
 import dev.thesummit.flink.handlers.TagHandler;
 import dev.thesummit.flink.handlers.UserHandler;
 import io.javalin.Javalin;
+import io.javalin.http.staticfiles.Location;
 import java.io.IOException;
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +23,17 @@ public class FlinkApplication {
 
   public static void main(String[] args) throws IOException {
 
+    // Set application time zone to UTC to match the database.
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
     Injector injector = Guice.createInjector(new DatabaseModule(), new AuthModule());
 
     Javalin app =
         Javalin.create(
             config -> {
               config.enableDevLogging();
-              config.addStaticFiles("web");
-              config.addStaticFiles("assets");
+              config.addStaticFiles("web", Location.CLASSPATH);
+              config.addStaticFiles("assets", Location.CLASSPATH);
             });
 
     // Protected routes that require a User to be logged in and pass a bearer token.
