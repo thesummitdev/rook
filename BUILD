@@ -105,6 +105,7 @@ APPLICATION_DEPS = [
     "@npm//zone.js",
     "@npm//tslib",
     "@npm//typescript",
+    "@npm//luxon",
 ]
 
 architect(

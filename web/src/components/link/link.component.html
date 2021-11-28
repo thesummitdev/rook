@@ -1,17 +1,25 @@
   <div class="link-container">
     <div class="link-content">
       <div>
-        <a class="link-title" href="{{link.url}}" target="_blank">
+        <a class="link-title"
+           href="{{link.url}}"
+           target="_blank">
           {{link.title}}
         </a>
       </div>
       <div class="details-container">
         <span class="link-anchor-container">
-          <a class="link-anchor" href="{{link.url}}" target="_blank">{{link.url}}</a>
+          <a class="link-anchor"
+             href="{{link.url}}"
+             target="_blank">{{link.url}}</a>
         </span>
         <div class="link-tags">
-          <span class="tag" *ngFor="let tag of tags">{{tag}}</span>
+          <span class="tag"
+                *ngFor="let tag of tags">{{tag}}</span>
           <span class="add-tag-icon">+</span>
+        </div>
+        <div class="link-date">
+          {{link.modified | timeSince}}
         </div>
       </div>
     </div>
