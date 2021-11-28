@@ -39,6 +39,11 @@ export class CreatePanelComponent {
     this.data.createLink(this.model).pipe(take(1)).subscribe(() => {
       this.toast.showMessage('Got it, I\'ll remember this one!');
       this.ui.setCreatePanelVisible(false);
+      this.model = {
+        url: '',
+        tags: '',
+        title: '',
+      };
     });
   }
 

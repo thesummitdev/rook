@@ -12,8 +12,7 @@ export class UrlRequiredDirective implements Validator {
     let input = control.value;
     if (typeof input === 'string') {
       try {
-        const url = new URL(input);
-        console.log(url);
+        new URL(input);
       } catch (_) {
         return {urlRequired: {value: control.value, reason: 'malformed-url'}};
       }
