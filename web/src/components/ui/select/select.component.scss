@@ -37,6 +37,8 @@
 .options-list {
 
   background-color: colors.$DIM-BACKGROUND;
+  max-height: 70vh;
+  overflow-y: auto;
   position: absolute;
   width: 100%;
 
@@ -59,6 +61,18 @@
         cursor: pointer;
       }
     }
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: colors.$BRIGHT-BLACK;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: colors.$YELLOW;
   }
 }
 
