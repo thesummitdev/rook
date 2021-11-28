@@ -10,7 +10,7 @@ import {FilterService} from './filters.service';
 export class DataService {
   // Emit any newly created links individually so that components don't have
   // to refresh the entire list when a new link is added.
-  private readonly newLinks$: Subject<Link> = new Subject();
+  private readonly newLinks$: Subject<Link|null> = new Subject();
 
   constructor(
       private readonly http: HttpClient,
@@ -66,5 +66,16 @@ export class DataService {
    */
   getNewLinksAsObservable(): Observable<Link> {
     return this.newLinks$.asObservable();
+  }
+
+  /**
+   * Sends a request to the server to remove the link from the database.
+   * @param link - the link to delete.
+   * @returns obs - The request observable which must be subscribed to in order
+   *     for the request to be sent.
+   */
+  deleteLink(link: Link): Observable<void> {
+    return this.http.delete<void>(`/links/${link.id}`)
+        .pipe(map(() => this.newLinks$.next(null)));
   }
 }

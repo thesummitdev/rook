@@ -47,8 +47,7 @@
 }
 
 .action-item,
-.link-tags,
-.link-unread {
+.link-tags {
   font-family: 'Fira Mono', monospace;
   font-size: 13px;
   font-weight: 400;
@@ -111,5 +110,10 @@
 
   &:last-child {
     margin-right: 0;
+  }
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
   }
 }
