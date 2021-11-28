@@ -20,7 +20,7 @@
 
 .left-column,
 .right-column {
-  align-items: start;
+  align-items: flex-start;
   display: flex;
   flex-flow: column;
   padding: 0 16px 16px;
