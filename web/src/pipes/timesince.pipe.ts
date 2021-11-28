@@ -18,7 +18,7 @@ export class TimeSince implements PipeTransform {
     } else if (difference < 3) {
       result = 'A moment ago';
     } else if (difference < 60) {
-      result = `${difference} minutes ago`;
+      result = `${Math.floor(difference)} minutes ago`;
     } else if (difference < 120) {
       result = 'A hour ago';
     } else if (difference < 1440) {

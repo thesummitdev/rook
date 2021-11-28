@@ -13,6 +13,7 @@ import io.javalin.http.NotFoundResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +41,10 @@ public class LinkHandler {
       HashMap<String, Object> params = new ObjectMapper().readValue(ctx.body(), HashMap.class);
       params.put("userId", user.id); // Scope the search to Links the user owns.
 
-      List<Link> lns = this.dbService.getAll(Link.class, params);
+      List<Link> lns =
+          this.dbService.getAll(Link.class, params).stream()
+              .sorted((Link l1, Link l2) -> l2.modified.compareTo(l1.modified))
+              .collect(Collectors.toList());
       for (Link l : lns) {
         arr.put(l.toJSONObject());
       }
