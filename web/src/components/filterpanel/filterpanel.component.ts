@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Observable} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {startWith, switchMap, take} from 'rxjs/operators';
 import {DataService} from 'web/src/services/data.service';
 import {FilterService} from 'web/src/services/filters.service';
 import {filterPanelAnimations} from './filterpanel.animations';
@@ -20,7 +20,11 @@ export class FilterPanelComponent {
       private readonly data: DataService,
       private readonly filters: FilterService,
   ) {
-    this.tags$ = this.data.getTags();
+    this.tags$ = this.data.getNewLinksAsObservable().pipe(
+        startWith(null),
+        switchMap(() => this.data.getTags()),
+    );
+
     this.selectedTags$ = this.filters.getTagsAsObservable();
   }
 

@@ -59,4 +59,12 @@ export class DataService {
           return link;
         }));
   }
+
+  /**
+   * Wraps the private newLinks$ subject in an observable for subscribers.
+   * @returns Observable that emits newly created links.
+   */
+  getNewLinksAsObservable(): Observable<Link> {
+    return this.newLinks$.asObservable();
+  }
 }
