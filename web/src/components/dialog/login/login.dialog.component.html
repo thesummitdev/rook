@@ -4,11 +4,13 @@
   <form class="login-form"
         [formGroup]="fg">
     <input #usernameInput
+           autocomplete="username"
            class="login-input"
            type="text"
            placeholder="username"
            [formControl]="controls.username">
-    <input class="login-input"
+    <input autocomplete="current-password"
+           class="login-input"
            type="password"
            placeholder="password"
            [formControl]="controls.password">
