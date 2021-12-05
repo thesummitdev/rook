@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, HostListener, Inject, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {DIALOG_CONTAINER} from 'web/src/util/injectiontokens';
 import {DialogComponent} from '../dialog.component';
@@ -33,8 +33,8 @@ export class LoginDialogComponent implements DialogComponent, AfterViewInit {
   @ViewChild('usernameInput') usernameInput: ElementRef<HTMLInputElement>;
 
   readonly controls: LoginForm&{[key: string]: AbstractControl} = {
-    username: new FormControl(),
-    password: new FormControl(),
+    username: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
   };
   readonly fg = new FormGroup(this.controls);
 

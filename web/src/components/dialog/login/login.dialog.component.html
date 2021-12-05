@@ -1,10 +1,21 @@
-<div #dialog class="login-dialog">
+<div #dialog
+     class="login-dialog">
   <h2 class="login-title">login</h2>
-  <form class="login-form" [formGroup]="fg">
-    <input #usernameInput class="login-input" type="text" placeholder="username" [formControl]="controls.username">
-    <input class="login-input" type="password" placeholder="password" [formControl]="controls.password">
+  <form class="login-form"
+        [formGroup]="fg">
+    <input #usernameInput
+           class="login-input"
+           type="text"
+           placeholder="username"
+           [formControl]="controls.username">
+    <input class="login-input"
+           type="password"
+           placeholder="password"
+           [formControl]="controls.password">
     <div class="login-button-wrap">
-      <button class="login-button" (click)="signIn()">Sign in</button>
+      <button class="login-button"
+              [disabled]="fg.invalid"
+              (click)="signIn()">Sign in</button>
     </div>
   </form>
 </div>

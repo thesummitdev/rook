@@ -1,7 +1,7 @@
 @use 'web/src/styles/colors';
 
 .login-dialog {
-  background-color: colors.$WHITE;
+  background-color: colors.$DIM-WHITE;
   border-radius: 12px;
   box-shadow: 3px 3px 5px #161616;
   min-width: 350px;
@@ -9,6 +9,7 @@
 }
 
 .login-form {
+  align-items: center;
   display: flex;
   flex-flow: column;
 }
@@ -20,12 +21,22 @@
 }
 
 .login-input {
+  color: colors.$BLACK;
   font-size: 16px;
   padding: 0.5em 0.5em;
-  border: 2px solid colors.$DIM_FOREGROUND;
+  border: 2px solid colors.$BLACK;
   border-radius: 4px;
   margin-bottom: 6px;
   outline: none;
+  width: 80%;
+
+  &::placeholder {
+    color: colors.$DIM-BLACK;
+  }
+
+  &:focus {
+    border: 2px solid colors.$BRIGHT-YELLOW;
+  }
 }
 
 
@@ -35,6 +46,7 @@
   align-items: center;
   justify-content: center;
   margin-top: 12px;
+  width: 80%;
 }
 
 .login-button {
@@ -53,8 +65,18 @@
   outline: none;
 
   &:hover {
-
     background-color: colors.$GREEN;
     color: colors.$BRIGHT_FOREGROUND;
+  }
+
+  &:disabled {
+    background: colors.$BRIGHT-BLACK;
+    color: colors.$DIM_FOREGROUND;
+  }
+
+  &:disabled:hover {
+    cursor: default;
+    background: colors.$BRIGHT-BLACK;
+    color: colors.$DIM_FOREGROUND;
   }
 }
