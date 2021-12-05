@@ -3,7 +3,8 @@
   <ul class="links-ul"
       *ngIf="links$ | async as links else empty;">
 
-    <li *ngFor="let link of links">
+    <li class="links-li"
+        *ngFor="let link of links">
       <app-link [link]="link"></app-link>
     </li>
 

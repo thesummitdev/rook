@@ -1,8 +1,6 @@
 @use 'web/src/styles/colors';
 
 .link-container {
-  background: colors.$DIM-BACKGROUND;
-  border: 1px solid colors.$DIM-WHITE;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
