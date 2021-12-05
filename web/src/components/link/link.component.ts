@@ -23,11 +23,34 @@ export class LinkComponent implements AfterViewInit {
     this.tags = this.link.tags.split(' ');
   }
 
-
+  /**
+   * Deletes the current link from the database.
+   * @param event - the click event (event is swallowed)
+   */
   onDelete(event: MouseEvent): void {
     event.stopPropagation();
     this.data.deleteLink(this.link).pipe(take(1)).subscribe(() => {
       this.toast.showWarning('Successfully removed!');
     });
+  }
+
+  /**
+   * Copies the current link to the clipboard.
+   * NOTE: the clipboard API is only available in Secure (https) or dev mode
+   * (localhost)
+   * @param event - the click event (event is swallowed)
+   */
+  onCopy(event: MouseEvent): void {
+    event.stopPropagation();
+    navigator.clipboard.writeText(this.link.url)
+        .then(
+            // Success
+            () => {
+              this.toast.showMessage('Copied!');
+            },
+            // Error
+            () => {
+              this.toast.showError('Something bad happened.');
+            });
   }
 }
