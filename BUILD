@@ -1,6 +1,7 @@
 load("@rules_java//java:defs.bzl", "java_binary")
 load("@bazel_common//tools/maven:pom_file.bzl", "pom_file")
 load("@npm//@angular-devkit/architect-cli:index.bzl", "architect", "architect_test")
+load("@io_bazel_rules_docker//java:image.bzl", "java_image")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -8,6 +9,31 @@ package_group(
     name = "flink_app",
     packages = [
         "//app/...",
+    ],
+)
+
+java_image(
+    name = "container_dev",
+    srcs = [
+        "app/src/main/java/dev/thesummit/flink/FlinkApplication.java",
+    ],
+    main_class = "dev.thesummit.flink.FlinkApplication",
+    resources =
+        [
+            ":web_bundle_dev",
+            "//app/src/main/resources",
+            "//web/src/assets:static_assets",
+        ],
+    deps = [
+        "//app/src/main/java/dev/thesummit/flink/auth",
+        "//app/src/main/java/dev/thesummit/flink/database:database_module",
+        "//app/src/main/java/dev/thesummit/flink/handlers",
+        "//app/src/main/java/dev/thesummit/flink/models",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_google_inject_guice",
+        "@maven//:commons_validator_commons_validator",
+        "@maven//:io_javalin_javalin",
+        "@maven//:org_slf4j_slf4j_api",
     ],
 )
 
