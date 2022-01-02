@@ -29,6 +29,7 @@ junit_platform_java_repositories(
     version = JUNIT_PLATFORM_VERSION,
 )
 
+# Maven deps for the java application.
 maven_install(
     artifacts = [
         "com.auth0:java-jwt:3.18.1",
@@ -72,8 +73,8 @@ maven_install(
         "https://repo1.maven.org/maven2/",
     ],
 )
-# Needed the POM file generator:
 
+# Needed for the POM file generator:
 http_archive(
     name = "bazel_common",
     sha256 = "d8c9586b24ce4a5513d972668f94b62eb7d705b92405d4bc102131f294751f1d",
@@ -95,7 +96,6 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 bazel_skylib_workspace()
 
 # nodejs
-
 http_archive(
     name = "build_bazel_rules_nodejs",
     sha256 = "b32a4713b45095e9e1921a7fcb1adf584bc05959f3336e7351bcf77f015a2d7c",
@@ -131,41 +131,14 @@ load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
 container_deps()
 
 load(
-    "@io_bazel_rules_docker//java:image.bzl",
-    _java_image_repos = "repositories",
-)
-
-_java_image_repos()
-
-load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_pull",
 )
 
-container_pull(
-    name = "postgres_base",
-    architecture = "amd64",
-    digest = "sha256:603f1a2e7487a60fe5f1ac23fe38438c8a4be8f4f1d9fb494a559f47c1751b46",
-    os = "linux",
-    registry = "index.docker.io",
-    repository = "library/postgres",
-    tag = "14.1",
-)
-
-container_pull(
-    name = "alpine_linux_amd64",
-    digest = "sha256:954b378c375d852eb3c63ab88978f640b4348b01c1b3456a024a81536dafbbf4",
-    registry = "index.docker.io",
-    repository = "library/alpine",
-    # tag field is ignored since digest is set
-    tag = "3.8",
-)
-
+# Base image for the container is debian stable, this fetches it from the official docker library.
 container_pull(
     name = "debian_stable_linux_amd64",
     digest = "sha256:3d8282536e0faa792afc317a5335b1487298341149a5ee6f5b34b1b02654df80",
     registry = "index.docker.io",
     repository = "library/debian",
-    # tag field is ignored since digest is set
-    tag = "3.8",
 )

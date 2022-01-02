@@ -1,42 +1,48 @@
 load("@rules_java//java:defs.bzl", "java_binary")
 load("@bazel_common//tools/maven:pom_file.bzl", "pom_file")
-load("@npm//@angular-devkit/architect-cli:index.bzl", "architect", "architect_test")
-load("@io_bazel_rules_docker//java:image.bzl", "java_image")
+load("@npm//@angular-devkit/architect-cli:index.bzl", "architect")
 load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 load("@io_bazel_rules_docker//docker/package_managers:download_pkgs.bzl", "download_pkgs")
 load("@io_bazel_rules_docker//docker/package_managers:install_pkgs.bzl", "install_pkgs")
 
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = ["//:flink_app"])
 
 package_group(
     name = "flink_app",
     packages = [
+        "//...",
         "//app/...",
+        "//web/...",
     ],
 )
 
+# This defines a list of linux packages to download that will be installed in the container.
 download_pkgs(
     name = "image_deps",
     image_tar = "@debian_stable_linux_amd64//image",
     packages = [
-        # "openjdk-11-jdk",
-        "openjdk-11-jre",
+        "openjdk-11-jre",  # Only the Java runtime, JDK is not needed for production container.
         "postgresql",
         "postgresql-contrib",
-        "sudo",
+        "sudo",  # Needed for the container_init script.
     ],
+    visibility = ["//visibility:private"],
 )
 
+# Installs the downloaded packages in the base debian image container.
 install_pkgs(
     name = "required_pkgs_image",
     image_tar = "@debian_stable_linux_amd64//image",
     installables_tar = ":image_deps.tar",
     output_image_name = "required_pkgs_image",
+    visibility = ["//visibility:private"],
 )
 
+# Builds the latest version of the container image.
+# blaze run //:latest will add the image to the local docker instance.
 container_image(
     name = "latest",
-    base = ":required_pkgs_image.tar",
+    base = ":required_pkgs_image.tar",  # Our custom image base with the installed packages.
     creation_time = "{BUILD_TIMESTAMP}",
     entrypoint = [
         "/bin/bash",
@@ -54,11 +60,16 @@ container_image(
         "postgres/schema_init.sql",
         ":flink_deploy.jar",
     ],
+    ports = [
+        "8000",  # Expose the 8000 port the server listens on.
+    ],
     repository = "thesummit/flink",
     stamp = "@io_bazel_rules_docker//stamp:always",
     tags = ["latest"],
 )
 
+# The actual server binary. bazel run //:flink can run this locally, but a local postgres instance
+# is required. See the postgres/* scripts for setting up a development database.
 java_binary(
     name = "flink",
     srcs = [
@@ -113,6 +124,7 @@ filegroup(
     visibility = ["//:__subpackages__"],
 )
 
+# List of NPM packages that are required by the Angular application.
 APPLICATION_DEPS = [
     ":common_deps",
     "@npm//@angular/animations",
@@ -131,6 +143,7 @@ APPLICATION_DEPS = [
     "@npm//luxon",
 ]
 
+# Build the Angular web application via the architect cli.
 architect(
     name = "build",
     args = [
@@ -152,47 +165,8 @@ architect(
     output_dir = True,
 )
 
-architect(
-    name = "build_prod",
-    args = [
-        "frontend:build:production",
-        "--outputPath=$(@D)",
-    ],
-    configuration_env_vars = ["NG_BUILD_CACHE"],
-    data = glob(
-        [
-            "web/src/**/*",
-        ],
-        exclude = [
-            "web/src/**/*.spec.ts",
-            "web/src/test.ts",
-        ],
-    ) + APPLICATION_DEPS + [
-        "tsconfig.app.json",
-    ],
-    output_dir = True,
-)
-
-# Uncomment this for building the production binary without sourcemaps.
-#genrule(
-#name = "web_bundle",
-#outs = [
-#"web/index.html",
-#"web/favicon.ico",
-#"web/main-es2015.js",
-#"web/main-es5.js",
-#"web/polyfills-es2015.js",
-#"web/polyfills-es5.js",
-#"web/vendor-es2015.js",
-#"web/vendor-es5.js",
-#"web/runtime-es2015.js",
-#"web/runtime-es5.js",
-#"web/styles.css",
-#],
-#cmd = """cp $(locations :build_prod)/* $(RULEDIR)/web/.""",
-#tools = [":build_prod"],
-#)
-
+# Rule that exposes the files for the java_binary resources attribute.
+# Any files that need to end up in the jar from the web client need to be declared here.
 genrule(
     name = "web_bundle",
     outs = [
@@ -209,4 +183,5 @@ genrule(
     ],
     cmd = """cp $(locations :build)/* $(RULEDIR)/web/.""",
     tools = [":build"],
+    visibility = ["//visibility:private"],
 )
