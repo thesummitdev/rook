@@ -16,7 +16,7 @@ public class PreferenceHandler {
   private static Logger log = LoggerFactory.getLogger(PreferenceHandler.class);
   private DatabaseService dbService;
 
-  @Inject
+  @Inject()
   public PreferenceHandler(DatabaseService dbService) {
     this.dbService = dbService;
   }

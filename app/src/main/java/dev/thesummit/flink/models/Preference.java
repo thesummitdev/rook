@@ -1,6 +1,8 @@
 package dev.thesummit.flink.models;
 
 import dev.thesummit.flink.database.DatabaseField;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 import org.json.JSONObject;
 
@@ -15,6 +17,16 @@ public class Preference implements BaseModel {
   public Preference(String key, String value) {
     this.key = key;
     this.value = value;
+  }
+
+  public static Preference fromResultSet(ResultSet rs) {
+    try {
+      Preference p = new Preference(rs.getString("key"), rs.getString("value"));
+      p.setId(rs.getObject("id", UUID.class));
+      return p;
+    } catch (SQLException e) {
+      return null;
+    }
   }
 
   @Override
