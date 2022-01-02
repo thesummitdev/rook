@@ -2,7 +2,10 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
+
 import {Link} from '../models/link';
+import {Preference} from '../models/preference';
+
 import {FilterService} from './filters.service';
 
 @Injectable({providedIn: 'root'})
@@ -42,6 +45,17 @@ export class DataService {
    */
   getTags(): Observable<string[]> {
     return this.http.get<string[]>('/tags');
+  }
+
+  /**
+   * Fetches a list of the application preferences from the backend.
+   * NOTE: this requires the user to be logged in.
+   * TODO: handle calls that don't have a logged in user, instead of erroring.
+   * @returns Http observable of the list of returned prefs. Can be empty an
+   *     empty list.
+   */
+  getPreferences(): Observable<Preference[]> {
+    return this.http.get<Preference[]>('/prefs');
   }
 
   /**

@@ -2,6 +2,7 @@ import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/com
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
+
 import {LoginService} from '../services/login.service';
 
 
@@ -20,6 +21,7 @@ export class AuthRequiredInterceptor implements HttpInterceptor {
   protected static protectedRoutes: string[] = [
     '/links',
     '/tags',
+    '/prefs',
   ];
 
   constructor(private readonly login: LoginService) {}
