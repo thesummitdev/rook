@@ -8,6 +8,7 @@ import dev.thesummit.flink.auth.AuthModule;
 import dev.thesummit.flink.database.DatabaseModule;
 import dev.thesummit.flink.handlers.AuthHandler;
 import dev.thesummit.flink.handlers.LinkHandler;
+import dev.thesummit.flink.handlers.PreferenceHandler;
 import dev.thesummit.flink.handlers.TagHandler;
 import dev.thesummit.flink.handlers.UserHandler;
 import io.javalin.Javalin;
@@ -40,6 +41,7 @@ public class FlinkApplication {
     app.before("/links", injector.getInstance(AuthHandler.class)::fetchUserContext);
     app.before("/links/*", injector.getInstance(AuthHandler.class)::fetchUserContext);
     app.before("/tags", injector.getInstance(AuthHandler.class)::fetchUserContext);
+    app.before("/prefs", injector.getInstance(AuthHandler.class)::fetchUserContext);
 
     // Other Routes
     app.routes(
@@ -74,6 +76,12 @@ public class FlinkApplication {
               "tags",
               () -> {
                 get(injector.getInstance(TagHandler.class)::getAll);
+              });
+
+          path(
+              "prefs",
+              () -> {
+                get(injector.getInstance(PreferenceHandler.class)::getAll);
               });
         });
 

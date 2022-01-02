@@ -23,6 +23,12 @@ CREATE TABLE IF NOT EXISTS links(
   CONSTRAINT fk_userid FOREIGN KEY ( userId ) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS preferences(
+  id        uuid                        NOT NULL default uuid_generate_v4(),
+  key       varchar(100)                NOT NULL,
+  value     varchar(100)                NOT NULL
+);
+
 -- ------------------------------------------------------------------------------
 
 -- ---------------------- FUNCTION / TRIGGER DEFINITIONS ------------------------

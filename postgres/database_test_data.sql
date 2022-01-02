@@ -57,3 +57,5 @@ INSERT INTO LINKS (title, url, tags, userId)
           'cycling', 
           (SELECT id from USERS where username='tyler')
          );
+
+INSERT INTO PREFERENCES (key, value) VALUES ('appVersion', '0.5');

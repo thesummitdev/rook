@@ -7,6 +7,7 @@ java_library(
     srcs = [
         "AuthHandler.java",
         "LinkHandler.java",
+        "PreferenceHandler.java",
         "TagHandler.java",
         "UserHandler.java",
     ],
