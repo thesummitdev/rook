@@ -136,3 +136,36 @@ load(
 )
 
 _java_image_repos()
+
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_pull",
+)
+
+container_pull(
+    name = "postgres_base",
+    architecture = "amd64",
+    digest = "sha256:603f1a2e7487a60fe5f1ac23fe38438c8a4be8f4f1d9fb494a559f47c1751b46",
+    os = "linux",
+    registry = "index.docker.io",
+    repository = "library/postgres",
+    tag = "14.1",
+)
+
+container_pull(
+    name = "alpine_linux_amd64",
+    digest = "sha256:954b378c375d852eb3c63ab88978f640b4348b01c1b3456a024a81536dafbbf4",
+    registry = "index.docker.io",
+    repository = "library/alpine",
+    # tag field is ignored since digest is set
+    tag = "3.8",
+)
+
+container_pull(
+    name = "debian_stable_linux_amd64",
+    digest = "sha256:3d8282536e0faa792afc317a5335b1487298341149a5ee6f5b34b1b02654df80",
+    registry = "index.docker.io",
+    repository = "library/debian",
+    # tag field is ignored since digest is set
+    tag = "3.8",
+)

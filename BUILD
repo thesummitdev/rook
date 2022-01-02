@@ -2,6 +2,9 @@ load("@rules_java//java:defs.bzl", "java_binary")
 load("@bazel_common//tools/maven:pom_file.bzl", "pom_file")
 load("@npm//@angular-devkit/architect-cli:index.bzl", "architect", "architect_test")
 load("@io_bazel_rules_docker//java:image.bzl", "java_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@io_bazel_rules_docker//docker/package_managers:download_pkgs.bzl", "download_pkgs")
+load("@io_bazel_rules_docker//docker/package_managers:install_pkgs.bzl", "install_pkgs")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -12,29 +15,48 @@ package_group(
     ],
 )
 
-java_image(
-    name = "container_dev",
-    srcs = [
-        "app/src/main/java/dev/thesummit/flink/FlinkApplication.java",
+download_pkgs(
+    name = "image_deps",
+    image_tar = "@debian_stable_linux_amd64//image",
+    packages = [
+        # "openjdk-11-jdk",
+        "openjdk-11-jre",
+        "postgresql",
+        "postgresql-contrib",
+        "sudo",
     ],
-    main_class = "dev.thesummit.flink.FlinkApplication",
-    resources =
-        [
-            ":web_bundle_dev",
-            "//app/src/main/resources",
-            "//web/src/assets:static_assets",
-        ],
-    deps = [
-        "//app/src/main/java/dev/thesummit/flink/auth",
-        "//app/src/main/java/dev/thesummit/flink/database:database_module",
-        "//app/src/main/java/dev/thesummit/flink/handlers",
-        "//app/src/main/java/dev/thesummit/flink/models",
-        "@maven//:com_fasterxml_jackson_core_jackson_core",
-        "@maven//:com_google_inject_guice",
-        "@maven//:commons_validator_commons_validator",
-        "@maven//:io_javalin_javalin",
-        "@maven//:org_slf4j_slf4j_api",
+)
+
+install_pkgs(
+    name = "required_pkgs_image",
+    image_tar = "@debian_stable_linux_amd64//image",
+    installables_tar = ":image_deps.tar",
+    output_image_name = "required_pkgs_image",
+)
+
+container_image(
+    name = "latest",
+    base = ":required_pkgs_image.tar",
+    creation_time = "{BUILD_TIMESTAMP}",
+    entrypoint = [
+        "/bin/bash",
+        "-c",
+        "./container_init.sh",
     ],
+    env = {
+        "POSTGRES_USER": "flink_system",
+        "POSTGRES_PASSWORD": "flinksystem",
+    },
+    files = [
+        "container_init.sh",
+        "postgres/database_init.sql",
+        "postgres/database_test_data.sql",
+        "postgres/schema_init.sql",
+        ":flink_deploy.jar",
+    ],
+    repository = "thesummit/flink",
+    stamp = "@io_bazel_rules_docker//stamp:always",
+    tags = ["latest"],
 )
 
 java_binary(
@@ -46,31 +68,6 @@ java_binary(
     resources =
         [
             ":web_bundle",
-            "//app/src/main/resources",
-            "//web/src/assets:static_assets",
-        ],
-    deps = [
-        "//app/src/main/java/dev/thesummit/flink/auth",
-        "//app/src/main/java/dev/thesummit/flink/database:database_module",
-        "//app/src/main/java/dev/thesummit/flink/handlers",
-        "//app/src/main/java/dev/thesummit/flink/models",
-        "@maven//:com_fasterxml_jackson_core_jackson_core",
-        "@maven//:com_google_inject_guice",
-        "@maven//:commons_validator_commons_validator",
-        "@maven//:io_javalin_javalin",
-        "@maven//:org_slf4j_slf4j_api",
-    ],
-)
-
-java_binary(
-    name = "flink-dev",
-    srcs = [
-        "app/src/main/java/dev/thesummit/flink/FlinkApplication.java",
-    ],
-    main_class = "dev.thesummit.flink.FlinkApplication",
-    resources =
-        [
-            ":web_bundle_dev",
             "//app/src/main/resources",
             "//web/src/assets:static_assets",
         ],
@@ -197,7 +194,7 @@ architect(
 #)
 
 genrule(
-    name = "web_bundle_dev",
+    name = "web_bundle",
     outs = [
         "web/index.html",
         "web/favicon.ico",
