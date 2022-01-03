@@ -48,14 +48,34 @@ export class DataService {
   }
 
   /**
-   * Fetches a list of the application preferences from the backend.
+   * Fetches a map of the application preferences from the backend.
    * NOTE: this requires the user to be logged in.
    * TODO: handle calls that don't have a logged in user, instead of erroring.
-   * @returns Http observable of the list of returned prefs. Can be empty an
-   *     empty list.
+   * @returns Http observable of the map of returned prefs. Can be empty an
+   *     empty map.
    */
-  getPreferences(): Observable<Preference[]> {
-    return this.http.get<Preference[]>('/prefs');
+  getPreferences(): Observable<Map<string, Preference>> {
+    return this.http.get<Preference[]>('/prefs').pipe(
+        map((prefs) => {
+          const map = new Map<string, Preference>();
+          for (const pref of prefs) {
+            map.set(pref.key, pref);
+          }
+          return map;
+        }),
+    );
+  }
+
+  /**
+   * Sets a preference in the backend database.
+   * NOTE: Some prefs are application wide, and some are user specific.
+   * See `//app/src/main/java/dev/thesummit/flink/models/Preference.java` for
+   * the list of app specific prefs.
+   * @param pref - the new pref to save.
+   * @returns Http obsedrvable of the new pref.
+   */
+  setPreference(pref: Preference): Observable<Preference> {
+    return this.http.put<Preference>('/prefs', JSON.stringify(pref));
   }
 
   /**

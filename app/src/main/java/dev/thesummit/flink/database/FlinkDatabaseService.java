@@ -114,27 +114,28 @@ public class FlinkDatabaseService implements DatabaseService {
 
       DatabaseField annotation = f.getAnnotation(DatabaseField.class);
       if (annotation == null) {
-        if (annotation.isId()) {
-          try {
-            id = (UUID) f.get(entity);
-
-          } catch (IllegalAccessException e) {
-            log.debug(
-                "Field was not accessible, check fields marked with @DatbaseField are not private.",
-                e);
-            return;
-          }
-        }
-
         fieldIndex++;
         continue;
       }
-      fields.append(" ");
-      fields.append(f.getName());
-      fields.append("=?");
-      if (fieldIndex != entity.getClass().getDeclaredFields().length) {
-        fields.append(",");
+      if (annotation.isId()) {
+        try {
+          id = (UUID) f.get(entity);
+        } catch (IllegalAccessException e) {
+          log.debug(
+              "Field was not accessible, check fields marked with @DatbaseField are not private.",
+              e);
+          return;
+        }
         fieldIndex++;
+
+      } else {
+        fields.append(" ");
+        fields.append(f.getName());
+        fields.append("=?");
+        if (fieldIndex != entity.getClass().getDeclaredFields().length) {
+          fields.append(",");
+          fieldIndex++;
+        }
       }
     }
 
@@ -151,17 +152,20 @@ public class FlinkDatabaseService implements DatabaseService {
     Connection conn = this.pool.getConnection();
     try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
-      fieldIndex = 0;
+      fieldIndex = 1;
       for (Field f : entity.getClass().getDeclaredFields()) {
         DatabaseField annotation = f.getAnnotation(DatabaseField.class);
         if (annotation == null || annotation.isId()) {
-          fieldIndex++;
           continue;
         }
-        if (f.getType() == Boolean.class) {
+        if (f.get(entity) == null) {
+          statement.setNull(fieldIndex, java.sql.Types.OTHER);
+        } else if (f.getType() == Boolean.class) {
           statement.setBoolean(fieldIndex, (Boolean) f.get(entity));
         } else if (f.getType() == Integer.class) {
           statement.setInt(fieldIndex, f.getInt(entity));
+        } else if (f.getType() == UUID.class) {
+          statement.setObject(fieldIndex, f.get(entity));
         } else {
           statement.setString(fieldIndex, (String) f.get(entity));
         }
@@ -359,11 +363,16 @@ public class FlinkDatabaseService implements DatabaseService {
           query.append("\n AND ");
         }
 
-        query
-            .append(field)
-            .append(annotation.cast())
-            .append(annotation.whereOperator())
-            .append("?");
+        if (params.get(field) == null) {
+          // For fields where the value is actually null do an "IS NULL" compare.
+          query.append(field).append(annotation.cast()).append(" is ").append("NULL");
+        } else {
+          query
+              .append(field)
+              .append(annotation.cast())
+              .append(annotation.whereOperator())
+              .append("?");
+        }
 
         if (index == params.size()) {
           query.append(";"); // End the Query
@@ -392,6 +401,10 @@ public class FlinkDatabaseService implements DatabaseService {
         } else if (e.getValue() instanceof Integer) {
           int i = (int) e.getValue();
           statement.setInt(index, i);
+        } else if (e.getValue() == null) {
+          // No parameter at this index, query was manually set to IS NULL.
+          index++;
+          continue;
         } else if (e.getValue() instanceof String) {
 
           // Check if the string field should be compared as an array.

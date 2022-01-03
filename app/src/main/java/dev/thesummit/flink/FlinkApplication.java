@@ -82,6 +82,7 @@ public class FlinkApplication {
               "prefs",
               () -> {
                 get(injector.getInstance(PreferenceHandler.class)::getAll);
+                put(injector.getInstance(PreferenceHandler.class)::create);
               });
         });
 

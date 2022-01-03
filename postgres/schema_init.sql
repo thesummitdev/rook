@@ -2,6 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ---------------------- TABLE DEFINITIONS -------------------------------------
 DROP TABLE IF EXISTS links;
+DROP TABLE IF EXISTS preferences;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS users(
@@ -26,7 +27,10 @@ CREATE TABLE IF NOT EXISTS links(
 CREATE TABLE IF NOT EXISTS preferences(
   id        uuid                        NOT NULL default uuid_generate_v4(),
   key       varchar(100)                NOT NULL,
-  value     varchar(100)                NOT NULL
+  value     varchar(100)                NOT NULL,
+  userId    uuid                        NULL,
+  PRIMARY KEY ( id ),
+  CONSTRAINT fk_userid FOREIGN KEY ( userId ) REFERENCES users(id)
 );
 
 -- ------------------------------------------------------------------------------

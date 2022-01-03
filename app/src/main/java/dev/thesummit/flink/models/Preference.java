@@ -3,15 +3,26 @@ package dev.thesummit.flink.models;
 import dev.thesummit.flink.database.DatabaseField;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.json.JSONObject;
 
 public class Preference implements BaseModel {
 
+  public static Set<String> applicationPrefs =
+      Stream.of("appVersion", "allowNewUsers").collect(Collectors.toCollection(HashSet::new));
+
   @DatabaseField(isId = true)
   public UUID id;
 
-  @DatabaseField() public String key;
+  @DatabaseField() public UUID userId;
+
+  @DatabaseField(isIdentifier = true)
+  public String key;
+
   @DatabaseField() public String value;
 
   public Preference(String key, String value) {
@@ -23,6 +34,7 @@ public class Preference implements BaseModel {
     try {
       Preference p = new Preference(rs.getString("key"), rs.getString("value"));
       p.setId(rs.getObject("id", UUID.class));
+      p.userId = (rs.getObject("userId", UUID.class));
       return p;
     } catch (SQLException e) {
       return null;
@@ -48,6 +60,12 @@ public class Preference implements BaseModel {
 
   @Override
   public Boolean isValid() {
-    return this.key != null && this.value != null;
+    if (applicationPrefs.contains(this.key)) {
+      // If it's an app pref, ensure it's not tied to a user.
+      return this.key != null && this.value != null && this.userId == null;
+    } else {
+      // If it's not an app pref, ensure it's tied to a user.
+      return this.key != null && this.value != null && this.userId != null;
+    }
   }
 }
