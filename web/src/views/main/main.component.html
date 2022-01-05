@@ -1,0 +1,42 @@
+<div class="flink-app">
+  <div class="left-column">
+    <section>
+      <h1 class="app-name">f.link</h1>
+    </section>
+    <ng-container *ngIf="user$|async">
+      <div class="filter-panel">
+        <app-filter-panel></app-filter-panel>
+      </div>
+    </ng-container>
+    <section>
+      <div class="footer">
+        f.link is an
+        <a href="https://github.com/thesummitdev/f.link"
+           target="_blank">open source</a>
+        project.
+        <br>
+        <br>
+        consider donating or sponsoring development.
+        <br>
+        <br>
+        this project is available under the
+        <br>
+        GNU GENERAL PUBLIC (v3) License; see the
+        <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"
+           target="_blank">License</a>
+        for details.
+      </div>
+    </section>
+  </div>
+  <div class="right-column">
+    <main>
+      <section>
+        <app-header></app-header>
+        <app-create-panel></app-create-panel>
+      </section>
+      <div class="linklist-panel">
+        <app-link-list></app-link-list>
+      </div>
+    </main>
+  </div>
+</div>
