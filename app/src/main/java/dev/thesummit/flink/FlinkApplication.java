@@ -35,6 +35,7 @@ public class FlinkApplication {
               config.enableDevLogging();
               config.addStaticFiles("web", Location.CLASSPATH);
               config.addStaticFiles("assets", Location.CLASSPATH);
+              config.addSinglePageRoot("/", "web/index.html");
             });
 
     // Protected routes that require a User to be logged in and pass a bearer token.
