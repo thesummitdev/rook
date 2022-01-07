@@ -3,6 +3,8 @@ import {Observable} from 'rxjs';
 import {startWith, switchMap, take} from 'rxjs/operators';
 import {DataService} from 'web/src/services/data.service';
 import {FilterService} from 'web/src/services/filters.service';
+import {UiService} from 'web/src/services/ui.service';
+
 import {filterPanelAnimations} from './filterpanel.animations';
 
 @Component({
@@ -15,11 +17,14 @@ import {filterPanelAnimations} from './filterpanel.animations';
 export class FilterPanelComponent {
   tags$: Observable<string[]>;
   selectedTags$: Observable<Set<string>>;
+  readonly show: Observable<boolean>;
 
   constructor(
       private readonly data: DataService,
       private readonly filters: FilterService,
+      private readonly ui: UiService,
   ) {
+    this.show = this.ui.getFilterPanelAsObservable();
     this.tags$ = this.data.getNewLinksAsObservable().pipe(
         startWith(null),
         switchMap(() => this.data.getTags()),
