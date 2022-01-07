@@ -45,7 +45,7 @@ public class PreferenceHandler {
 
     // Fetch User specific Prefs.
     HashMap<String, Object> userParams = new HashMap<String, Object>();
-    params.put("userId", user.getId());
+    userParams.put("userId", user.getId());
     List<Preference> userPrefs =
         this.dbService.getAll(Preference.class, userParams).stream().collect(Collectors.toList());
 
