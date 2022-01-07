@@ -1,8 +1,8 @@
-@use 'web/src/styles/colors';
+@use 'web/src/styles/theme';
 
 .create-panel {
-  border: 1px solid colors.$DIM-WHITE;
-  background: colors.$DIM_BACKGROUND;
+  border: 1px solid theme.$BRIGHT;
+  background: theme.$BACKGROUND;
   padding: 8px 0;
 }
 
@@ -15,7 +15,7 @@
     padding: 4px;
 
     .invalid {
-      border-left: 2px solid colors.$RED;
+      border-left: 2px solid theme.$ERROR;
     }
   }
 
@@ -26,7 +26,7 @@
   }
 
   .error {
-    color: colors.$RED;
+    color: theme.$ERROR;
     font-family: 'Fira Mono', monospace;
     font-size: 13px;
     margin-left: 4px;

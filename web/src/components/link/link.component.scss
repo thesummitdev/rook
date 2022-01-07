@@ -1,4 +1,4 @@
-@use 'web/src/styles/colors';
+@use 'web/src/styles/theme';
 
 .link-container {
   display: flex;
@@ -29,7 +29,7 @@
   line-height: 13px;
 
   .link-anchor {
-    color: colors.$DIM-WHITE;
+    color: theme.$DIM;
     font-family: 'Fira Mono', monospace;
     font-size: 11px;
     font-weight: 300;
@@ -37,7 +37,7 @@
 }
 
 .link-date {
-  color: colors.$DIM-WHITE;
+  color: theme.$DIM;
   font-family: 'Fira Sans', sans-serif;
   font-size: 11px;
   font-weight: 300;
@@ -62,29 +62,8 @@
   }
 }
 
-.add-tag-icon {
-  background-color: colors.$YELLOW;
-  border-radius: 50%;
-  color: colors.$DARK_FOREGROUND;
-  font-family: 'Fira Mono', monospace;
-  font-size: 16px;
-  font-weight: 500;
-  height: 15px;
-  line-height: 15px;
-  text-align: center;
-  width: 15px;
-  visibility: hidden;
-
-  &:hover {
-
-    background-color: colors.$RED;
-    color: colors.$BRIGHT-WHITE;
-    cursor: pointer;
-  }
-}
-
 .tag {
-  color: colors.$YELLOW;
+  color: theme.$ACCENT;
   margin-right: 8px;
 
   &:hover {

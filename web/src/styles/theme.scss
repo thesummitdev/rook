@@ -1,0 +1,21 @@
+:root {
+  --background: #eeeef1;
+  --foreground: #6b717f;
+  --anchor: #0091ff;
+  --accent: #f77d00;
+  --dim: #959595;
+  --bright: #d1d1d1;
+  --dark: #4a4f5a;
+  --error: #e93f3f;
+  --success: #3fe99b;
+}
+
+$BACKGROUND: var(--background);
+$FOREGROUND: var(--foreground);
+$ANCHOR: var(--anchor);
+$ACCENT: var(--accent);
+$DIM: var(--dim);
+$BRIGHT: var(--bright);
+$DARK: var(--dark);
+$ERROR: var(--error);
+$SUCCESS: var(--success);

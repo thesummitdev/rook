@@ -1,17 +1,16 @@
-@use "colors";
+@use "theme";
 
-// Required for Angular CDK Overlay
 @import '@angular/cdk/overlay-prebuilt.css';
 
 
 body {
-  background: colors.$BACKGROUND;
-  color: colors.$FOREGROUND;
+  background: theme.$BACKGROUND;
+  color: theme.$FOREGROUND;
   margin: 0;
 }
 
 a {
-  color: colors.$RED;
+  color: theme.$ANCHOR;
   text-decoration: none;
 
   &:hover {
@@ -25,7 +24,7 @@ input[type=url] {
   background: inherit;
   border: none;
   border-bottom: 1px solid transparent;
-  color: colors.$BRIGHT-WHITE;
+  color: theme.$DARK;
   font-family: 'Fira Mono', monospace;
   font-size: 14px;
   line-height: 22px;
@@ -33,19 +32,19 @@ input[type=url] {
   width: 100%;
 
   &::placeholder {
-    color: colors.$DIM-WHITE;
+    color: theme.$DIM;
   }
 
   &:focus {
-    border-bottom: 1px solid colors.$YELLOW;
+    border-bottom: 1px solid theme.$ACCENT;
   }
 }
 
 button {
-  background: colors.$DIM_BACKGROUND;
+  background: transparent;
   border-radius: 45px;
   border: none;
-  color: colors.$DIM_FOREGROUND;
+  color: theme.$DARK;
   cursor: pointer;
   font-family: 'Fira Sans', sans-serif;
   font-size: 14px;
@@ -56,14 +55,14 @@ button {
 
   &:hover:not(:disabled) {
 
-    background: colors.$GREEN;
-    color: colors.$BRIGHT_FOREGROUND;
+    background: theme.$SUCCESS;
+    color: theme.$DARK;
 
   }
 
   &:hover:disabled {
-    background: colors.$DIM_RED;
-    color: colors.$BRIGHT_FOREGROUND;
+    background: theme.$ERROR;
+    color: theme.$DARK;
     cursor: default;
   }
 

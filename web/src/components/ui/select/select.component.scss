@@ -1,4 +1,4 @@
-@use 'web/src/styles/colors';
+@use 'web/src/styles/theme';
 
 .app-select-wrapper {
   position: relative;
@@ -11,7 +11,7 @@
   padding: 6px 0 6px 6px;
 
   &:focus-within {
-    border-bottom: 1px solid colors.$YELLOW;
+    border-bottom: 1px solid theme.$ACCENT;
   }
 
   span {
@@ -29,14 +29,15 @@
 }
 
 .icon {
-  fill: colors.$WHITE;
+  fill: theme.$ACCENT;
   height: 14px;
   width: 14px;
 }
 
 .options-list {
 
-  background-color: colors.$DIM-BACKGROUND;
+  background-color: theme.$BACKGROUND;
+  border: 1px solid theme.$DARK;
   max-height: 70vh;
   overflow-y: auto;
   position: absolute;
@@ -53,11 +54,11 @@
       font-family: 'Fira Mono', monospace;
       font-size: 14px;
       line-height: 14px;
-      color: colors.$YELLOW;
+      color: theme.$FOREGROUND;
 
       &:hover {
-        background-color: colors.$YELLOW;
-        color: colors.$BLACK;
+        background-color: theme.$ACCENT;
+        color: theme.$DARK;
         cursor: pointer;
       }
     }
@@ -68,11 +69,11 @@
   }
 
   &::-webkit-scrollbar-track {
-    background: colors.$BRIGHT-BLACK;
+    background: theme.$BRIGHT;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: colors.$YELLOW;
+    background: theme.$ACCENT;
   }
 }
 

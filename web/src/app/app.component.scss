@@ -1,4 +1,4 @@
-@use 'web/src/styles/colors';
+@use 'web/src/styles/theme';
 
 .flink-app {
   display: flex;
@@ -35,7 +35,7 @@
   max-width: 300px;
 
   .footer {
-    color: colors.$DIM-WHITE;
+    color: theme.$DARK;
     font-family: 'Fira Mono', monospace;
     font-size: 13px;
     line-height: 16px;

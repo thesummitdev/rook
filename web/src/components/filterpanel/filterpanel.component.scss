@@ -1,4 +1,4 @@
-@use 'web/src/styles/colors';
+@use 'web/src/styles/theme';
 
 .filter-panel {
   display: flex;
@@ -19,12 +19,12 @@
     width: 100%;
 
     &:focus-within {
-      border-bottom: 1px solid colors.$YELLOW;
+      border-bottom: 1px solid theme.$ACCENT;
     }
   }
 
   .search-icon {
-    fill: colors.$BRIGHT-WHITE;
+    fill: theme.$ACCENT;
     height: 14px;
     width: 14px;
     margin-right: 6px;
@@ -33,14 +33,14 @@
   .search-input {
     background: inherit;
     border: none;
-    color: colors.$BRIGHT-WHITE;
+    color: theme.$DARK;
     font-family: 'Fira Mono', monospace;
     line-height: 22px;
     outline: none;
     width: 100%;
 
     &::placeholder {
-      color: colors.$DIM-WHITE;
+      color: theme.$DIM;
     }
 
   }
