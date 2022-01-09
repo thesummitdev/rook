@@ -1,4 +1,30 @@
-<div>
-  <p>Hello world from SettingsViewComponent!</p>
-  {{prefs$|async}}
+<div class="settings">
+  <section>
+    <h2 class="settings-name">settings</h2>
+  </section>
+  <section>
+    <ng-container *ngIf="prefs$|async as prefs">
+      <form #form="ngForm" class="settings-form">
+        <div class="setting form-theme">
+          <span>Theme</span>
+          <select [(ngModel)]="model.theme"
+          name="theme"
+          (ngModelChange)="onThemeChange($event)">
+            <option *ngFor="let theme of allThemes | keyvalue">
+            {{theme.key}}
+            </option>
+          </select>
+        </div>
+        <div class="setting form-allow-new-users">
+          <span> Allow new users?</span>
+          <input type="checkbox" 
+          [(ngModel)]="model.allowNewUsers"
+          name="allowNewUsers"
+          (ngModelChange)="onAllowNewUsersChange($event)">
+        </div>
+      </form>
+    </ng-container>
+  </section>
+
+
 </div>
