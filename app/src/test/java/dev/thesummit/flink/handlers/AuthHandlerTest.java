@@ -59,7 +59,7 @@ public class AuthHandlerTest {
   }
 
   @Test
-  public void fetchUserContext() {
+  public void requireUserContext() {
 
     DecodedJWT mockJWT = mock(DecodedJWT.class);
     Claim mockClaim = mock(Claim.class);
@@ -71,7 +71,33 @@ public class AuthHandlerTest {
     doReturn(Optional.of(mockJWT)).when(jwtProvider).validateToken("jwttoken");
     doReturn(mockUser).when(dbService).get(User.class, "testuser");
 
-    handler.fetchUserContext(ctx);
+    handler.requireUserContext(ctx);
     verify(ctx).sessionAttribute("current_user", mockUser);
+  }
+
+  @Test
+  public void optionalUserContextWithToken() {
+
+    DecodedJWT mockJWT = mock(DecodedJWT.class);
+    Claim mockClaim = mock(Claim.class);
+
+    doReturn("Bearer jwttoken").when(ctx).header("Authorization");
+
+    doReturn("testuser").when(mockClaim).asString();
+    doReturn(mockClaim).when(mockJWT).getClaim("username");
+    doReturn(Optional.of(mockJWT)).when(jwtProvider).validateToken("jwttoken");
+    doReturn(mockUser).when(dbService).get(User.class, "testuser");
+
+    handler.optionalUserContext(ctx);
+    verify(ctx).sessionAttribute("current_user", mockUser);
+  }
+
+  @Test
+  public void optionalUserContextNoToken() {
+
+    doReturn(null).when(ctx).header("Authorization");
+
+    handler.optionalUserContext(ctx);
+    verify(ctx).sessionAttribute("current_user", null);
   }
 }
