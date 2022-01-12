@@ -1,4 +1,4 @@
-@use 'web/src/styles/colors';
+@use 'web/src/styles/theme';
 
 .toast-container {
 
@@ -10,18 +10,18 @@
   padding: 6px 12px;
 
   &.info {
-    background: colors.$GREEN;
-    color: colors.$BLACK;
+    background: theme.$SUCCESS;
+    color: theme.$DARK;
   }
 
   &.warn {
-    background: colors.$YELLOW;
-    color: colors.$BLACK;
+    background: theme.$ACCENT;
+    color: theme.$DARK;
   }
 
   &.error {
-    background: colors.$RED;
-    color: colors.$BRIGHT-FOREGROUND;
+    background: theme.$ERROR;
+    color: theme.$DARK;
   }
 
 }

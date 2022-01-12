@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {Observable, of, ReplaySubject} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
 import {User} from 'web/src/models/user';
+
 import {ToastService} from './toast.service';
 
 @Injectable({providedIn: 'root'})
@@ -39,8 +40,6 @@ export class LoginService {
             catchError(
                 (err: HttpErrorResponse,
                  caught: Observable<User|undefined>) => {
-                  console.log(err, caught);
-
                   if (err.status === 401) {
                     this.toast.showError('Invalid username and password.');
                   } else {

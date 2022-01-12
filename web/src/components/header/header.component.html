@@ -12,7 +12,7 @@
     </ng-template>
     <div class="login-panel">
       <ng-container *ngIf="user$|async as user; else login">
-        <span>settings</span>
+        <span routerLink="/settings">settings</span>
         <span aria-label="Sign out"
               role="button"
               (click)="signOut()">sign out</span>
@@ -21,8 +21,10 @@
         <span aria-label="Login"
               role="button"
               (click)="showLogin($event)">login</span>
-        <span aria-label="Create a new account"
-              role="button">create account</span>
+        <ng-container *ngIf="allowCreateNewUsers$ | async">
+          <span aria-label="Create a new account"
+                role="button">create account</span>
+        </ng-container>
       </ng-template>
     </div>
   </div>

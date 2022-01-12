@@ -30,7 +30,6 @@ public class PreferenceHandler {
   /** Request handler for GET ${host}/prefs/ */
   public void getAll(Context ctx) {
 
-    User user = ctx.sessionAttribute("current_user");
     JSONArray arr = new JSONArray();
 
     // Fetch Application Prefs.
@@ -44,13 +43,16 @@ public class PreferenceHandler {
     }
 
     // Fetch User specific Prefs.
-    HashMap<String, Object> userParams = new HashMap<String, Object>();
-    userParams.put("userId", user.getId());
-    List<Preference> userPrefs =
-        this.dbService.getAll(Preference.class, userParams).stream().collect(Collectors.toList());
+    User user = ctx.sessionAttribute("current_user");
+    if (user != null) {
+      HashMap<String, Object> userParams = new HashMap<String, Object>();
+      userParams.put("userId", user.getId());
+      List<Preference> userPrefs =
+          this.dbService.getAll(Preference.class, userParams).stream().collect(Collectors.toList());
 
-    for (Preference p : userPrefs) {
-      arr.put(p.toJSONObject());
+      for (Preference p : userPrefs) {
+        arr.put(p.toJSONObject());
+      }
     }
 
     String response = arr.toString();

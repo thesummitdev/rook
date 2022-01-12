@@ -16,7 +16,8 @@ import {StrictRequiredDirective} from '../directives/strictrequired.directive';
 import {UrlRequiredDirective} from '../directives/urlrequired.directive';
 import {AuthRequiredInterceptor} from '../interceptors/authrequired.interceptor';
 import {PipesModule} from '../pipes/pipes.module';
-import {MainComponent} from '../views/main/main.component';
+import {MainViewComponent} from '../views/main/main.component';
+import {SettingsViewComponent} from '../views/settings/settings.component';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -29,7 +30,8 @@ import {AppComponent} from './app.component';
     HeaderComponent,
     LinkComponent,
     LinkListComponent,
-    MainComponent,
+    MainViewComponent,
+    SettingsViewComponent,
     StrictRequiredDirective,
     UrlRequiredDirective,
   ],
