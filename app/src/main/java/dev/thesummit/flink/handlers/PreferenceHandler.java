@@ -54,6 +54,7 @@ public class PreferenceHandler {
         arr.put(p.toJSONObject());
       }
     }
+
     String response = arr.toString();
     ctx.status(200);
     ctx.contentType("application/json");
