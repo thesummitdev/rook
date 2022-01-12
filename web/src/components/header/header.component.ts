@@ -38,7 +38,7 @@ export class HeaderComponent {
     this.dialog.showLoginDialog().resultAsObservable().subscribe((result) => {
       if (!result.cancelled) {
         const {username, password} = result.result;
-        this.login.attemptSignIn(username, password).subscribe(console.log);
+        this.login.attemptSignIn(username, password).subscribe();
       }
     });
   }

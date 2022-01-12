@@ -1,12 +1,11 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
-
-import {Link} from '../models/link';
-import {Preference} from '../models/preference';
-
-import {FilterService} from './filters.service';
+import {catchError, combineLatest, Observable, of, Subject} from 'rxjs';
+import {map, shareReplay, startWith, switchMap} from 'rxjs/operators';
+import {Link} from 'web/src/models/link';
+import {Preference} from 'web/src/models/preference';
+import {FilterService} from 'web/src/services/filters.service';
+import {LoginService} from 'web/src/services/login.service';
 
 @Injectable({providedIn: 'root'})
 /** Data service that fetches data from the flink api. */
@@ -14,11 +13,35 @@ export class DataService {
   // Emit any newly created links individually so that components don't have
   // to refresh the entire list when a new link is added.
   private readonly newLinks$: Subject<Link|null> = new Subject();
+  private readonly newPref$: Subject<void> = new Subject();
+  private readonly preferences$: Observable<Map<string, Preference>>;
 
   constructor(
       private readonly http: HttpClient,
       private readonly filters: FilterService,
-  ) {}
+      private readonly login: LoginService,
+  ) {
+    // Setup the preferences observable. This observable will keep the prefs
+    // up-to-date for login / logout actions.
+    this.preferences$ =
+        combineLatest([
+          this.login.getUserAsObservable(),
+          this.newPref$.pipe(startWith(null)),
+        ])
+            .pipe(
+                switchMap(
+                    () => this.http.get<Preference[]>('/prefs').pipe(
+                        map((prefs) => {
+                          const map = new Map<string, Preference>();
+                          for (const pref of prefs) {
+                            map.set(pref.key, pref);
+                          }
+                          return map;
+                        }),
+                        )),
+                shareReplay(1),
+            );
+  }
 
   /**
    * Fetches the links from the backend, and includes applied filters as request
@@ -33,7 +56,9 @@ export class DataService {
         switchMap((tags) => this.http.request<Link[]>('POST', '/links', {
           body: JSON.stringify({tags: [...tags].join(' ')}),
         })),
-    );
+        // If the route errors or there is no auth token present, just return
+        // an empty array.
+        catchError((() => of([]))));
   }
 
   /**
@@ -44,26 +69,20 @@ export class DataService {
    *     empty list.
    */
   getTags(): Observable<string[]> {
-    return this.http.get<string[]>('/tags');
+    return this.http.get<string[]>('/tags').pipe(
+        // If the route errors or there is no auth token present, just return
+        // an empty array.
+        catchError((() => of([]))),
+    );
   }
 
   /**
    * Fetches a map of the application preferences from the backend.
-   * NOTE: this requires the user to be logged in.
-   * TODO: handle calls that don't have a logged in user, instead of erroring.
    * @returns Http observable of the map of returned prefs. Can be empty an
    *     empty map.
    */
   getPreferences(): Observable<Map<string, Preference>> {
-    return this.http.get<Preference[]>('/prefs').pipe(
-        map((prefs) => {
-          const map = new Map<string, Preference>();
-          for (const pref of prefs) {
-            map.set(pref.key, pref);
-          }
-          return map;
-        }),
-    );
+    return this.preferences$;
   }
 
   /**
@@ -75,7 +94,12 @@ export class DataService {
    * @returns Http obsedrvable of the new pref.
    */
   setPreference(pref: Preference): Observable<Preference> {
-    return this.http.put<Preference>('/prefs', JSON.stringify(pref));
+    return this.http.put<Preference>('/prefs', JSON.stringify(pref))
+        .pipe(map((pref) => {
+          this.newPref$.next();  // Toggle a reload of preferences to pick up
+                                 // the change everywhere.
+          return pref;
+        }));
   }
 
   /**
