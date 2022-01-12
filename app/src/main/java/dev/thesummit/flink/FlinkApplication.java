@@ -39,10 +39,12 @@ public class FlinkApplication {
             });
 
     // Protected routes that require a User to be logged in and pass a bearer token.
-    app.before("/links", injector.getInstance(AuthHandler.class)::fetchUserContext);
-    app.before("/links/*", injector.getInstance(AuthHandler.class)::fetchUserContext);
-    app.before("/tags", injector.getInstance(AuthHandler.class)::fetchUserContext);
-    app.before("/prefs", injector.getInstance(AuthHandler.class)::fetchUserContext);
+    app.before("/links", injector.getInstance(AuthHandler.class)::requireUserContext);
+    app.before("/links/*", injector.getInstance(AuthHandler.class)::requireUserContext);
+    app.before("/tags", injector.getInstance(AuthHandler.class)::requireUserContext);
+
+    // Routes that have optional user context handling, but don't require authorization.
+    app.before("/prefs", injector.getInstance(AuthHandler.class)::optionalUserContext);
 
     // Other Routes
     app.routes(

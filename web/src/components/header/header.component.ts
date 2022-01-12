@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
 import {Observable} from 'rxjs';
-import {shareReplay} from 'rxjs/operators';
+import {map, shareReplay} from 'rxjs/operators';
 import {User} from 'web/src/models/user';
+import {DataService} from 'web/src/services/data.service';
 import {DialogService} from 'web/src/services/dialog.service';
 import {LoginService} from 'web/src/services/login.service';
 import {UiService} from 'web/src/services/ui.service';
@@ -14,17 +15,22 @@ import {UiService} from 'web/src/services/ui.service';
 })
 export class HeaderComponent {
   user$: Observable<User|undefined>;
+  allowCreateNewUsers$: Observable<boolean>;
   createPanelVisible$: Observable<boolean>;
 
   constructor(
       private readonly login: LoginService,
       private readonly dialog: DialogService,
       private readonly ui: UiService,
+      private readonly data: DataService,
   ) {
     this.user$ = this.login.getUserAsObservable().pipe(
         shareReplay(),
     );
     this.createPanelVisible$ = this.ui.getCreatePanelAsObservable();
+    this.allowCreateNewUsers$ = this.data.getPreferences().pipe(
+        map((prefs) => prefs.get('allowNewUsers')?.value === 'true'),
+    );
   }
 
   showLogin(event: MouseEvent): void {

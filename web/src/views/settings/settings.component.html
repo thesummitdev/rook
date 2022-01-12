@@ -4,23 +4,24 @@
   </section>
   <section>
     <ng-container *ngIf="prefs$|async as prefs">
-      <form #form="ngForm" class="settings-form">
+      <form #form="ngForm"
+            class="settings-form">
         <div class="setting form-theme">
           <span>Theme</span>
           <select [(ngModel)]="model.theme"
-          name="theme"
-          (ngModelChange)="onThemeChange($event)">
+                  name="theme"
+                  (ngModelChange)="onThemeChange($event)">
             <option *ngFor="let theme of allThemes | keyvalue">
-            {{theme.key}}
+              {{theme.key}}
             </option>
           </select>
         </div>
         <div class="setting form-allow-new-users">
           <span> Allow new users?</span>
-          <input type="checkbox" 
-          [(ngModel)]="model.allowNewUsers"
-          name="allowNewUsers"
-          (ngModelChange)="onAllowNewUsersChange($event)">
+          <input type="checkbox"
+                 [(ngModel)]="model.allowNewUsers"
+                 name="allowNewUsers"
+                 (ngModelChange)="onAllowNewUsersChange($event)">
         </div>
       </form>
     </ng-container>

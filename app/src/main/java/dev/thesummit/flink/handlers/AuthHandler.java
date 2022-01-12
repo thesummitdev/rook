@@ -70,7 +70,35 @@ public class AuthHandler {
     throw new BadRequestResponse("Missing required username and password.");
   }
 
-  public void fetchUserContext(Context ctx) {
+  public void requireUserContext(Context ctx) {
+
+    Optional<User> user = getUserFromRequest(ctx);
+
+    if (user.isPresent()) {
+      ctx.sessionAttribute("current_user", user.get());
+    } else {
+      throw new ForbiddenResponse(
+          "Missing authorized user, please login via /users/login to obtain a token");
+    }
+  }
+
+  public void optionalUserContext(Context ctx) {
+
+    Optional<User> user = getUserFromRequest(ctx);
+
+    if (user.isPresent()) {
+      ctx.sessionAttribute("current_user", user.get());
+    } else {
+      ctx.sessionAttribute("current_user", null);
+    }
+  }
+
+  /**
+   * Attempts to find the {@link User} from the request context. Looks up the user based on the
+   * username claim in the Auth token. In the case where there is no Auth token present, or the user
+   * cannot be found, returns Optional.empty().
+   */
+  private Optional<User> getUserFromRequest(Context ctx) {
 
     Optional<String> token =
         Optional.ofNullable(ctx.header("Authorization"))
@@ -89,15 +117,15 @@ public class AuthHandler {
       Optional<DecodedJWT> jwt = this.jwtProvider.validateToken(token.get());
 
       if (jwt.isPresent()) {
-        User user = this.dbService.get(User.class, jwt.get().getClaim("username").asString());
-        ctx.sessionAttribute("current_user", user);
+        // Check the database for the user.
+        return Optional.ofNullable(
+            this.dbService.get(User.class, jwt.get().getClaim("username").asString()));
       } else {
+        // A token was in the headers, but is invalid.
         throw new ForbiddenResponse("Invalid authorization token. The token might be expired.");
       }
-
-    } else {
-      throw new ForbiddenResponse(
-          "Missing authorization token, please login via /users/login to obtain a token");
     }
+    // There was no token, so don't look for a user.
+    return Optional.empty();
   }
 }
