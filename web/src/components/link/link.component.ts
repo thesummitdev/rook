@@ -2,6 +2,7 @@ import {AfterViewInit, Component, Input} from '@angular/core';
 import {take} from 'rxjs';
 import {Link} from 'web/src/models/link';
 import {DataService} from 'web/src/services/data.service';
+import {DialogService} from 'web/src/services/dialog.service';
 import {ToastService} from 'web/src/services/toast.service';
 
 
@@ -17,6 +18,7 @@ export class LinkComponent implements AfterViewInit {
   constructor(
       private readonly data: DataService,
       private readonly toast: ToastService,
+      private readonly dialog: DialogService,
   ) {}
 
   ngAfterViewInit() {
@@ -32,6 +34,17 @@ export class LinkComponent implements AfterViewInit {
     this.data.deleteLink(this.link).pipe(take(1)).subscribe(() => {
       this.toast.showWarning('Successfully removed!');
     });
+  }
+
+  /**
+   * Opens the edit dialog.
+   * @param event - the click event (event is swallowed)
+   */
+  onEdit(event: MouseEvent): void {
+    event.stopPropagation();
+    this.dialog.showEditLinkDialog(this.link).resultAsObservable().subscribe(
+        // TODO: listen to the emitted response and make an update call.
+        console.log);
   }
 
   /**

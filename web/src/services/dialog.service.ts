@@ -1,12 +1,14 @@
 import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal, ComponentType} from '@angular/cdk/portal';
-import {ComponentRef, Injectable, Injector, SkipSelf} from '@angular/core';
+import {ComponentRef, Injectable, Injector, SkipSelf, StaticProvider} from '@angular/core';
 import {DialogContainer, DialogContainerComponent} from 'web/src/components/dialog/dialog.container.component';
 import {DialogModule} from 'web/src/components/dialog/dialog.module';
 import {LoginDialogComponent} from 'web/src/components/dialog/login/login.dialog.component';
 
 import {DialogComponent} from '../components/dialog/dialog.component';
-import {DIALOG_CONTAINER} from '../util/injectiontokens';
+import {EditLinkComponent} from '../components/dialog/editlink/editlink.dialog.component';
+import {Link} from '../models/link';
+import {DIALOG_CONTAINER, LINK} from '../util/injectiontokens';
 
 
 @Injectable({providedIn: DialogModule})
@@ -25,16 +27,20 @@ export class DialogService {
     return this.attach(LoginDialogComponent);
   }
 
+  showEditLinkDialog(link: Link): EditLinkComponent {
+    return this.attach(EditLinkComponent, [{provide: LINK, useValue: link}]);
+  }
+
   /**
    * Attaches the dialog component the the dom
    * @param dialog The component to open as a dialog.
    * @return a dialog instance
    */
-  private attach<T extends DialogComponent<unknown>>(dialog: ComponentType<T>):
-      T {
+  private attach<T extends DialogComponent<unknown>>(
+      dialog: ComponentType<T>, providers?: StaticProvider[]): T {
     const overlayRef = this.createOverlay();
     const container = this.attachContainer(overlayRef);
-    const injector = this.createInjector(container);
+    const injector = this.createInjector(container, providers);
     const dialogPortal = new ComponentPortal(dialog, null, injector);
 
     const ref = container.attachComponentPortal(dialogPortal);
@@ -80,10 +86,13 @@ export class DialogService {
    * @param containerRef - The dialog's container.
    * @return An injector that can instantiate the dialog.
    */
-  private createInjector(containerRef: DialogContainer): Injector {
+  private createInjector(
+      containerRef: DialogContainer,
+      providers: StaticProvider[] = []): Injector {
     return Injector.create({
       parent: this.injector,
-      providers: [{provide: DIALOG_CONTAINER, useValue: containerRef}],
+      providers:
+          [{provide: DIALOG_CONTAINER, useValue: containerRef}, ...providers],
     });
   }
 }
