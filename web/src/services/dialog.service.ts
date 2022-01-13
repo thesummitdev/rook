@@ -4,6 +4,7 @@ import {ComponentRef, Injectable, Injector, SkipSelf} from '@angular/core';
 import {DialogContainer, DialogContainerComponent} from 'web/src/components/dialog/dialog.container.component';
 import {DialogModule} from 'web/src/components/dialog/dialog.module';
 import {LoginDialogComponent} from 'web/src/components/dialog/login/login.dialog.component';
+
 import {DialogComponent} from '../components/dialog/dialog.component';
 import {DIALOG_CONTAINER} from '../util/injectiontokens';
 
@@ -29,7 +30,8 @@ export class DialogService {
    * @param dialog The component to open as a dialog.
    * @return a dialog instance
    */
-  private attach<T extends DialogComponent>(dialog: ComponentType<T>): T {
+  private attach<T extends DialogComponent<unknown>>(dialog: ComponentType<T>):
+      T {
     const overlayRef = this.createOverlay();
     const container = this.attachContainer(overlayRef);
     const injector = this.createInjector(container);

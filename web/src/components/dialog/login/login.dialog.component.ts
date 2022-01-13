@@ -1,10 +1,9 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Inject, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable, Subject} from 'rxjs';
 import {DIALOG_CONTAINER} from 'web/src/util/injectiontokens';
+
 import {DialogComponent} from '../dialog.component';
 import {DialogContainer} from '../dialog.container.component';
-import {DialogResult} from '../dialog.result';
 
 /** The data returned by the login dialog. */
 interface LoginData {
@@ -26,10 +25,8 @@ interface LoginForm {
  * The dialog that collects the user's username and password via a displayed
  * form.
  */
-export class LoginDialogComponent implements DialogComponent, AfterViewInit {
-  private readonly result$: Subject<DialogResult<LoginData>> = new Subject();
-
-  @ViewChild('dialog') rootEl: ElementRef<HTMLDivElement>;
+export class LoginDialogComponent extends DialogComponent<LoginData> implements
+    AfterViewInit {
   @ViewChild('usernameInput') usernameInput: ElementRef<HTMLInputElement>;
 
   readonly controls: LoginForm&{[key: string]: AbstractControl} = {
@@ -40,40 +37,13 @@ export class LoginDialogComponent implements DialogComponent, AfterViewInit {
 
 
   constructor(
-      @Inject(DIALOG_CONTAINER) private readonly container: DialogContainer,
-  ) {}
+      @Inject(DIALOG_CONTAINER) container: DialogContainer,
+  ) {
+    super(container);
+  }
 
   ngAfterViewInit(): void {
     this.usernameInput.nativeElement.focus();
-  }
-
-  /**
-   * An Observable stream that will eventually emit the results of the dialog.
-   * @return obs
-   */
-  resultAsObservable(): Observable<DialogResult<LoginData>> {
-    return this.result$.asObservable();
-  }
-
-  /**
-   * Emit the results of the dialog and end the observable.
-   * @param result
-   */
-  private setResult(result: DialogResult<LoginData>): void {
-    this.result$.next(result);
-    this.result$.complete();
-  }
-
-  @HostListener('document:click', ['$event'])
-  /**
-   * Click listener that closes the dialog if the click location was outside of
-   * the dialog.
-   * @param event
-   */
-  listenForOutsideClicks(event: PointerEvent): void {
-    if (!this.rootEl.nativeElement.contains(event.target as Node)) {
-      this.cancel();
-    }
   }
 
   signIn(): void {
@@ -85,7 +55,7 @@ export class LoginDialogComponent implements DialogComponent, AfterViewInit {
     }
   }
 
-  close(): void {
+  override close(): void {
     if (this.fg.valid) {
       const username = this.controls.username.value;
       const password = this.controls.password.value;
@@ -95,7 +65,7 @@ export class LoginDialogComponent implements DialogComponent, AfterViewInit {
   }
 
   /** Exit the dialog and emit a canclled result. */
-  cancel(): void {
+  override cancel(): void {
     this.setResult({cancelled: true});
     this.container.exit();
   }
