@@ -1,5 +1,4 @@
 import {AfterViewInit, Component, ElementRef, Inject, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {DIALOG_CONTAINER} from 'web/src/util/injectiontokens';
 
 import {DialogComponent} from '../dialog.component';
@@ -9,12 +8,6 @@ import {DialogContainer} from '../dialog.container.component';
 interface LoginData {
   username: string;
   password: string;
-}
-
-/** The data shape of the login form. */
-interface LoginForm {
-  username: FormControl;
-  password: FormControl;
 }
 
 @Component({
@@ -29,12 +22,7 @@ export class LoginDialogComponent extends DialogComponent<LoginData> implements
     AfterViewInit {
   @ViewChild('usernameInput') usernameInput: ElementRef<HTMLInputElement>;
 
-  readonly controls: LoginForm&{[key: string]: AbstractControl} = {
-    username: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required),
-  };
-  readonly fg = new FormGroup(this.controls);
-
+  model: LoginData = {username: '', password: ''};
 
   constructor(
       @Inject(DIALOG_CONTAINER) container: DialogContainer,
@@ -47,21 +35,14 @@ export class LoginDialogComponent extends DialogComponent<LoginData> implements
   }
 
   signIn(): void {
-    if (this.fg.valid) {
-      const username = this.controls.username.value;
-      const password = this.controls.password.value;
-      this.setResult({cancelled: false, result: {username, password}});
-      this.container.exit();
-    }
+    const username = this.model.username;
+    const password = this.model.password;
+    this.setResult({cancelled: false, result: {username, password}});
+    this.container.exit();
   }
 
   override close(): void {
-    if (this.fg.valid) {
-      const username = this.controls.username.value;
-      const password = this.controls.password.value;
-      this.setResult({cancelled: false, result: {username, password}});
-      this.container.exit();
-    }
+    this.container.exit();
   }
 
   /** Exit the dialog and emit a canclled result. */

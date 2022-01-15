@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Observable} from 'rxjs';
-import {map, shareReplay} from 'rxjs/operators';
+import {map, shareReplay, take} from 'rxjs/operators';
 import {User} from 'web/src/models/user';
 import {DataService} from 'web/src/services/data.service';
 import {DialogService} from 'web/src/services/dialog.service';
@@ -16,7 +16,6 @@ import {UiService} from 'web/src/services/ui.service';
 export class HeaderComponent {
   user$: Observable<User|undefined>;
   allowCreateNewUsers$: Observable<boolean>;
-  createPanelVisible$: Observable<boolean>;
 
   constructor(
       private readonly login: LoginService,
@@ -27,7 +26,6 @@ export class HeaderComponent {
     this.user$ = this.login.getUserAsObservable().pipe(
         shareReplay(),
     );
-    this.createPanelVisible$ = this.ui.getCreatePanelAsObservable();
     this.allowCreateNewUsers$ = this.data.getPreferences().pipe(
         map((prefs) => prefs.get('allowNewUsers')?.value === 'true'),
     );
@@ -45,7 +43,13 @@ export class HeaderComponent {
 
   showCreate(event: MouseEvent): void {
     event.stopPropagation();
-    this.ui.setCreatePanelVisible(true);
+    const dialog = this.dialog.showAddLinkDialog();
+    dialog.resultAsObservable().pipe(take(1)).subscribe((dialog) => {
+      // If the dialog includes a result, then add the link to the backend.
+      if (dialog.result) {
+        this.data.createLink(dialog.result).subscribe();
+      }
+    });
   }
 
   signOut(): void {

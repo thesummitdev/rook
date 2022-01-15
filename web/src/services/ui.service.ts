@@ -51,7 +51,6 @@ const gruvbox: Theme = {
 
 @Injectable({providedIn: 'root'})
 export class UiService {
-  private readonly createPanel$: ReplaySubject<boolean> = new ReplaySubject(1);
   private readonly filterPanel$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   private readonly themes: Map<string, Theme> = new Map([
@@ -78,15 +77,6 @@ export class UiService {
     for (const [key, value] of Object.entries(loadedTheme)) {
       root.style.setProperty(key, value);
     }
-  }
-
-
-  getCreatePanelAsObservable(): Observable<boolean> {
-    return this.createPanel$.asObservable();
-  }
-
-  setCreatePanelVisible(visible: boolean): void {
-    this.createPanel$.next(visible);
   }
 
   getFilterPanelAsObservable(): Observable<boolean> {

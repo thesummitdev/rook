@@ -14,6 +14,8 @@ import {DIALOG_CONTAINER, LINK} from '../util/injectiontokens';
 @Injectable({providedIn: DialogModule})
 /** Dialog service that displays dialogs to the user. */
 export class DialogService {
+  private currentOverlayRef: OverlayRef|null;
+
   constructor(
       private overlay: Overlay,
       @SkipSelf() private readonly injector: Injector,
@@ -27,6 +29,10 @@ export class DialogService {
     return this.attach(LoginDialogComponent);
   }
 
+  showAddLinkDialog(): EditLinkComponent {
+    return this.attach(EditLinkComponent);
+  }
+
   showEditLinkDialog(link: Link): EditLinkComponent {
     return this.attach(EditLinkComponent, [{provide: LINK, useValue: link}]);
   }
@@ -38,7 +44,13 @@ export class DialogService {
    */
   private attach<T extends DialogComponent<unknown>>(
       dialog: ComponentType<T>, providers?: StaticProvider[]): T {
+    if (this.currentOverlayRef) {
+      this.currentOverlayRef.detach();
+      this.currentOverlayRef.dispose();
+      this.currentOverlayRef = null;
+    }
     const overlayRef = this.createOverlay();
+    this.currentOverlayRef = overlayRef;
     const container = this.attachContainer(overlayRef);
     const injector = this.createInjector(container, providers);
     const dialogPortal = new ComponentPortal(dialog, null, injector);

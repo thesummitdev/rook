@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input} from '@angular/core';
-import {take} from 'rxjs';
+import {EMPTY, switchMap, take} from 'rxjs';
 import {Link} from 'web/src/models/link';
 import {DataService} from 'web/src/services/data.service';
 import {DialogService} from 'web/src/services/dialog.service';
@@ -42,9 +42,21 @@ export class LinkComponent implements AfterViewInit {
    */
   onEdit(event: MouseEvent): void {
     event.stopPropagation();
-    this.dialog.showEditLinkDialog(this.link).resultAsObservable().subscribe(
-        // TODO: listen to the emitted response and make an update call.
-        console.log);
+    const updatedLink =
+        this.dialog.showEditLinkDialog(this.link).resultAsObservable().pipe(
+            switchMap((dialog) => {
+              if (dialog.result) {
+                return this.data.updateLink(dialog.result);
+              }
+              return EMPTY;
+            }));
+
+    updatedLink.subscribe((updated) => {
+      if (updated) {
+        this.link = updated;
+        this.tags = updated.tags.split(' ');
+      }
+    });
   }
 
   /**

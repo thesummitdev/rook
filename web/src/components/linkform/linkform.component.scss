@@ -1,0 +1,62 @@
+@use 'web/src/styles/theme';
+
+.link-form {
+  display: flex;
+  flex-flow: column;
+
+  .input-wrapper {
+    border: 2px solid theme.$ACCENT;
+    border-radius: 8px;
+    display: flex;
+    flex-flow: row nowrap;
+    margin: 2px;
+    padding: 4px;
+
+    input,
+    input:focus {
+      border: none;
+      color: theme.$FOREGROUND;
+    }
+
+    .field-name {
+      color: theme.$FOREGROUND;
+      font-family: 'Fira Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 22px;
+      margin-right: 16px;
+      padding: 1px 2px;
+      text-align: left;
+      width: 30px;
+    }
+
+    &.invalid {
+      border: 2px solid theme.$ERROR;
+    }
+
+  }
+
+  .action-row {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    padding: 8px 12px;
+
+  }
+
+
+}
+
+.error-container {
+  display: block;
+  min-height: 16px;
+  line-height: 14px;
+  padding-left: 34px;
+}
+
+.error {
+  color: theme.$ERROR;
+  font-family: 'Fira Mono', monospace;
+  font-size: 13px;
+  margin-left: 4px;
+}

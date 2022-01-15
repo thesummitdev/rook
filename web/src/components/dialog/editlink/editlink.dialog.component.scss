@@ -1,0 +1,10 @@
+@use 'web/src/styles/theme';
+
+.editlink-dialog-wrapper {
+  background: theme.$BACKGROUND;
+  border: 1px solid theme.$FOREGROUND;
+  border-radius: 12px;
+  box-shadow: 3px 3px 5px theme.$DARK;
+  min-width: 350px;
+  padding: 16px 24px;
+}

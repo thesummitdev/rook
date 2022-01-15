@@ -1,2 +1,6 @@
-<div>THIS IS THE EDIT LINK DIALOG</div>
-<div>{{link}}</div>
+<div #dialog
+     class="editlink-dialog-wrapper">
+  <h2>{{dialogTitle}}</h2>
+  <link-form [data]="link"
+             (formSubmit)="onFormSubmit($event)"></link-form>
+</div>

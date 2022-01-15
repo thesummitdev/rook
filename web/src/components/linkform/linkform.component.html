@@ -1,0 +1,53 @@
+<div class="link-form-wrapper">
+  <form #form="ngForm"
+        (ngSubmit)="onSubmit()"
+        class="link-form">
+    <div class="input-wrapper"
+         [class.invalid]="title.errors?.['strictRequired'] && (title.dirty || title.touched)">
+      <div class="field-name">title</div>
+      <input [(ngModel)]="model.title"
+             #title="ngModel"
+             autocomplete="off"
+             name="title"
+             strictRequired
+             type="text">
+    </div>
+    <div class="error-container">
+      <span *ngIf="title.errors?.['strictRequired'] && (title.dirty || title.touched)"
+            [@formErrorMessage]
+            class="error">
+        Add a title
+      </span>
+    </div>
+    <div class="input-wrapper"
+         [class.invalid]="url.errors?.['urlRequired'] && (url.dirty || url.touched)">
+      <div class="field-name">url</div>
+      <input [(ngModel)]="model.url"
+             #url="ngModel"
+             autocomplete="off"
+             name="url"
+             urlRequired
+             type="url"
+             spellcheck="false">
+    </div>
+    <div class="error-container">
+      <span class="error"
+            [@formErrorMessage]
+            *ngIf="url.errors?.['urlRequired'] && (url.dirty || url.touched)">
+        Must be a valid web address
+      </span>
+    </div>
+    <div class="input-wrapper">
+      <div class="field-name">tags</div>
+      <input [(ngModel)]="model.tags"
+             autocomplete="off"
+             name="tags"
+             type="text">
+    </div>
+    <div class="action-row">
+      <button (click)="onCancel()">cancel</button>
+      <button type="submit"
+              [disabled]="form.invalid">{{editing ? 'update' : 'add'}}</button>
+    </div>
+  </form>
+</div>

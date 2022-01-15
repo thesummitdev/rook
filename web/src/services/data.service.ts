@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {catchError, combineLatest, Observable, of, Subject} from 'rxjs';
+import {catchError, combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
 import {map, shareReplay, startWith, switchMap} from 'rxjs/operators';
 import {Link} from 'web/src/models/link';
 import {Preference} from 'web/src/models/preference';
@@ -112,6 +112,25 @@ export class DataService {
     return this.http.put<Link>('/links', JSON.stringify(link))
         .pipe(map((link) => {
           // submit the newly created Link to the new links Observable so
+          // subscribers can act accordingly.
+          this.newLinks$.next(link);
+          return link;
+        }));
+  }
+
+  /**
+   * Adds the link to the user's list of bookmarks.
+   * NOTE: if successful, the new link will be emitted via newLinks$ observable.
+   * @param link - the link to send to the backend to save.
+   * @returns Http observable of the newly created link
+   */
+  updateLink(link: Link): Observable<Link> {
+    if (!link.id) {
+      return EMPTY;
+    }
+    return this.http.patch<Link>(`/links/${link.id}`, JSON.stringify(link))
+        .pipe(map((link) => {
+          // submit the updated Link to the new links Observable so
           // subscribers can act accordingly.
           this.newLinks$.next(link);
           return link;

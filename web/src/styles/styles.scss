@@ -44,7 +44,7 @@ button {
   background: transparent;
   border-radius: 45px;
   border: none;
-  color: theme.$DARK;
+  color: theme.$FOREGROUND;
   cursor: pointer;
   font-family: 'Fira Sans', sans-serif;
   font-size: 14px;
@@ -64,6 +64,10 @@ button {
     background: theme.$ERROR;
     color: theme.$DARK;
     cursor: default;
+  }
+
+  &:disabled {
+    color: theme.$DIM;
   }
 
 }

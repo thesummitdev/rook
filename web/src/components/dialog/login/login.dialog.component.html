@@ -2,22 +2,23 @@
      class="login-dialog">
   <h2 class="login-title">login</h2>
   <form class="login-form"
-        [formGroup]="fg">
+        (ngSubmit)="signIn()"
+        #form="ngForm">
     <input #usernameInput
            autocomplete="username"
            class="login-input"
            type="text"
            placeholder="username"
-           [formControl]="controls.username">
+           [(ngModel)]="model.username">
     <input autocomplete="current-password"
            class="login-input"
            type="password"
            placeholder="password"
-           [formControl]="controls.password">
+           [(ngModel)]="model.password">
     <div class="login-button-wrap">
       <button class="login-button"
-              [disabled]="fg.invalid"
-              (click)="signIn()">Sign in</button>
+              [disabled]="form.invalid"
+              type="submit">Sign in</button>
     </div>
   </form>
 </div>
