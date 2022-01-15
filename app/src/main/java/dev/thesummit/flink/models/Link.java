@@ -26,7 +26,8 @@ public class Link implements BaseModel {
       arraySeperator = " ")
   public String tags;
 
-  @DatabaseField() public String title;
+  @DatabaseField(whereOperator = " ~ ")
+  public String title;
 
   @DatabaseField() public UUID userId;
 

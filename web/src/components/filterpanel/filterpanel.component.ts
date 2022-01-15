@@ -33,6 +33,10 @@ export class FilterPanelComponent {
     this.selectedTags$ = this.filters.getTagsAsObservable();
   }
 
+  onSearchChange(searchTerm: string) {
+    this.filters.setSearch(searchTerm || undefined);
+  }
+
   /**
    * When a tag is added to the selected tags from the tag dropdown.
    * This pushes the new list of tags to the FilterService.

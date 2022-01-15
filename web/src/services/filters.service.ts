@@ -26,10 +26,26 @@ export class FilterService {
   }
 
   /**
+   * Sets the current search term to be used for data requests.
+   * @param search
+   */
+  setSearch(search: string|undefined): void {
+    this.searchTerm$.next(search);
+  }
+
+  /**
    * Returns the current set of tags as an observable.
    * @return Observable of the current tags.
    */
   getTagsAsObservable(): Observable<Set<string>> {
     return this.tags$.asObservable();
+  }
+
+  /**
+   * Returns the current search term as an observable.
+   * @return Observable of the current search term.
+   */
+  getSearchAsObservable(): Observable<string|undefined> {
+    return this.searchTerm$.asObservable();
   }
 }

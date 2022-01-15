@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {catchError, combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
-import {map, shareReplay, startWith, switchMap} from 'rxjs/operators';
+import {debounceTime, map, shareReplay, startWith, switchMap} from 'rxjs/operators';
 import {Link} from 'web/src/models/link';
 import {Preference} from 'web/src/models/preference';
 import {FilterService} from 'web/src/services/filters.service';
@@ -52,13 +52,23 @@ export class DataService {
    *     empty list.
    */
   getLinks(): Observable<Link[]> {
-    return this.filters.getTagsAsObservable().pipe(
-        switchMap((tags) => this.http.request<Link[]>('POST', '/links', {
-          body: JSON.stringify({tags: [...tags].join(' ')}),
-        })),
-        // If the route errors or there is no auth token present, just return
-        // an empty array.
-        catchError((() => of([]))));
+    return combineLatest([
+             this.filters.getSearchAsObservable().pipe(
+                 debounceTime(300),  // debounce user input.
+                 ),
+             this.filters.getTagsAsObservable()
+           ])
+        .pipe(
+            switchMap(([
+                        searchTerm,
+                        tags,
+                      ]) => this.http.request<Link[]>('POST', '/links', {
+              body: JSON.stringify(
+                  {title: searchTerm, tags: [...tags].join(' ')}),
+            })),
+            // If the route errors or there is no auth token present, just
+            // return an empty array.
+            catchError((() => of([]))));
   }
 
   /**

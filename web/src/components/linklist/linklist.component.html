@@ -8,6 +8,9 @@
       <app-link [link]="link"></app-link>
     </li>
 
+    <li class="empty-list"
+        *ngIf="links.length === 0">No results.</li>
+
   </ul>
 
   <ng-template #empty>

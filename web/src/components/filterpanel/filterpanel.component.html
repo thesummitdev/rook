@@ -18,7 +18,9 @@
           C52.074,52.304,52.086,51.671,51.704,51.273z M21.983,40c-10.477,0-19-8.523-19-19s8.523-19,19-19s19,8.523,19,19
           S32.459,40,21.983,40z" />
         </svg>
-        <input class='search-input'
+        <input #searchInput
+               class='search-input'
+               (keyup)="onSearchChange(searchInput.value)"
                type="text"
                placeholder="search for bookmarks">
       </div>
