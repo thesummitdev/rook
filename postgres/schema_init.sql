@@ -49,7 +49,7 @@ CREATE FUNCTION links_modified_timestamp() RETURNS TRIGGER as $lmt$
       RAISE EXCEPTION 'new cannot be null';
     END IF;
 
-    NEW.modified := now(); -- use db timezone, but this should be stored as UTC.
+    NEW.modified = now(); -- use db timezone, but this should be stored as UTC.
     RETURN NEW;
   END;
 $lmt$ LANGUAGE plpgsql;
@@ -57,7 +57,7 @@ $lmt$ LANGUAGE plpgsql;
 -- Trigger for the links table to update modified timestamp using the above
 -- function.
 CREATE TRIGGER links_update_trigger
-  AFTER UPDATE ON links
+  BEFORE UPDATE ON links
   FOR EACH ROW EXECUTE FUNCTION links_modified_timestamp();
 
 -- ------------------------------------------------------------------------------

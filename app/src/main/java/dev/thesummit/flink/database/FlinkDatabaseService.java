@@ -113,7 +113,7 @@ public class FlinkDatabaseService implements DatabaseService {
     for (Field f : entity.getClass().getDeclaredFields()) {
 
       DatabaseField annotation = f.getAnnotation(DatabaseField.class);
-      if (annotation == null) {
+      if (annotation == null || annotation.isSetByDatabase()) {
         fieldIndex++;
         continue;
       }
@@ -132,7 +132,7 @@ public class FlinkDatabaseService implements DatabaseService {
         fields.append(" ");
         fields.append(f.getName());
         fields.append("=?");
-        if (fieldIndex != entity.getClass().getDeclaredFields().length) {
+        if (fieldIndex != entity.getClass().getDeclaredFields().length - 1) {
           fields.append(",");
           fieldIndex++;
         }
@@ -146,7 +146,7 @@ public class FlinkDatabaseService implements DatabaseService {
     StringBuilder query =
         new StringBuilder(
             String.format(
-                "UPDATE %s set %s WHERE id::text='%s' returning id;",
+                "UPDATE %s set %s WHERE id::text='%s' returning *;",
                 tableName, fields.toString(), id));
 
     Connection conn = this.pool.getConnection();
@@ -155,7 +155,7 @@ public class FlinkDatabaseService implements DatabaseService {
       fieldIndex = 1;
       for (Field f : entity.getClass().getDeclaredFields()) {
         DatabaseField annotation = f.getAnnotation(DatabaseField.class);
-        if (annotation == null || annotation.isId()) {
+        if (annotation == null || annotation.isId() || annotation.isSetByDatabase()) {
           continue;
         }
         if (f.get(entity) == null) {
@@ -172,6 +172,7 @@ public class FlinkDatabaseService implements DatabaseService {
         fieldIndex++;
       }
 
+      log.info(statement.toString());
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
           entity.setId(rs.getObject("id", UUID.class));
@@ -179,10 +180,10 @@ public class FlinkDatabaseService implements DatabaseService {
       }
     } catch (IllegalAccessException e) {
       log.debug(
-          "Field was not accessible, check fields marked with @DatbaseField are not private.", e);
+          "Field was not accessible, check fields marked with @DatabaseField are not private.", e);
       return;
     } catch (SQLException e) {
-      log.debug("Unable to patch entity, SQL error occured.", e);
+      log.info("Unable to patch entity, SQL error occured.", e);
     } finally {
       this.pool.releaseConnection(conn);
     }
