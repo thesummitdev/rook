@@ -7,13 +7,15 @@ import dev.thesummit.flink.models.Preference;
 import dev.thesummit.flink.models.User;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseModule extends AbstractModule {
 
-  // TODO: Change these to OS ENV parameters.
-  static final String DB_URL = "jdbc:postgresql://localhost:5432/flink";
-  static final String DB_USER = "flink_system";
-  static final String DB_PASSWORD = "flinksystem";
+  static final Map<String, String> env = System.getenv();
+  static final String DB_URL =
+      env.getOrDefault("POSTGRES_CONNECTION_PATH", "jdbc:postgresql://localhost:5432/flink");
+  static final String DB_USER = env.getOrDefault("POSTGRES_USER", "flink_system");
+  static final String DB_PASSWORD = env.getOrDefault("POSTGRES_PASSWORD", "flinksystem");
   static FlinkConnectionPool pool;
   static HashMap<Class<?>, String> tableMapping;
   static DatabaseService service;
