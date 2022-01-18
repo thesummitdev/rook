@@ -43,6 +43,7 @@ export class SelectComponent {
     this.selectionChanged.emit([...this.selected].sort());
     this.showList = false;
     this.searchText = '';
+    this.focus();
   }
 
   /**

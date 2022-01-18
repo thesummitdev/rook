@@ -40,8 +40,10 @@
        *ngIf="showList">
 
     <ul>
-      <li [class.hidden]="selected.has(option)"
+      <li tabindex="0"
+          [class.hidden]="selected.has(option)"
           *ngFor="let option of ( options | filterList: searchText )"
+          (keydown.enter)="onSelect(option)"
           (click)="onSelect(option)"> {{ option }}</li>
     </ul>
 

@@ -56,10 +56,12 @@
       line-height: 14px;
       color: theme.$FOREGROUND;
 
+      &:focus,
       &:hover {
         background-color: theme.$ACCENT;
         color: theme.$DARK;
         cursor: pointer;
+        outline: none;
       }
     }
   }
