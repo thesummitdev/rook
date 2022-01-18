@@ -46,8 +46,10 @@
              type="text">
     </div>
     <div class="action-row">
-      <button (click)="onCancel()">cancel</button>
+      <button (click)="onCancel()"
+              tabindex="0">cancel</button>
       <button type="submit"
+              tabindex="{{form.invalid ? -1 : 0}}"
               [disabled]="form.invalid">{{editing ? 'update' : 'add'}}</button>
     </div>
   </form>

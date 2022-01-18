@@ -53,6 +53,7 @@ button {
   text-transform: lowercase;
   transition: all 0.3s ease 0s;
 
+  &:focus:not(:disabled),
   &:hover:not(:disabled) {
 
     background: theme.$SUCCESS;

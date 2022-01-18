@@ -1,3 +1,4 @@
+import {A11yModule} from '@angular/cdk/a11y';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {PortalModule} from '@angular/cdk/portal';
 import {NgModule} from '@angular/core';
@@ -20,6 +21,7 @@ import {LoginDialogComponent} from './login/login.dialog.component';
     LinkFormComponent,
   ],
   imports: [
+    A11yModule,
     BrowserModule,
     BrowserAnimationsModule,
     DirectivesModule,
