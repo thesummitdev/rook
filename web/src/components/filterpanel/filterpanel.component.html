@@ -37,7 +37,8 @@
                 *ngFor="let tag of selectedTags$ | async"
                 [content]="tag"></app-pill>
     </div>
-    <app-select [options]="tags$ | async"
+    <app-select #tagSelect
+                [options]="tags$ | async"
                 [selected]="selectedTags$ | async"
                 placeholder="filter by tag"
                 (selectionChanged)="onTagSelected($event)">

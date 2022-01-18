@@ -10,6 +10,8 @@ import {EditLinkComponent} from '../components/dialog/editlink/editlink.dialog.c
 import {Link} from '../models/link';
 import {DIALOG_CONTAINER, LINK} from '../util/injectiontokens';
 
+import {HotkeysService} from './hotkeys.service';
+
 
 @Injectable({providedIn: DialogModule})
 /** Dialog service that displays dialogs to the user. */
@@ -103,8 +105,10 @@ export class DialogService {
       providers: StaticProvider[] = []): Injector {
     return Injector.create({
       parent: this.injector,
-      providers:
-          [{provide: DIALOG_CONTAINER, useValue: containerRef}, ...providers],
+      providers: [
+        {provide: DIALOG_CONTAINER, useValue: containerRef},
+        ...providers,
+      ],
     });
   }
 }

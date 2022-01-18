@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Input, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Link} from 'web/src/models/link';
 
 import {linkFormAnimations} from './linkform.animations';
@@ -13,6 +13,7 @@ export class LinkFormComponent implements AfterViewInit {
   @Input() data: Link|null = null;
   @Output() formSubmit = new EventEmitter<Link|null>();
   editing: boolean = false;
+  @ViewChild('titleInput') titleInput: ElementRef<HTMLInputElement>;
 
   model: Link = {
     url: '',
@@ -27,6 +28,7 @@ export class LinkFormComponent implements AfterViewInit {
       this.model = {...this.data};
       this.editing = true;
     }
+    this.titleInput.nativeElement.focus();
   }
 
   onSubmit(): void {

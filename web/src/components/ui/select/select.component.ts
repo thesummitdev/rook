@@ -17,6 +17,7 @@ export class SelectComponent {
   @Output() selectionChanged: EventEmitter<string[]> = new EventEmitter();
   @ViewChild('root') root: ElementRef;
   @Input() selected: Set<string> = new Set();
+  @ViewChild('input', {static: false}) input: ElementRef<HTMLInputElement>;
 
   showList = false;
   searchText: string = '';
@@ -27,6 +28,10 @@ export class SelectComponent {
    */
   onFocus(_: FocusEvent): void {
     this.showList = true;
+  }
+
+  focus(): void {
+    this.input.nativeElement.focus();
   }
 
   /**

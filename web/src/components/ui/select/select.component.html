@@ -19,7 +19,8 @@
         </g>
       </svg>
     </span>
-    <input [(ngModel)]="searchText"
+    <input #input
+           [(ngModel)]="searchText"
            class="text-input"
            type="text"
            placeholder="{{placeholder}}"

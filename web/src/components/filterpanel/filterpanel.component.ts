@@ -1,9 +1,12 @@
-import {Component} from '@angular/core';
-import {Observable} from 'rxjs';
-import {startWith, switchMap, take} from 'rxjs/operators';
+import {Component, ComponentRef, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Observable, ReplaySubject} from 'rxjs';
+import {startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {DataService} from 'web/src/services/data.service';
 import {FilterService} from 'web/src/services/filters.service';
+import {HotkeysService} from 'web/src/services/hotkeys.service';
 import {UiService} from 'web/src/services/ui.service';
+
+import {SelectComponent} from '../ui/select/select.component';
 
 import {filterPanelAnimations} from './filterpanel.animations';
 
@@ -14,15 +17,19 @@ import {filterPanelAnimations} from './filterpanel.animations';
   animations: [filterPanelAnimations.growHeight],
 })
 /** FilterPanel in the left hand column. */
-export class FilterPanelComponent {
+export class FilterPanelComponent implements OnInit, OnDestroy {
+  @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
+  @ViewChild('tagSelect') tagSelect: SelectComponent;
   tags$: Observable<string[]>;
   selectedTags$: Observable<Set<string>>;
   readonly show: Observable<boolean>;
+  private readonly destroyed$: ReplaySubject<void> = new ReplaySubject();
 
   constructor(
       private readonly data: DataService,
       private readonly filters: FilterService,
       private readonly ui: UiService,
+      private readonly hotkeys: HotkeysService,
   ) {
     this.show = this.ui.getFilterPanelAsObservable();
     this.tags$ = this.data.getNewLinksAsObservable().pipe(
@@ -31,6 +38,23 @@ export class FilterPanelComponent {
     );
 
     this.selectedTags$ = this.filters.getTagsAsObservable();
+  }
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+  }
+
+  ngOnInit(): void {
+    // Setup shortcut for search bar.
+    this.hotkeys.addShortcut({keys: '/'})
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((event) => {
+          if (document.activeElement !== this.searchInput.nativeElement) {
+            this.searchInput.nativeElement.focus();
+          }
+        });
+    this.hotkeys.addShortcut({keys: 'shift.t'})
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((event) => {this.tagSelect.focus()});
   }
 
   onSearchChange(searchTerm: string) {
