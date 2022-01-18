@@ -106,15 +106,13 @@ public class FlinkDatabaseService implements DatabaseService {
   @Override
   public void patch(BaseModel entity) {
     String tableName = this.tableMapping.get(entity.getClass());
-    StringBuilder fields = new StringBuilder();
+    StringJoiner fields = new StringJoiner(",");
 
-    int fieldIndex = 1;
     UUID id = entity.getId();
     for (Field f : entity.getClass().getDeclaredFields()) {
 
       DatabaseField annotation = f.getAnnotation(DatabaseField.class);
       if (annotation == null || annotation.isSetByDatabase()) {
-        fieldIndex++;
         continue;
       }
       if (annotation.isId()) {
@@ -126,16 +124,8 @@ public class FlinkDatabaseService implements DatabaseService {
               e);
           return;
         }
-        fieldIndex++;
-
       } else {
-        fields.append(" ");
-        fields.append(f.getName());
-        fields.append("=?");
-        if (fieldIndex != entity.getClass().getDeclaredFields().length - 1) {
-          fields.append(",");
-          fieldIndex++;
-        }
+        fields.add(f.getName() + "=?"); // Include the parameter =? in the statement for each field.
       }
     }
 
@@ -152,7 +142,7 @@ public class FlinkDatabaseService implements DatabaseService {
     Connection conn = this.pool.getConnection();
     try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
-      fieldIndex = 1;
+      int fieldIndex = 1;
       for (Field f : entity.getClass().getDeclaredFields()) {
         DatabaseField annotation = f.getAnnotation(DatabaseField.class);
         if (annotation == null || annotation.isId() || annotation.isSetByDatabase()) {
