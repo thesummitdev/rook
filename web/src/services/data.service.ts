@@ -1,4 +1,4 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {catchError, combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
 import {debounceTime, map, shareReplay, startWith, switchMap} from 'rxjs/operators';
@@ -6,6 +6,8 @@ import {Link} from 'web/src/models/link';
 import {Preference} from 'web/src/models/preference';
 import {FilterService} from 'web/src/services/filters.service';
 import {LoginService} from 'web/src/services/login.service';
+
+import {ToastService} from './toast.service';
 
 @Injectable({providedIn: 'root'})
 /** Data service that fetches data from the flink api. */
@@ -20,6 +22,7 @@ export class DataService {
       private readonly http: HttpClient,
       private readonly filters: FilterService,
       private readonly login: LoginService,
+      private readonly toast: ToastService,
   ) {
     // Setup the preferences observable. This observable will keep the prefs
     // up-to-date for login / logout actions.
@@ -120,12 +123,18 @@ export class DataService {
    */
   createLink(link: Link): Observable<Link> {
     return this.http.put<Link>('/links', JSON.stringify(link))
-        .pipe(map((link) => {
-          // submit the newly created Link to the new links Observable so
-          // subscribers can act accordingly.
-          this.newLinks$.next(link);
-          return link;
-        }));
+        .pipe(
+            map((link) => {
+              // submit the newly created Link to the new links Observable so
+              // subscribers can act accordingly.
+              this.newLinks$.next(link);
+              return link;
+            }),
+            catchError((err: HttpErrorResponse) => {
+              this.toast.showError(err.error.title);
+              return EMPTY;
+            }),
+        );
   }
 
   /**
