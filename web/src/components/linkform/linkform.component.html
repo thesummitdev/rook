@@ -1,11 +1,11 @@
 <div class="link-form-wrapper">
   <form #form="ngForm"
-        (ngSubmit)="onSubmit()"
         class="link-form">
     <div class="input-wrapper"
          [class.invalid]="title.errors?.['strictRequired'] && (title.dirty || title.touched)">
       <div class="field-name">title</div>
-      <input [(ngModel)]="model.title"
+      <input tabindex="0"
+             [(ngModel)]="model.title"
              #title="ngModel"
              #titleInput
              autocomplete="off"
@@ -23,7 +23,8 @@
     <div class="input-wrapper"
          [class.invalid]="url.errors?.['urlRequired'] && (url.dirty || url.touched)">
       <div class="field-name">url</div>
-      <input [(ngModel)]="model.url"
+      <input tabindex="0"
+             [(ngModel)]="model.url"
              #url="ngModel"
              autocomplete="off"
              name="url"
@@ -38,19 +39,43 @@
         Must be a valid web address
       </span>
     </div>
-    <div class="input-wrapper">
-      <div class="field-name">tags</div>
-      <input [(ngModel)]="model.tags"
-             autocomplete="off"
-             name="tags"
-             type="text">
-    </div>
-    <div class="action-row">
-      <button (click)="onCancel()"
-              tabindex="0">cancel</button>
-      <button type="submit"
-              tabindex="{{form.invalid ? -1 : 0}}"
-              [disabled]="form.invalid">{{editing ? 'update' : 'add'}}</button>
+    <div class="tags-input">
+      <div class="input-wrapper">
+        <div class="field-name">tags</div>
+        <input #tagsInput
+               tabindex="0"
+               [(ngModel)]="model.tags"
+               autocomplete="off"
+               name="tags"
+               type="text">
+
+      </div>
+      <ng-container
+                    *ngIf="(tagsInput.value | lastword) && 
+                           (tagOptions$ | async | filterList: (model.tags | lastword) ) as options">
+        <div *ngIf="options.length > 0"
+             class="options-list">
+
+          <ul>
+            <ng-container *ngFor="let option of ( options | filterList: (model.tags | lastword) )">
+              <li tabindex="0"
+                  *ngIf="option"
+                  (keydown.enter)="appendTag($event, option)"
+                  (click)="appendTag($event, option)">
+                {{ option }}
+              </li>
+            </ng-container>
+          </ul>
+
+        </div>
+      </ng-container>
     </div>
   </form>
+  <div class="action-row">
+    <button (click)="onCancel($event)"
+            tabindex="-1">cancel</button>
+    <button (click)="onSubmit()"
+            tabindex="{{form.invalid ? -1 : 0}}"
+            [disabled]="form.invalid">{{editing ? 'update' : 'add'}}</button>
+  </div>
 </div>

@@ -36,6 +36,8 @@ export abstract class DialogComponent<T> {
    */
   protected listenForOutsideClicks(event: PointerEvent): void {
     if (!this.rootEl?.nativeElement.contains(event.target as Node)) {
+      console.log(event);
+      debugger;
       this.cancel();
     }
   }

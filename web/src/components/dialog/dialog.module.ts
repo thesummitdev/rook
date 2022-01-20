@@ -6,6 +6,7 @@ import {FormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DirectivesModule} from 'web/src/directives/directives.module';
+import {PipesModule} from 'web/src/pipes/pipes.module';
 
 import {LinkFormComponent} from '../linkform/linkform.component';
 
@@ -28,6 +29,7 @@ import {LoginDialogComponent} from './login/login.dialog.component';
     FormsModule,
     OverlayModule,
     PortalModule,
+    PipesModule,
   ],
 })
 export class DialogModule {

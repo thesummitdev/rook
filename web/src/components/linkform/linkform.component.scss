@@ -1,5 +1,66 @@
 @use 'web/src/styles/theme';
 
+.tags-input {
+
+  .options-list {
+    display: none;
+  }
+
+  &:focus-within .options-list {
+    display: block;
+  }
+
+}
+
+.options-list {
+
+  background-color: theme.$BACKGROUND;
+  border: 1px solid theme.$DARK;
+  max-height: 30vh;
+  margin-left: 5px;
+  margin-top: 2px;
+  overflow-y: auto;
+  position: absolute;
+  width: 85%;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin: 0;
+      padding: 12px 12px 12px 35px;
+      font-family: 'Fira Mono', monospace;
+      font-size: 14px;
+      line-height: 14px;
+      color: theme.$FOREGROUND;
+
+      &:focus,
+      &:hover {
+        background-color: theme.$ACCENT;
+        color: theme.$DARK;
+        cursor: pointer;
+        outline: none;
+      }
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: theme.$BRIGHT;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: theme.$ACCENT;
+  }
+
+}
+
+
 .link-form {
   display: flex;
   flex-flow: column;
@@ -36,14 +97,14 @@
 
   }
 
-  .action-row {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-end;
-    padding: 8px 12px;
 
-  }
+}
 
+.action-row {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  padding: 8px 12px;
 
 }
 
