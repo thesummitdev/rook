@@ -10,6 +10,7 @@ import {PipesModule} from 'web/src/pipes/pipes.module';
 
 import {LinkFormComponent} from '../linkform/linkform.component';
 
+import {CreateAccountDialogComponent} from './createaccount/createaccount.dialog.component';
 import {DialogContainerComponent} from './dialog.container.component';
 import {EditLinkComponent} from './editlink/editlink.dialog.component';
 import {LoginDialogComponent} from './login/login.dialog.component';
@@ -17,6 +18,7 @@ import {LoginDialogComponent} from './login/login.dialog.component';
 @NgModule({
   declarations: [
     DialogContainerComponent,
+    CreateAccountDialogComponent,
     LoginDialogComponent,
     EditLinkComponent,
     LinkFormComponent,

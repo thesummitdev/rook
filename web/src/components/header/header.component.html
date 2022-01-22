@@ -21,7 +21,8 @@
               (click)="showLogin($event)">login</span>
         <ng-container *ngIf="allowCreateNewUsers$ | async">
           <span aria-label="Create a new account"
-                role="button">create account</span>
+                role="button"
+                (click)="showCreateAccount($event)">create account</span>
         </ng-container>
       </ng-template>
     </div>

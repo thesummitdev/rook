@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
-import {Observable} from 'rxjs';
-import {map, shareReplay, take} from 'rxjs/operators';
+import {EMPTY, Observable} from 'rxjs';
+import {map, shareReplay, switchMap, take} from 'rxjs/operators';
 import {User} from 'web/src/models/user';
 import {DataService} from 'web/src/services/data.service';
 import {DialogService} from 'web/src/services/dialog.service';
@@ -29,6 +29,27 @@ export class HeaderComponent {
     this.allowCreateNewUsers$ = this.data.getPreferences().pipe(
         map((prefs) => prefs.get('allowNewUsers')?.value === 'true'),
     );
+  }
+
+  showCreateAccount(event: MouseEvent): void {
+    event.stopPropagation();
+    this.dialog.showCreateAccountDialog()
+        .resultAsObservable()
+        .pipe(
+            switchMap((dialog) => {
+              if (!dialog.cancelled) {
+                const {username, password} = dialog.result;
+                return this.data.createUser({username, password})
+                    .pipe(
+                        switchMap(
+                            (user) =>
+                                this.login.attemptSignIn(username, password)),
+                    );
+              }
+              return EMPTY;
+            }),
+            take(1))
+        .subscribe();
   }
 
   showLogin(event: MouseEvent): void {

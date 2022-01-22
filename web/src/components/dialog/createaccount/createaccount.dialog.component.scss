@@ -1,0 +1,82 @@
+@use 'web/src/styles/theme';
+
+.create-account-dialog {
+  background-color: theme.$BACKGROUND;
+  border-radius: 12px;
+  box-shadow: 3px 3px 5px theme.$DARK;
+  min-width: 350px;
+  padding: 16px 24px;
+}
+
+.create-account-form {
+  align-items: center;
+  display: flex;
+  flex-flow: column;
+}
+
+.create-account-title {
+  color: theme.$DARK;
+  font-size: 24px;
+  margin-top: 0px;
+}
+
+.create-account-input {
+  color: theme.$DARK;
+  font-size: 16px;
+  padding: 0.5em 0.5em;
+  border: 2px solid theme.$DIM;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  outline: none;
+  width: 80%;
+
+  &::placeholder {
+    color: theme.$DARK;
+  }
+
+  &:focus {
+    border: 2px solid theme.$ACCENT;
+  }
+}
+
+
+.create-account-button-wrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  width: 80%;
+}
+
+.create-account-button {
+  width: 100%;
+  height: 45px;
+  font-size: 14px;
+  text-transform: lowercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: theme.$DARK;
+  background-color: theme.$BRIGHT;
+  border: none;
+  border-radius: 45px;
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    background-color: theme.$ACCENT;
+    color: theme.$DARK;
+  }
+
+  &:disabled {
+    background: theme.$DIM;
+    color: theme.$BRIGHT;
+  }
+
+  &:disabled:hover {
+    cursor: default;
+    background: theme.$ERROR;
+    color: theme.$BRIGHT;
+  }
+}

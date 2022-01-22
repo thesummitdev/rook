@@ -5,6 +5,7 @@ import {DialogContainer, DialogContainerComponent} from 'web/src/components/dial
 import {DialogModule} from 'web/src/components/dialog/dialog.module';
 import {LoginDialogComponent} from 'web/src/components/dialog/login/login.dialog.component';
 
+import {CreateAccountDialogComponent} from '../components/dialog/createaccount/createaccount.dialog.component';
 import {DialogComponent} from '../components/dialog/dialog.component';
 import {EditLinkComponent} from '../components/dialog/editlink/editlink.dialog.component';
 import {Link} from '../models/link';
@@ -29,6 +30,14 @@ export class DialogService {
    */
   showLoginDialog(): LoginDialogComponent {
     return this.attach(LoginDialogComponent);
+  }
+
+  /**
+   * Opens the create account dialog component.
+   * @return a reference to the open dialog.
+   */
+  showCreateAccountDialog(): CreateAccountDialogComponent {
+    return this.attach(CreateAccountDialogComponent);
   }
 
   showAddLinkDialog(): EditLinkComponent {

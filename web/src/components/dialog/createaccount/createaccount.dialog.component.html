@@ -1,0 +1,25 @@
+<div #dialog
+     cdkTrapFocus
+     class="create-account-dialog">
+  <h2 class="create-account-title">new account</h2>
+  <form class="create-account-form"
+        (ngSubmit)="submit()"
+        #form="ngForm">
+    <input #usernameInput
+           autocomplete="username"
+           class="create-account-input"
+           type="text"
+           placeholder="username"
+           [(ngModel)]="model.username">
+    <input autocomplete="new-password"
+           class="create-account-input"
+           type="password"
+           placeholder="password"
+           [(ngModel)]="model.password">
+    <div class="create-account-button-wrap">
+      <button class="create-account-button"
+              [disabled]="form.invalid"
+              type="submit">create</button>
+    </div>
+  </form>
+</div>

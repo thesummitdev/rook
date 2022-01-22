@@ -7,6 +7,8 @@ import {Preference} from 'web/src/models/preference';
 import {FilterService} from 'web/src/services/filters.service';
 import {LoginService} from 'web/src/services/login.service';
 
+import {User} from '../models/user';
+
 import {ToastService} from './toast.service';
 
 @Injectable({providedIn: 'root'})
@@ -113,6 +115,15 @@ export class DataService {
                                  // the change everywhere.
           return pref;
         }));
+  }
+
+  /**
+   * Requests a new user account from the backend.
+   * @param user - the user to send to the backend to save.
+   * @returns Http observable of the newly created user
+   */
+  createUser(user: User): Observable<User> {
+    return this.http.put<User>('/users', JSON.stringify(user));
   }
 
   /**
