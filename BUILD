@@ -21,6 +21,7 @@ download_pkgs(
     name = "image_deps",
     image_tar = "@debian_stable_linux_amd64//image",
     packages = [
+        "locales",
         "openjdk-11-jre",  # Only the Java runtime, JDK is not needed for production container.
         "postgresql",
         "postgresql-contrib",
@@ -52,12 +53,15 @@ container_image(
     env = {
         "POSTGRES_USER": "flink_system",
         "POSTGRES_PASSWORD": "flinksystem",
+        "PGDATA":"/usr/local/pgsql/data",
     },
     files = [
         "container_init.sh",
-        "postgres/database_init.sql",
+        "postgres/user_init.sql",
         "postgres/database_test_data.sql",
         "postgres/schema_init.sql",
+        "postgres/populate.sql",
+        "postgres/database_clean.sql",
         ":flink_deploy.jar",
     ],
     ports = [

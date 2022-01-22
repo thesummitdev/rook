@@ -1,9 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ---------------------- TABLE DEFINITIONS -------------------------------------
-DROP TABLE IF EXISTS links;
-DROP TABLE IF EXISTS preferences;
-DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS users(
   id                    uuid            NOT NULL DEFAULT uuid_generate_v4(),
@@ -30,14 +27,23 @@ CREATE TABLE IF NOT EXISTS preferences(
   value     varchar(100)                NOT NULL,
   userId    uuid                        NULL,
   PRIMARY KEY ( id ),
-  CONSTRAINT fk_userid FOREIGN KEY ( userId ) REFERENCES users(id)
+  CONSTRAINT fk_userid FOREIGN KEY ( userId ) REFERENCES users(id),
+  UNIQUE (key, userId) -- Pref for any given user / key combination should be unique.
+);
+
+CREATE TABLE IF NOT EXISTS system(
+  key       varchar(100)                NOT NULL,
+  value     varchar(100)                NOT NULL,
+  PRIMARY KEY ( key )
 );
 
 -- ------------------------------------------------------------------------------
 
 -- ---------------------- FUNCTION / TRIGGER DEFINITIONS ------------------------
-DROP FUNCTION IF EXISTS links_modified_timestamp;
+
+-- First drop the function and trigger so it can be re-added with any updates.
 DROP TRIGGER IF EXISTS links_update_trigger on links;
+DROP FUNCTION IF EXISTS links_modified_timestamp;
 
 -- Function that automatically updates the modified field with the current
 -- utc timestamp.
