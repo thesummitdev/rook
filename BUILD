@@ -61,7 +61,6 @@ container_image(
         "postgres/database_test_data.sql",
         "postgres/schema_init.sql",
         "postgres/populate.sql",
-        "postgres/database_clean.sql",
         ":flink_deploy.jar",
     ],
     ports = [
