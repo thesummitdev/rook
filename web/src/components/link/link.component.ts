@@ -3,6 +3,7 @@ import {EMPTY, switchMap, take} from 'rxjs';
 import {Link} from 'web/src/models/link';
 import {DataService} from 'web/src/services/data.service';
 import {DialogService} from 'web/src/services/dialog.service';
+import {FilterService} from 'web/src/services/filters.service';
 import {ToastService} from 'web/src/services/toast.service';
 
 
@@ -19,6 +20,7 @@ export class LinkComponent implements AfterViewInit {
       private readonly data: DataService,
       private readonly toast: ToastService,
       private readonly dialog: DialogService,
+      private readonly filters: FilterService,
   ) {}
 
   ngAfterViewInit() {
@@ -33,6 +35,12 @@ export class LinkComponent implements AfterViewInit {
     event.stopPropagation();
     this.data.deleteLink(this.link).pipe(take(1)).subscribe(() => {
       this.toast.showWarning('Successfully removed!');
+    });
+  }
+
+  addTag(tag: string) {
+    this.filters.getTagsAsObservable().pipe(take(1)).subscribe((tags) => {
+      this.filters.setTags(tags.add(tag));
     });
   }
 

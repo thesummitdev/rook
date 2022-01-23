@@ -14,7 +14,8 @@
              target="_blank">{{link.url}}</a>
         </span>
         <div class="link-tags">
-          <span class="tag"
+          <span (click)="addTag(tag)"
+                class="tag"
                 *ngFor="let tag of tags">{{tag}}</span>
         </div>
         <div class="link-date">
