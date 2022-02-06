@@ -28,7 +28,7 @@ public class FlinkConnectionPool implements ConnectionPool {
     return new FlinkConnectionPool(url, user, password, pool);
   }
 
-  public FlinkConnectionPool(String url, String user, String password, ArrayList pool) {
+  public FlinkConnectionPool(String url, String user, String password, ArrayList<Connection> pool) {
     this.url = url;
     this.user = user;
     this.password = password;
@@ -73,7 +73,7 @@ public class FlinkConnectionPool implements ConnectionPool {
    */
   @Override
   public boolean releaseConnection(Connection connection) {
-    if (this.connectionPool.size() >= this.MAX_POOL_SIZE) {
+    if (this.connectionPool.size() >= MAX_POOL_SIZE) {
       try {
         log.info("ConnectionPool size exceeded, closing connection rather than returning to pool.");
         connection.close();
