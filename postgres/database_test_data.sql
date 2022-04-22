@@ -1,4 +1,4 @@
-INSERT INTO USERS (username) VALUES ('flink_system');
+INSERT INTO USERS (username) VALUES ('rook_system');
 INSERT INTO USERS (username, userencryptedpassword, usersalt) 
   VALUES ('tyler', 'GDDhPB/h//hXtcCbme45iS6/KgA=','OLnkz/DcTKM=');
 

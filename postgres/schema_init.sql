@@ -67,5 +67,5 @@ CREATE TRIGGER links_update_trigger
   FOR EACH ROW EXECUTE FUNCTION links_modified_timestamp();
 
 -- ------------------------------------------------------------------------------
-GRANT ALL privileges on DATABASE flink to flink_system;
-GRANT ALL privileges on ALL TABLES IN SCHEMA public to flink_system;
+GRANT ALL privileges on DATABASE rook to rook_system;
+GRANT ALL privileges on ALL TABLES IN SCHEMA public to rook_system;

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "bazel run :flink-dev",
+    "start": "bazel run :rook-dev",
     "build": "bazel build :build",
     "test": "bazel test :test",
     "postinstall": "patch-package"

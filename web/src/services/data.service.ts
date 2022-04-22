@@ -12,7 +12,7 @@ import {User} from '../models/user';
 import {ToastService} from './toast.service';
 
 @Injectable({providedIn: 'root'})
-/** Data service that fetches data from the flink api. */
+/** Data service that fetches data from the rook api. */
 export class DataService {
   // Emit any newly created links individually so that components don't have
   // to refresh the entire list when a new link is added.
@@ -103,7 +103,7 @@ export class DataService {
   /**
    * Sets a preference in the backend database.
    * NOTE: Some prefs are application wide, and some are user specific.
-   * See `//app/src/main/java/dev/thesummit/flink/models/Preference.java` for
+   * See `//app/src/main/java/dev/thesummit/rook/models/Preference.java` for
    * the list of app specific prefs.
    * @param pref - the new pref to save.
    * @returns Http obsedrvable of the new pref.

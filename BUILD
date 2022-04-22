@@ -5,10 +5,10 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 load("@io_bazel_rules_docker//docker/package_managers:download_pkgs.bzl", "download_pkgs")
 load("@io_bazel_rules_docker//docker/package_managers:install_pkgs.bzl", "install_pkgs")
 
-package(default_visibility = ["//:flink_app"])
+package(default_visibility = ["//:rook_app"])
 
 package_group(
-    name = "flink_app",
+    name = "rook_app",
     packages = [
         "//...",
         "//app/...",
@@ -51,8 +51,8 @@ container_image(
         "./container_init.sh",
     ],
     env = {
-        "POSTGRES_USER": "flink_system",
-        "POSTGRES_PASSWORD": "flinksystem",
+        "POSTGRES_USER": "rook_system",
+        "POSTGRES_PASSWORD": "rooksystem",
         "PGDATA":"/usr/local/pgsql/data",
     },
     files = [
@@ -61,24 +61,24 @@ container_image(
         "postgres/database_test_data.sql",
         "postgres/schema_init.sql",
         "postgres/populate.sql",
-        ":flink_deploy.jar",
+        ":rook_deploy.jar",
     ],
     ports = [
         "8000",  # Expose the 8000 port the server listens on.
     ],
-    repository = "thesummit/flink",
+    repository = "thesummit/rook",
     stamp = "@io_bazel_rules_docker//stamp:always",
     tags = ["latest"],
 )
 
-# The actual server binary. bazel run //:flink can run this locally, but a local postgres instance
+# The actual server binary. bazel run //:rook can run this locally, but a local postgres instance
 # is required. See the postgres/* scripts for setting up a development database.
 java_binary(
-    name = "flink",
+    name = "rook",
     srcs = [
-        "app/src/main/java/dev/thesummit/flink/FlinkApplication.java",
+        "app/src/main/java/dev/thesummit/rook/RookApplication.java",
     ],
-    main_class = "dev.thesummit.flink.FlinkApplication",
+    main_class = "dev.thesummit.rook.RookApplication",
     resources =
         [
             ":web_bundle",
@@ -86,10 +86,10 @@ java_binary(
             "//web/src/assets:static_assets",
         ],
     deps = [
-        "//app/src/main/java/dev/thesummit/flink/auth",
-        "//app/src/main/java/dev/thesummit/flink/database:database_module",
-        "//app/src/main/java/dev/thesummit/flink/handlers",
-        "//app/src/main/java/dev/thesummit/flink/models",
+        "//app/src/main/java/dev/thesummit/rook/auth",
+        "//app/src/main/java/dev/thesummit/rook/database:database_module",
+        "//app/src/main/java/dev/thesummit/rook/handlers",
+        "//app/src/main/java/dev/thesummit/rook/models",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_google_inject_guice",
         "@maven//:commons_validator_commons_validator",
@@ -102,18 +102,18 @@ pom_file(
     name = "pom",
     testonly = True,
     targets = [
-        ":flink",
-        "//app/src/main/java/dev/thesummit/flink/database:database_module",
-        "//app/src/main/java/dev/thesummit/flink/database:connection_pool",
-        "//app/src/main/java/dev/thesummit/flink/database:database_service",
-        "//app/src/main/java/dev/thesummit/flink/database:database_field",
-        "//app/src/main/java/dev/thesummit/flink/auth",
-        "//app/src/main/java/dev/thesummit/flink/models",
-        "//app/src/main/java/dev/thesummit/flink/handlers",
-        "//app/src/test/java/dev/thesummit/flink/handlers:LinkHandlerTest",
-        "//app/src/test/java/dev/thesummit/flink/handlers:AuthHandlerTest",
-        "//app/src/test/java/dev/thesummit/flink/handlers:TagHandlerTest",
-        "//app/src/test/java/dev/thesummit/flink/handlers:UserHandlerTest",
+        ":rook",
+        "//app/src/main/java/dev/thesummit/rook/database:database_module",
+        "//app/src/main/java/dev/thesummit/rook/database:connection_pool",
+        "//app/src/main/java/dev/thesummit/rook/database:database_service",
+        "//app/src/main/java/dev/thesummit/rook/database:database_field",
+        "//app/src/main/java/dev/thesummit/rook/auth",
+        "//app/src/main/java/dev/thesummit/rook/models",
+        "//app/src/main/java/dev/thesummit/rook/handlers",
+        "//app/src/test/java/dev/thesummit/rook/handlers:LinkHandlerTest",
+        "//app/src/test/java/dev/thesummit/rook/handlers:AuthHandlerTest",
+        "//app/src/test/java/dev/thesummit/rook/handlers:TagHandlerTest",
+        "//app/src/test/java/dev/thesummit/rook/handlers:UserHandlerTest",
     ],
     template_file = "pom.template",
 )

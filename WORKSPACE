@@ -1,5 +1,5 @@
 workspace(
-    name = "flink",
+    name = "rook",
     managed_directories = {"@npm": ["node_modules"]},
 )
 

@@ -1,6 +1,6 @@
 @use 'web/src/styles/theme';
 
-.flink-app {
+.rook-app {
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -43,7 +43,7 @@
   }
 }
 
-.right-column{
+.right-column {
   // Make right column fill available horizontal space.
   flex-grow: 1;
   max-width: 400px;

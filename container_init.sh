@@ -15,19 +15,19 @@ usermod -a -G postgres $POSTGRES_USER
 
 if [[ -v RESET_DATABASE ]]; then
   echo "reset & drop database cluster was requested."
-  pg_dropcluster --stop 13 flink_system
+  pg_dropcluster --stop 13 rook_system
   echo "database reset complete."
 fi
 
-# Create a cluster for the flink system.
-pg_createcluster -u $POSTGRES_USER -d $PGDATA -p 5432 13 flink_system
+# Create a cluster for the rook system.
+pg_createcluster -u $POSTGRES_USER -d $PGDATA -p 5432 13 rook_system
 
 echo
 echo "starting postgres..."
 echo
 
 # Initialize postgres cluster.
-pg_ctlcluster start 13 flink_system
+pg_ctlcluster start 13 rook_system
 pg_lsclusters
 echo
 echo "postgres service started."
@@ -43,31 +43,31 @@ echo
 echo "creating database..."
 echo
 
-sudo -u $POSTGRES_USER createdb flink
+sudo -u $POSTGRES_USER createdb rook
 
 echo
 echo "updating postgres user..."
 echo
 
-sudo -u $POSTGRES_USER psql -d flink -f ./user_init.sql
+sudo -u $POSTGRES_USER psql -d rook -f ./user_init.sql
 
 echo
-echo "applying flink schema to database..."
+echo "applying rook schema to database..."
 echo
 
-sudo -u $POSTGRES_USER psql -d flink -f ./schema_init.sql
+sudo -u $POSTGRES_USER psql -d rook -f ./schema_init.sql
 
-if [[ -v FLINK_ENABLE_TEST_DATA ]]; then
+if [[ -v rook_ENABLE_TEST_DATA ]]; then
   echo "Test data was requested."
-  sudo -u $POSTGRES_USER psql -d flink -f ./database_test_data.sql
+  sudo -u $POSTGRES_USER psql -d rook -f ./database_test_data.sql
 fi
 
-sudo -u $POSTGRES_USER psql -d flink -f ./populate.sql
+sudo -u $POSTGRES_USER psql -d rook -f ./populate.sql
 
 echo
 echo "database setup completed."
 echo
 
-# Environment is ready, run the flink application server
-echo "starting flink application server..."
-sudo -u flink_system java -jar flink_deploy.jar
+# Environment is ready, run the rook application server
+echo "starting rook application server..."
+sudo -u rook_system java -jar rook_deploy.jar
