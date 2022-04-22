@@ -138,12 +138,6 @@ public class LinkHandler {
 
     Link link = this.dbService.get(Link.class, UUID.fromString(resourceId));
 
-    log.info("PATCH DEBUG");
-    log.info(link.toString());
-    log.info(link.userId.toString());
-    log.info(user.getId().toString());
-    log.info("PATCH DEBUG");
-
     if (link == null || !user.id.equals(link.userId)) {
       ctx.status(404);
       ctx.result("Link not found.");
