@@ -1,7 +1,7 @@
-# f.link
+# rook
 
-F.link is a open source bookmark service built to provide a performant solution to organize,
-tag and search bookmarks. F.link bundles a high throughput transactional database (postgresql)
+Rook is a open source bookmark service built to provide a performant solution to organize,
+tag and search bookmarks. Rook bundles a high throughput transactional database (postgresql)
 with a Java API server and lightweight web application.
 
 A docker image will be eventually be provided to self-host the entire application with
