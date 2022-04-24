@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  rook:
+    image: "thesummit/rook:latest"
+    ports:
+      - "8000:8000"
+    volumes:
+      - "/tmp/postgresql/data:/usr/local/pgsql/data"
+      - "/tmp/postgresql/etc:/etc/postgresql/"
+    environment:
+      - "ENABLE_TEST_DATA=1"

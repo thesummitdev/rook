@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# setup locale
-# TODO get locale correctly set for postgres.
-# sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
-# locale-gen
-#
-# localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
-# LANG="en_US.utf8"
+# Setup locale.
+sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+locale-gen
+
+# Drop the default cluster that is installed with postgres.
+pg_dropcluster --stop 13 main
 
 # Add a user to run the application as.
 useradd $POSTGRES_USER
