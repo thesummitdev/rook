@@ -33,12 +33,15 @@ public class RookDatabaseService implements DatabaseService {
 
   @Override
   public void put(BaseModel entity) {
+
+    entity.setId(UUID.randomUUID());
+
     String tableName = this.tableMapping.get(entity.getClass());
 
     String fields =
         this.getQueryFieldsString(
-            entity.getClass(), /*includeId= */ false, /* includeFieldsSetByDatabase= */ false);
-    ArrayList<Object> values = this.getQueryFieldValues(entity, /*includeId= */ false, false);
+            entity.getClass(), /*includeId= */ true, /* includeFieldsSetByDatabase= */ false);
+    ArrayList<Object> values = this.getQueryFieldValues(entity, /*includeId= */ true, false);
     String valuePlaceholders = "?";
     if (values.size() > 1) {
       valuePlaceholders = "?,".repeat(values.size() - 1) + "?";
@@ -70,11 +73,10 @@ public class RookDatabaseService implements DatabaseService {
         }
         fieldIndex++;
       }
-
-      log.debug("PUT SQL: ", statement.toString());
+      log.debug(String.format("PUT SQL: %s", statement.toString()));
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
-          entity.setId(rs.getObject("id", UUID.class));
+          // entity.setId(rs.getObject("id", UUID.class));
 
           for (Field f : entity.getClass().getDeclaredFields()) {
 
@@ -98,7 +100,6 @@ public class RookDatabaseService implements DatabaseService {
     } catch (SQLException e) {
       log.info("Unable to create entity, SQL error occured.", e);
     } finally {
-
       this.pool.releaseConnection(conn);
     }
   }
@@ -373,7 +374,7 @@ public class RookDatabaseService implements DatabaseService {
     }
 
     String sql = query.toString();
-    log.debug(sql);
+    log.info(sql);
     Connection conn = this.pool.getConnection();
     try (PreparedStatement statement = conn.prepareStatement(sql)) {
 
@@ -429,6 +430,7 @@ public class RookDatabaseService implements DatabaseService {
             results.add(entity);
           } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // Couldn't call fromResultSet
+            e.printStackTrace();
             return null;
           }
         }

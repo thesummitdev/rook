@@ -52,9 +52,10 @@ public class User implements BaseModel {
               rs.getString("username"),
               rs.getString("userencryptedpassword"),
               rs.getString("usersalt"));
-      u.setId(rs.getObject("id", UUID.class));
+      u.setId(UUID.fromString(rs.getString("id")));
       return u;
     } catch (SQLException e) {
+      e.printStackTrace();
       return null;
     }
   }

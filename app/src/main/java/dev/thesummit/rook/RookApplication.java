@@ -27,13 +27,26 @@ public class RookApplication {
   private static Map<String, String> ENV = System.getenv();
   private static Integer PORT = Integer.parseInt(ENV.getOrDefault("ROOK_PORT", "8000"));
 
+  private static boolean RESET_DATABASE_FLAG = false;
+
   public static void main(String[] args) throws IOException {
+
+    for (String arg : args) {
+      if (arg.contains("resetdb")) {
+        String value = arg.split("=")[1];
+        log.info(arg.split("=")[1]);
+        if (value != null) {
+          RESET_DATABASE_FLAG = Boolean.parseBoolean(value);
+        }
+      }
+    }
 
     // Set application time zone to UTC to match the database.
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
     Injector injector =
-        Guice.createInjector(new FlagModule(args), new DatabaseModule(), new AuthModule());
+        Guice.createInjector(
+            new FlagModule(args), new DatabaseModule(RESET_DATABASE_FLAG), new AuthModule());
 
     // Verify & Check for database updates before starting the server.
     injector.getInstance(PostgresSchemaManager.class).verifySchema();

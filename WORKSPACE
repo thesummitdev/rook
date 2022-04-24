@@ -40,7 +40,7 @@ maven_install(
         "io.javalin:javalin-bundle:4.1.1",
         "io.javalin:javalin:4.1.1",
         "org.json:json:20210307",
-        "org.postgresql:postgresql:42.2.20.jre7",
+        "org.xerial:sqlite-jdbc:3.36.0.3",
         "org.slf4j:slf4j-api:1.7.30",
         maven.artifact(
             "org.junit.jupiter",

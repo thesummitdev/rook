@@ -4,34 +4,28 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 public class RookConnectionPool implements ConnectionPool {
 
   private static Logger log = Logger.getLogger(RookConnectionPool.class.getName());
 
-  private String url;
-  private String user;
-  private String password;
+  private String path;
   private ArrayList<Connection> connectionPool;
   private ArrayList<Connection> usedConnections = new ArrayList<Connection>(INITIAL_POOL_SIZE);
-  private static int INITIAL_POOL_SIZE = 5;
+  private static int INITIAL_POOL_SIZE = 1;
   private static int MAX_POOL_SIZE = 10;
 
-  public static RookConnectionPool create(String url, String user, String password)
-      throws SQLException {
+  public static RookConnectionPool create(String path) throws SQLException {
     ArrayList<Connection> pool = new ArrayList<Connection>();
     for (int i = 0; i < INITIAL_POOL_SIZE; i++) {
-      pool.add(createConnection(url, user, password));
+      pool.add(createConnection(path));
     }
-    return new RookConnectionPool(url, user, password, pool);
+    return new RookConnectionPool(path, pool);
   }
 
-  public RookConnectionPool(String url, String user, String password, ArrayList<Connection> pool) {
-    this.url = url;
-    this.user = user;
-    this.password = password;
+  public RookConnectionPool(String path, ArrayList<Connection> pool) {
+    this.path = path;
     this.connectionPool = pool;
   }
 
@@ -47,10 +41,11 @@ public class RookConnectionPool implements ConnectionPool {
    */
   @Override
   public Connection getConnection() {
+    log.info(String.format("Current connection pool size: %s", this.connectionPool.size()));
     if (this.connectionPool.size() == 0) {
       try {
         log.info("No available pool connections, attempting to create a new connection...");
-        this.connectionPool.add(createConnection(this.url, this.user, this.password));
+        this.connectionPool.add(createConnection(this.path));
       } catch (SQLException e) {
         throw new RuntimeException(
             "No available pool connections & cannot create a new connection.", e);
@@ -89,19 +84,12 @@ public class RookConnectionPool implements ConnectionPool {
   /**
    * Creates a new jdbc connection.
    *
-   * @param url The connection url.
-   * @param user the username to authenticate with.
-   * @param password the password to authenticate with.
+   * @param path The connection path.
    * @return The JDBC connection object.
    * @throws SQLException if a JDBC connection is not successfully made.
    */
-  private static Connection createConnection(String url, String user, String password)
-      throws SQLException {
-    Properties connectionProps = new Properties();
-    connectionProps.put("user", user);
-    connectionProps.put("password", password);
-
-    return DriverManager.getConnection(url, connectionProps);
+  private static Connection createConnection(String path) throws SQLException {
+    return DriverManager.getConnection(path);
   }
 
   /**
@@ -114,29 +102,11 @@ public class RookConnectionPool implements ConnectionPool {
   }
 
   /**
-   * Returns the connection string for this ConnectionPool.
+   * Returns the connection path for this ConnectionPool.
    *
-   * @return The connection string.
+   * @return The connection path.
    */
-  public String getUrl() {
-    return url;
-  }
-
-  /**
-   * Returns the user string for this ConnectionPool.
-   *
-   * @return The user string.
-   */
-  public String getUser() {
-    return user;
-  }
-
-  /**
-   * Returns the password string for this ConnectionPool.
-   *
-   * @return The user string.
-   */
-  public String getPassword() {
-    return password;
+  public String getPath() {
+    return path;
   }
 }

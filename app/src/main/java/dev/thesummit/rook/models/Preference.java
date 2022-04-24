@@ -33,10 +33,14 @@ public class Preference implements BaseModel {
   public static Preference fromResultSet(ResultSet rs) {
     try {
       Preference p = new Preference(rs.getString("key"), rs.getString("value"));
-      p.setId(rs.getObject("id", UUID.class));
-      p.userId = (rs.getObject("userId", UUID.class));
+      p.setId(UUID.fromString(rs.getString("id")));
+      String possibleUserId = rs.getString("userId");
+      if (!rs.wasNull()) {
+        p.userId = UUID.fromString(possibleUserId);
+      }
       return p;
     } catch (SQLException e) {
+      e.printStackTrace();
       return null;
     }
   }
@@ -67,5 +71,11 @@ public class Preference implements BaseModel {
       // If it's not an app pref, ensure it's tied to a user.
       return this.key != null && this.value != null && this.userId != null;
     }
+  }
+
+  @Override
+  public String toString() {
+    // TODO Auto-generated method stub
+    return String.format("id: %s, key: %s, value: %s", this.id.toString(), this.key, this.value);
   }
 }

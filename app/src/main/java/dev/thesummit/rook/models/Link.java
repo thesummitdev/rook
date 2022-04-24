@@ -91,10 +91,9 @@ public class Link implements BaseModel {
               rs.getString("title"),
               rs.getString("url"),
               rs.getString("tags"),
-              rs.getObject("userId", UUID.class));
-      l.setId(rs.getObject("id", UUID.class));
+              UUID.fromString(rs.getString("userId")));
+      l.setId(UUID.fromString(rs.getString("id")));
       l.modified = rs.getTimestamp("modified");
-      System.out.println(l.modified.toString());
       return l;
     } catch (SQLException e) {
       return null;
