@@ -12,6 +12,7 @@ java_library(
         ":database_service",
         "//app/src/main/java/dev/thesummit/rook/models",
         "@maven//:com_google_inject_guice",
+        "@maven//:org_slf4j_slf4j_api",
     ],
 )
 
@@ -31,6 +32,24 @@ java_library(
     srcs = [
         "DatabaseArrayField.java",
         "DatabaseField.java",
+    ],
+)
+
+java_library(
+    name = "schema_managers",
+    srcs = [
+        "DatabaseSchemaManager.java",
+        "PostgresSchemaManager.java",
+        "ScriptRunner.java",
+        "RuntimeSqlException.java",
+    ],
+    deps = [
+        "//app/src/main/java/dev/thesummit/rook/models",
+        "@maven//:com_google_inject_guice",
+        "@maven//:org_slf4j_slf4j_api",
+        ":database_service",
+        ":connection_pool",
+        "//app/src/main/java/dev/thesummit/rook/utils:flag_service",
     ],
 )
 

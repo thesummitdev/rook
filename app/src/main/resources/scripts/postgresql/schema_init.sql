@@ -32,9 +32,11 @@ CREATE TABLE IF NOT EXISTS preferences(
 );
 
 CREATE TABLE IF NOT EXISTS system(
+  id        uuid                        NOT NULL default uuid_generate_v4(),
   key       varchar(100)                NOT NULL,
   value     varchar(100)                NOT NULL,
-  PRIMARY KEY ( key )
+  PRIMARY KEY ( id ),
+  UNIQUE (key)
 );
 
 -- ------------------------------------------------------------------------------

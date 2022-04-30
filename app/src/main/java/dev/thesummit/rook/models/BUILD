@@ -9,6 +9,7 @@ java_library(
         "Link.java",
         "Preference.java",
         "User.java",
+        "SystemKey.java",
     ],
     deps = [
         "//app/src/main/java/dev/thesummit/rook/database:database_field",

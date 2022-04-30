@@ -61,9 +61,6 @@ container_image(
     files = [
         "container_init.sh",
         "postgres/user_init.sql",
-        "postgres/database_test_data.sql",
-        "postgres/schema_init.sql",
-        "postgres/populate.sql",
         ":rook_deploy.jar",
     ],
     ports = [
@@ -99,7 +96,9 @@ java_binary(
         ],
     deps = [
         "//app/src/main/java/dev/thesummit/rook/auth",
+        "//app/src/main/java/dev/thesummit/rook/utils:flag_module",
         "//app/src/main/java/dev/thesummit/rook/database:database_module",
+        "//app/src/main/java/dev/thesummit/rook/database:schema_managers",
         "//app/src/main/java/dev/thesummit/rook/handlers",
         "//app/src/main/java/dev/thesummit/rook/models",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
@@ -186,7 +185,7 @@ genrule(
     name = "web_bundle",
     outs = [
         "web/index.html",
-        "web/favicon.ico",
+        "web/favicon.svg",
         "web/main.js",
         "web/main.js.map",
         "web/polyfills.js",

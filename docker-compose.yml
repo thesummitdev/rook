@@ -8,6 +8,5 @@ services:
       - "/tmp/postgresql/data:/usr/local/pgsql/data"
       - "/tmp/postgresql/etc:/etc/postgresql/"
     environment:
-      - ROOK_ARGS=-resetdb=true
-      - ROOK_PORT=80
+      - ROOK_PORT=8000
       - ROOK_SERVER_SECRET_KEY=some_secret

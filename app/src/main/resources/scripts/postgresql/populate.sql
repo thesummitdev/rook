@@ -1,5 +1,5 @@
 -- Register database_schema_version.
-INSERT INTO SYSTEM (key,value) VALUES ('database_schema_version', '1.0') ON CONFLICT DO NOTHING;
+INSERT INTO SYSTEM (key,value) VALUES ('database_schema_version', '1.1') ON CONFLICT DO NOTHING;
 
 -- Check for existing prefs before adding the defaults.
 DO

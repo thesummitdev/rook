@@ -24,6 +24,11 @@ This project is still under development, and not yet ready for release.
 
 If this project interests you contact me on Twitter: [_tylersaunders@](https://twitter.com/_tylersaunders)
 
+## Acknowledgements
+
+* Heavy inspiration was drawn from [pinboard](https://pinboard.in/).
+* Icons are provided courtesy of the excellent [tabler-icons.io](https://tabler-icons.io).
+
 ## Licenses
 
 * [GNU GPL v3](http://www.gnu.org/licenses/gpl.html)

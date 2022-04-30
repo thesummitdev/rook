@@ -6,14 +6,17 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import dev.thesummit.rook.auth.AuthModule;
 import dev.thesummit.rook.database.DatabaseModule;
+import dev.thesummit.rook.database.PostgresSchemaManager;
 import dev.thesummit.rook.handlers.AuthHandler;
 import dev.thesummit.rook.handlers.LinkHandler;
 import dev.thesummit.rook.handlers.PreferenceHandler;
 import dev.thesummit.rook.handlers.TagHandler;
 import dev.thesummit.rook.handlers.UserHandler;
+import dev.thesummit.rook.utils.FlagModule;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import java.io.IOException;
+import java.util.Map;
 import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,18 +24,24 @@ import org.slf4j.LoggerFactory;
 public class RookApplication {
 
   private static Logger log = LoggerFactory.getLogger(RookApplication.class);
+  private static Map<String, String> ENV = System.getenv();
+  private static Integer PORT = Integer.parseInt(ENV.getOrDefault("ROOK_PORT", "8000"));
 
   public static void main(String[] args) throws IOException {
 
     // Set application time zone to UTC to match the database.
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
-    Injector injector = Guice.createInjector(new DatabaseModule(), new AuthModule());
+    Injector injector =
+        Guice.createInjector(new FlagModule(args), new DatabaseModule(), new AuthModule());
+
+    // Verify & Check for database updates before starting the server.
+    injector.getInstance(PostgresSchemaManager.class).verifySchema();
 
     Javalin app =
         Javalin.create(
             config -> {
-              config.enableDevLogging();
+              // config.enableDevLogging();
               config.addStaticFiles("web", Location.CLASSPATH);
               config.addStaticFiles("assets", Location.CLASSPATH);
               config.addSinglePageRoot("/", "web/index.html");
@@ -89,7 +98,7 @@ public class RookApplication {
               });
         });
 
-    app.start(8000); // Start listening for http requests.
+    app.start(RookApplication.PORT); // Start listening for http requests.
     log.info("Rook server successfully started.");
   }
 }

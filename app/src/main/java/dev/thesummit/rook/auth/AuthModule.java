@@ -18,7 +18,7 @@ public class AuthModule extends AbstractModule {
   private static final long ONE_HOUR = 3600000;
   private static final long ONE_DAY = ONE_HOUR * 24;
   private static final String ISSUER = "dev.thesummit.rook";
-  private static String SECRET_KEY = System.getenv("rook_SERVER_SECRET_KEY");
+  private static String SECRET_KEY = System.getenv("ROOK_SERVER_SECRET_KEY");
 
   public AuthModule() {}
 
