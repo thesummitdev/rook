@@ -1,7 +1,7 @@
 load("@rules_java//java:defs.bzl", "java_binary")
 load("@bazel_common//tools/maven:pom_file.bzl", "pom_file")
 load("@npm//@angular-devkit/architect-cli:index.bzl", "architect")
-load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
 load("@io_bazel_rules_docker//docker/package_managers:download_pkgs.bzl", "download_pkgs")
 load("@io_bazel_rules_docker//docker/package_managers:install_pkgs.bzl", "install_pkgs")
 
@@ -72,6 +72,15 @@ container_image(
     repository = "thesummit/rook",
     stamp = "@io_bazel_rules_docker//stamp:always",
     tags = ["latest"],
+)
+
+container_push(
+  name = "docker_hub_push_latest",
+  image = ":latest",
+  format = "Docker",
+  registry = "index.docker.io",
+  repository = "tylersaunders/rook",
+  tag = "latest",
 )
 
 # The actual server binary. bazel run //:rook can run this locally, but a local postgres instance
