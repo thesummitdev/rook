@@ -5,9 +5,11 @@ with a Java API server and lightweight web application.
 
 ## Getting Started
 
-**NOTE:** This project is still under active development.
+**NOTE:** This project is still under active development, and currently only supports the `x86_64` architecture. There are currently no plans to support other architectures.
 
-0.1.0-alpha container images have been published and can be pulled from `docker pull ghcr.io/thesummitdev/rook:latest`
+0.1.0-alpha container images have been published and can be pulled from:
+
+`docker pull ghcr.io/thesummitdev/rook:latest`
 
 For sample configuration see the [docker-compose.yml](docker-compose.yml) in this repo.
 
