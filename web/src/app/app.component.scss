@@ -1,12 +1,22 @@
 @use 'web/src/styles/theme';
+@use 'web/src/styles/mixins';
 
 .rook-app {
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 10%;
+
+  @include mixins.desktop {
+
+    flex-flow: row nowrap;
+    justify-content: center;
+    max-width: 1100px;
+    padding: 0 10%;
+
+  }
+
+  @include mixins.mobile {
+    flex-flow: column;
+  }
 }
 
 .app-name-wrapper {
@@ -36,8 +46,17 @@
   flex-flow: column;
   padding: 0 16px 16px;
 
+  @include mixins.mobile {
+    margin: 0 auto;
+    padding: 0 8px 0;
+  }
+
   section {
     margin: 24px 0px;
+
+    @include mixins.mobile {
+      margin: 5px 0;
+    }
   }
 }
 
@@ -50,6 +69,10 @@
     font-size: 13px;
     line-height: 16px;
     margin-top: auto;
+
+    @include mixins.mobile {
+      display: none;
+    }
   }
 }
 

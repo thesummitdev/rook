@@ -1,11 +1,20 @@
 @use 'web/src/styles/theme';
+@use 'web/src/styles/mixins';
 
 .link-container {
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-  min-width: 350px;
   padding: 16px 12px;
+
+  @include mixins.desktop {
+    min-width: 350px;
+
+  }
+
+  @include mixins.mobile {
+    min-width: 300px;
+  }
 }
 
 .link-content {
