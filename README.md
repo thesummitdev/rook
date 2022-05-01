@@ -1,5 +1,4 @@
 # rook
-
 Rook is a open source bookmark service built to provide a performant solution to organize,
 tag and search bookmarks. Rook bundles a high throughput transactional database (postgresql)
 with a Java API server and lightweight web application.
