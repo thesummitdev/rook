@@ -51,9 +51,10 @@ container_image(
         "./container_init.sh",
     ],
     env = {
+        "ROOK_PORT": "8000",
         "POSTGRES_USER": "rook_system",
         "POSTGRES_PASSWORD": "rooksystem",
-        "PGDATA":"/usr/local/pgsql/data",
+        "PGDATA":"/data/rook",
         "LC_ALL":"en_US.UTF-8",
         "LANG":"en_US.UTF-8",
         "LANGUAGE":"en_US.UTF-8",
@@ -62,9 +63,6 @@ container_image(
         "container_init.sh",
         "postgres/user_init.sql",
         ":rook_deploy.jar",
-    ],
-    ports = [
-        "8000",  # Expose the 8000 port the server listens on.
     ],
     repository = "thesummit/rook",
     stamp = "@io_bazel_rules_docker//stamp:always",
@@ -77,6 +75,15 @@ container_push(
   format = "Docker",
   registry = "index.docker.io",
   repository = "tylersaunders/rook",
+  tag = "latest",
+)
+
+container_push(
+  name = "github_push_latest",
+  image = ":latest",
+  format = "Docker",
+  registry = "ghcr.io",
+  repository = "thesummitdev/rook",
   tag = "latest",
 )
 
