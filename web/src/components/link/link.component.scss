@@ -36,6 +36,13 @@
 
 .link-anchor-container {
   line-height: 13px;
+  max-width: 285px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @include mixins.mobile {
+    max-width: 205px;
+  }
 
   .link-anchor {
     color: theme.$DIM;
