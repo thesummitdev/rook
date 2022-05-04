@@ -39,6 +39,7 @@
   max-width: 285px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 
   @include mixins.mobile {
     max-width: 205px;
