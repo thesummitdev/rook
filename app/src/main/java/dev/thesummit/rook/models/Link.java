@@ -54,7 +54,7 @@ public class Link implements BaseModel {
         new Link(
             obj.getString("title"),
             obj.getString("url"),
-            obj.optString("tags", ""),
+            obj.optString("tags", "").toLowerCase(),
             UUID.fromString(obj.getString("userId")));
 
     if (obj.has("id")) {
