@@ -1,13 +1,20 @@
 @use "web/src/styles/theme";
 
-.settings{
-  section{
+.settings {
+  section {
     margin: 24px 0;
+  }
+
+  .user-container {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
   }
 
   .setting {
     border-top: 1px solid theme.$DIM;
-    display:flex;
+    display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     padding: 12px;
@@ -26,13 +33,13 @@
   margin: 0;
 }
 
-.settings-form{
-  display:flex;
+.settings-form {
+  display: flex;
   flex-flow: column;
   min-width: 225px;
 }
 
-.form-theme{
+.form-theme {
 
   span {
     margin-right: 6px;
@@ -40,6 +47,6 @@
 
 }
 
-.form-allow-new-users{
+.form-allow-new-users {
   min-width: 150px;
 }

@@ -20,10 +20,11 @@ public class Sqlite3SchemaManager implements DatabaseSchemaManager {
   private static Logger log = LoggerFactory.getLogger(Sqlite3SchemaManager.class);
 
   private static final String VERSION_1_0 = "1.0";
+  private static final String VERSION_1_1 = "1.1";
   private static final String COLON_DELIMITER = ";";
   private static final String SPECIAL_DELIMITER = "$$";
 
-  private static final String RELEASE_VERSION = VERSION_1_0;
+  private static final String RELEASE_VERSION = VERSION_1_1;
 
   private final HashMap<String, String> SCRIPT_UPGRADE_MAP = new HashMap<String, String>();
 
@@ -43,6 +44,7 @@ public class Sqlite3SchemaManager implements DatabaseSchemaManager {
 
     // Register upgrade scripts.
     SCRIPT_UPGRADE_MAP.put(RELEASE_VERSION, "/sqlite3/init.sql");
+    SCRIPT_UPGRADE_MAP.put(VERSION_1_1, "/sqlite3/migrations/1_0_to_1_1.sql");
   }
 
   @Override
@@ -83,6 +85,9 @@ public class Sqlite3SchemaManager implements DatabaseSchemaManager {
   private void doUpgrade(SystemKey reportedVersion) {
 
     switch (reportedVersion.value) {
+      case VERSION_1_0:
+        runScript(SCRIPT_UPGRADE_MAP.get(VERSION_1_1), COLON_DELIMITER);
+        break;
       default:
         break;
     }

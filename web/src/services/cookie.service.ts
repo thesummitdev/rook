@@ -14,11 +14,15 @@ export class CookieService implements OnDestroy {
     // Check for a stored authentication token.
     const storedToken = this.getCookie('jwt');
     const storedUser = this.getCookie('user');
+    const storedAdmin = this.getCookie('userIsAdmin');
 
     // Pass the stored token to the login service.
     this.login.setToken(storedToken);
     if (storedUser) {
-      this.login.setUser({username: storedUser});
+      this.login.setUser({
+        username: storedUser,
+        isAdmin: storedAdmin === 'true',
+      });
     }
 
     // On future token updates, set the cookie.
@@ -35,10 +39,15 @@ export class CookieService implements OnDestroy {
         .pipe(
             skip(1),  // Ignore first value since this is a ReplaySubject.
             takeUntil(this.unsubscribe))
-        .subscribe(
-            (user: User|undefined) => user ?
-                this.setCookie('user', user.username, 7) :
-                this.removeCookie('user'));
+        .subscribe((user: User|undefined) => {
+          if (user) {
+            this.setCookie('user', user.username, 1);
+            user.isAdmin ? this.setCookie('userIsAdmin', 'true', 1) : null;
+
+          } else {
+            this.removeCookie('user');
+          }
+        });
   }
 
   ngOnDestroy(): void {

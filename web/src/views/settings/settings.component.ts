@@ -1,7 +1,9 @@
 import {Component} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {Preference} from 'web/src/models/preference';
+import {User} from 'web/src/models/user';
 import {DataService} from 'web/src/services/data.service';
+import {LoginService} from 'web/src/services/login.service';
 import {UiService} from 'web/src/services/ui.service';
 
 interface Settings {
@@ -16,6 +18,7 @@ interface Settings {
 })
 /** Settings View component */
 export class SettingsViewComponent {
+  user$: Observable<User>;
   prefs$: Observable<Map<string, Preference>>;
   allThemes = this.ui.getAllThemes();
 
@@ -27,7 +30,10 @@ export class SettingsViewComponent {
   constructor(
       private readonly data: DataService,
       private readonly ui: UiService,
+      private readonly login: LoginService,
   ) {
+    this.user$ = this.login.getUserAsObservable();
+
     this.prefs$ = this.data.getPreferences().pipe(
         map((prefs) => {
           // Init form with current settings.
@@ -53,9 +59,8 @@ export class SettingsViewComponent {
     this.data.setPreference({key: 'theme', value: newTheme}).subscribe();
   }
 
-
   /**
-   * Handler for the allowNewUsers checkbox.
+   * Handler for the allow new users toggle.
    * @param allowed
    */
   onAllowNewUsersChange(allowed: boolean) {

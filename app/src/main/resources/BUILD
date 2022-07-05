@@ -4,5 +4,5 @@ filegroup(
     name = "resources",
     srcs = [
         "logback.xml",
-    ] + glob([ "sqlite3/*.sql" ]),
+    ] + glob([ "sqlite3/**" ]),
 )

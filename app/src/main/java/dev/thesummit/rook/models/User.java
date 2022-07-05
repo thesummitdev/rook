@@ -11,6 +11,7 @@ public class User implements BaseModel {
     this.username = username;
     this.userEncryptedPassword = userEncryptedPassword;
     this.userSalt = userSalt;
+    this.isAdmin = false;
   }
 
   @DatabaseField(isId = true)
@@ -21,6 +22,8 @@ public class User implements BaseModel {
 
   @DatabaseField public String userEncryptedPassword;
   @DatabaseField public String userSalt;
+
+  @DatabaseField public boolean isAdmin;
 
   public void setId(Integer id) {
     this.id = id;
@@ -52,6 +55,7 @@ public class User implements BaseModel {
               rs.getString("userencryptedpassword"),
               rs.getString("usersalt"));
       u.setId(rs.getInt("id"));
+      u.isAdmin = rs.getBoolean("isAdmin");
       return u;
     } catch (SQLException e) {
       e.printStackTrace();
