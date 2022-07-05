@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users(
   username              varchar(1000)   NOT NULL,
   userEncryptedPassword varchar(1000)   NULL,
   userSalt              varchar(1000)   NULL,
+  isAdmin               boolean         NOT NULL DEFAULT FALSE,
   PRIMARY KEY ( id )
 );
 

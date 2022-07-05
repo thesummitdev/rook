@@ -20,8 +20,9 @@ public class PostgresSchemaManager implements DatabaseSchemaManager {
 
   private static final String VERSION_1_0 = "1.0";
   private static final String VERSION_1_1 = "1.1";
+  private static final String VERSION_1_2 = "1.2";
 
-  private static final String RELEASE_VERSION = "1.1";
+  private static final String RELEASE_VERSION = VERSION_1_2;
 
   private ConnectionPool pool;
   private DatabaseService dbService;
@@ -77,7 +78,15 @@ public class PostgresSchemaManager implements DatabaseSchemaManager {
                     getClass()
                         .getResourceAsStream("/scripts/postgresql/migrations/1_0_to_1_1.sql")));
         runner.runScript(reader1_0_To_1_1);
+      } else if (systemReportedVersion.value.equals(PostgresSchemaManager.VERSION_1_1)) {
+        BufferedReader reader1_1_To_1_2 =
+            new BufferedReader(
+                new InputStreamReader(
+                    getClass()
+                        .getResourceAsStream("/scripts/postgresql/migrations/1_1_to_1_2.sql")));
+        runner.runScript(reader1_1_To_1_2);
       }
+      log.info("Rook database update is complete!");
     } else {
       log.info("Rook database is up to date!");
     }
@@ -102,7 +111,7 @@ public class PostgresSchemaManager implements DatabaseSchemaManager {
   private Boolean upgradeRequired(String systemReportedVersion) {
 
     log.info(
-        String.format("checking for required upgrade, current verison: %s", systemReportedVersion));
+        String.format("checking for required upgrade, current version: %s", systemReportedVersion));
     if (!systemReportedVersion.contains(".")) {
       log.info("Could not fetch valid schema version string: ", systemReportedVersion);
     }
@@ -116,7 +125,7 @@ public class PostgresSchemaManager implements DatabaseSchemaManager {
             "Current: %s.%s Next: %s.%s",
             majorVersion, minorVersion, currentMajorVersion, currentMinorVersion));
 
-    return !(majorVersion.equals(currentMinorVersion) && minorVersion.equals(currentMinorVersion));
+    return !(majorVersion.equals(currentMajorVersion) && minorVersion.equals(currentMinorVersion));
   }
 
   /** Runs the reset_schema.sql file against the currently connected database. */

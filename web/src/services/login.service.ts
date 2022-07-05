@@ -30,9 +30,12 @@ export class LoginService {
       Observable<User|undefined> {
     return this.http.post('/login', {username, password})
         .pipe(
-            map((resp: {jwt: string, username: string}) => {
+            map((resp: {jwt: string, username: string, isAdmin: boolean}) => {
               this.token.next(resp.jwt);
-              const user: User = {username};
+              const user: User = {
+                username: resp.username,
+                isAdmin: resp.isAdmin,
+              };
               this.user.next(user);
               this.toast.showMessage(`Welcome back, ${username}!`);
               return user;
