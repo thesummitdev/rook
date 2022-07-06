@@ -49,14 +49,26 @@ const gruvbox: Theme = {
   '--success': '#689d6a',
 };
 
-@Injectable({providedIn: 'root'})
-export class UiService {
+const everforest: Theme = {
+  '--background': '#2f383e',
+  '--foreground': '#d3c6aa',
+  '--anchor': '#dbbc7f',
+  '--accent': '#e69875',
+  '--dim': '#7a8478',
+  '--bright': '#d3c6aa',
+  '--dark': '#2f383e',
+  '--error': '#e67e80',
+  '--success': '#a7c080',
+}
+
+@Injectable({providedIn: 'root'}) export class UiService {
   private readonly filterPanel$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   private readonly themes: Map<string, Theme> = new Map([
     ['light', light],
     ['nord', nord],
     ['gruvbox', gruvbox],
+    ['everforest', everforest],
   ]);
 
   private getTheme(theme?: string): Theme {
