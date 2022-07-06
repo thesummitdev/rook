@@ -27,7 +27,7 @@ public class AuthModule extends AbstractModule {
     JWTGenerator generator =
         (user, alg) -> {
           Date expires = new Date();
-          expires.setTime(expires.getTime() + ONE_DAY);
+          expires.setTime(expires.getTime() + (ONE_DAY * 7));
           JWTCreator.Builder token =
               JWT.create()
                   .withClaim("username", user.username)
