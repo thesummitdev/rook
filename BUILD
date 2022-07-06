@@ -169,7 +169,7 @@ architect(
     name = "build",
     args = [
         "frontend:build",
-        "--outputPath=$(@D)",
+        "--output-path=$(@D)",
     ],
     configuration_env_vars = ["NG_BUILD_CACHE"],
     data = glob(
