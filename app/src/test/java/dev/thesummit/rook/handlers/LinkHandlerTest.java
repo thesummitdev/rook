@@ -12,7 +12,6 @@ import io.javalin.http.NotFoundResponse;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +28,8 @@ public class LinkHandlerTest {
 
   @Mock private Context ctx;
   @Mock private RookDatabaseService dbService;
-  private final UUID MOCK_USER_UUID = UUID.randomUUID();
-  private final UUID MOCK_LINK_UUID = UUID.randomUUID();
+  private final Integer MOCK_USER_ID = 1;
+  private final Integer MOCK_LINK_ID = 2;
 
   private LinkHandler handler;
 
@@ -39,20 +38,20 @@ public class LinkHandlerTest {
     handler = new LinkHandler(dbService);
 
     User mockUser = new User("username", "userEncryptedPassword", "salt");
-    mockUser.setId(MOCK_USER_UUID);
+    mockUser.setId(MOCK_USER_ID);
 
     doReturn(mockUser).when(ctx).sessionAttribute("current_user");
   }
 
   @Test
   public void GETONE_links() {
-    Link link = new Link("Test Link", "http://test.com", "test tags", MOCK_USER_UUID);
+    Link link = new Link("Test Link", "http://test.com", "test tags", MOCK_USER_ID);
     link.modified = new Timestamp(1531503944); // Mock modified timestamp of 7/13/2018 5:45:44PM
 
-    UUID uuid = UUID.randomUUID();
-    link.setId(uuid);
-    doReturn(link).when(dbService).get(Link.class, uuid);
-    doReturn(uuid.toString()).when(ctx).pathParam("id");
+    Integer id = 4;
+    link.setId(id);
+    doReturn(link).when(dbService).get(Link.class, id);
+    doReturn(id.toString()).when(ctx).pathParam("id");
 
     handler.getOne(ctx);
     verify(ctx).result(link.toJSONObject().toString());
@@ -62,9 +61,9 @@ public class LinkHandlerTest {
 
   @Test
   public void GETONE_links_not_found() {
-    UUID uuid = UUID.randomUUID();
-    doReturn(uuid.toString()).when(ctx).pathParam("id");
-    doReturn(null).when(dbService).get(Link.class, uuid);
+    Integer id = 4;
+    doReturn(id.toString()).when(ctx).pathParam("id");
+    doReturn(null).when(dbService).get(Link.class, id);
 
     assertThrows(
         NotFoundResponse.class,
@@ -74,9 +73,9 @@ public class LinkHandlerTest {
   }
 
   @Test
-  public void GETONE_links_invalid_uuid_format() {
+  public void GETONE_links_invalid_id_format() {
 
-    doReturn("this-is-not-a-valid-uuid").when(ctx).pathParam("id");
+    doReturn("this-is-not-a-valid-id").when(ctx).pathParam("id");
 
     assertThrows(
         BadRequestResponse.class,
@@ -87,9 +86,9 @@ public class LinkHandlerTest {
 
   @Test
   public void GETALL_links() {
-    Link mockLink = new Link("First Link", "http://test.com", "test tags", MOCK_USER_UUID);
+    Link mockLink = new Link("First Link", "http://test.com", "test tags", MOCK_USER_ID);
     mockLink.modified = new Timestamp(1531503944); // Mock modified timestamp of 7/13/2018 5:45:44PM
-    Link mockLink2 = new Link("Second Link", "http://test2.com", "test2 tags", MOCK_USER_UUID);
+    Link mockLink2 = new Link("Second Link", "http://test2.com", "test2 tags", MOCK_USER_ID);
     mockLink2.modified =
         new Timestamp(1531503944); // Mock modified timestamp of 7/13/2018 5:45:44PM
     ArrayList<Link> list = new ArrayList<Link>();
@@ -121,11 +120,8 @@ public class LinkHandlerTest {
     when(ctx.body()).thenReturn(body);
     Link expectedLink =
         new Link(
-            obj.getString("title"),
-            obj.getString("url"),
-            obj.optString("tags", ""),
-            MOCK_USER_UUID);
-    expectedLink.setId(MOCK_LINK_UUID);
+            obj.getString("title"), obj.getString("url"), obj.optString("tags", ""), MOCK_USER_ID);
+    expectedLink.setId(MOCK_LINK_ID);
     expectedLink.modified =
         new Timestamp(1531503944); // Mock modified timestamp of 7/13/2018 5:45:44PM
 
@@ -134,7 +130,7 @@ public class LinkHandlerTest {
     doAnswer(
             invocation -> {
               Link l = invocation.getArgument(0);
-              l.setId(MOCK_LINK_UUID);
+              l.setId(MOCK_LINK_ID);
               return null;
             })
         .when(dbService)

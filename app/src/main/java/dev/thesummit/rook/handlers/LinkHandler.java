@@ -61,14 +61,16 @@ public class LinkHandler {
   /** Request handler for GET ${host}/links/{id} */
   public void getOne(Context ctx) {
 
-    Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
+    Integer resourceId;
 
     try {
       User user = ctx.sessionAttribute("current_user");
+      resourceId = Integer.parseInt(ctx.pathParam("id"));
       Link link = this.dbService.get(Link.class, resourceId);
 
       if (link == null || !user.id.equals(link.userId)) {
-        throw new NotFoundResponse(String.format("Link with id %s was not found.", resourceId));
+        throw new NotFoundResponse(
+            String.format("Link with id %s was not found.", ctx.pathParam("id")));
       }
 
       ctx.status(200);
@@ -76,7 +78,8 @@ public class LinkHandler {
       ctx.result(link.toJSONObject().toString());
 
     } catch (IllegalArgumentException e) {
-      throw new BadRequestResponse(String.format("Bad Request: %s is not a valid id.", resourceId));
+      throw new BadRequestResponse(
+          String.format("Bad Request: %s is not a valid id.", ctx.pathParam("id")));
     }
   }
 

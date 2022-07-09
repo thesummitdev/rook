@@ -11,7 +11,6 @@ import dev.thesummit.rook.database.RookDatabaseService;
 import dev.thesummit.rook.models.User;
 import io.javalin.http.Context;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ public class AuthHandlerTest {
     handler = new AuthHandler(pwm, dbService, jwtProvider);
 
     mockUser = new User("testuser", "testpassword", "testsalt");
-    mockUser.setId(UUID.randomUUID());
+    mockUser.setId(1);
   }
 
   @AfterEach

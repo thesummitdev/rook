@@ -11,7 +11,6 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +27,8 @@ public class PreferenceHandlerTest {
 
   @Mock private Context ctx;
   @Mock private RookDatabaseService dbService;
-  private final UUID MOCK_USER_UUID = UUID.randomUUID();
-  private final UUID MOCK_PREF_UUID = UUID.randomUUID();
+  private final Integer MOCK_USER_ID = 1;
+  private final Integer MOCK_PREF_ID = 2;
 
   private PreferenceHandler handler;
 
@@ -38,7 +37,7 @@ public class PreferenceHandlerTest {
     handler = new PreferenceHandler(dbService);
 
     User mockUser = new User("username", "userEncryptedPassword", "salt");
-    mockUser.setId(MOCK_USER_UUID);
+    mockUser.setId(MOCK_USER_ID);
 
     doReturn(mockUser).when(ctx).sessionAttribute("current_user");
   }
@@ -86,9 +85,9 @@ public class PreferenceHandlerTest {
 
     doReturn(body).when(ctx).body();
     Preference expectedPref = new Preference(input.getString("key"), input.getString("value"));
-    expectedPref.setId(MOCK_PREF_UUID);
+    expectedPref.setId(MOCK_PREF_ID);
     if (!Preference.applicationPrefs.contains(input.getString("key"))) {
-      expectedPref.userId = MOCK_USER_UUID;
+      expectedPref.userId = MOCK_USER_ID;
     }
 
     // Handle side effect of the database service setting the ID on the new preference with the id
@@ -96,7 +95,7 @@ public class PreferenceHandlerTest {
     doAnswer(
             invocation -> {
               Preference p = invocation.getArgument(0);
-              p.setId(MOCK_PREF_UUID);
+              p.setId(MOCK_PREF_ID);
               return null;
             })
         .when(dbService)

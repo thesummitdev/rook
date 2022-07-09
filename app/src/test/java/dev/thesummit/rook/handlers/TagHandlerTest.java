@@ -8,7 +8,6 @@ import dev.thesummit.rook.models.User;
 import io.javalin.http.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ public class TagHandlerTest {
 
   @Mock private Context ctx;
   @Mock private RookDatabaseService dbService;
-  private final UUID MOCK_USER_UUID = UUID.randomUUID();
+  private final Integer MOCK_USER_ID = 1;
 
   private TagHandler handler;
 
@@ -30,7 +29,7 @@ public class TagHandlerTest {
     handler = new TagHandler(dbService);
 
     User mockUser = new User("username", "userEncryptedPassword", "salt");
-    mockUser.setId(MOCK_USER_UUID);
+    mockUser.setId(MOCK_USER_ID);
 
     doReturn(mockUser).when(ctx).sessionAttribute("current_user");
   }
@@ -38,8 +37,8 @@ public class TagHandlerTest {
   @Test
   public void getTags() {
 
-    Link mockLink = new Link("First Link", "http://test.com", "test tags", MOCK_USER_UUID);
-    Link mockLink2 = new Link("Second Link", "http://test2.com", "test2 tags", MOCK_USER_UUID);
+    Link mockLink = new Link("First Link", "http://test.com", "test tags", MOCK_USER_ID);
+    Link mockLink2 = new Link("Second Link", "http://test2.com", "test2 tags", MOCK_USER_ID);
     ArrayList<Link> list = new ArrayList<Link>();
     list.add(mockLink);
     list.add(mockLink2);
