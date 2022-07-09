@@ -25,7 +25,6 @@ java_library(
         "RookConnectionPool.java",
     ],
     deps = [
-        # "@maven//:org_postgresql_postgresql",
         "@maven//:org_xerial_sqlite_jdbc"
     ],
 )

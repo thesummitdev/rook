@@ -82,8 +82,7 @@ container_push(
   tag = "latest",
 )
 
-# The actual server binary. bazel run //:rook can run this locally, but a local postgres instance
-# is required. See the postgres/* scripts for setting up a development database.
+# The actual server binary. bazel run //:rook can run this locally.
 java_binary(
     name = "rook",
     srcs = [
