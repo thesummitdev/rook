@@ -20,7 +20,7 @@ if [ -f "$DATABASE_FILE" ]; then
   echo "Database file already exists."
 else
   # Create an empty database file.
-  sqlite3 $DATABASE_FILE
+  sqlite3 $DATABASE_FILE "VACUUM;"
 fi
 
 # Environment is ready, run the rook application server
