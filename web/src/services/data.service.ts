@@ -77,6 +77,18 @@ export class DataService {
   }
 
   /**
+   * Fetches the links from the backend with no filters applied.
+   * NOTE: this requires the user to be logged in.
+   * TODO: handle calls that don't have a logged in user, instead of erroring.
+   * @returns Http observable of the list of returned links. Can be empty an
+   *     empty list.
+   */
+  getLinksWithNoFilters(): Observable<Link[]> {
+    // Empty params object so no filters are applied server side.
+    return this.http.post<Link[]>('/links', JSON.stringify({}));
+  }
+
+  /**
    * Fetches a list of the users tags from the backend.
    * NOTE: this requires the user to be logged in.
    * TODO: handle calls that don't have a logged in user, instead of erroring.

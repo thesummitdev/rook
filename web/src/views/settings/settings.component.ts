@@ -53,8 +53,28 @@ export class SettingsViewComponent {
     this.data.setPreference({key: 'theme', value: newTheme}).subscribe();
   }
 
+
+  /**
+   * Handler for the allowNewUsers checkbox.
+   * @param allowed
+   */
   onAllowNewUsersChange(allowed: boolean) {
     const value = allowed ? 'true' : 'false';
     this.data.setPreference({key: 'allowNewUsers', value}).subscribe();
+  }
+
+  /**
+   * Handler for a download all links request.
+   */
+  handleDownloadRequest(): void {
+    this.data.getLinksWithNoFilters().subscribe((links) => {
+      const blob = new Blob([JSON.stringify(links)]);
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = 'rook.json';
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    });
   }
 }
