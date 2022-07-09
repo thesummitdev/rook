@@ -33,7 +33,7 @@ java_library(
 java_library(
     name = "database_field",
     srcs = [
-        "DatabaseArrayField.java",
+        "DatabaseListField.java",
         "DatabaseField.java",
     ],
 )
@@ -42,7 +42,7 @@ java_library(
     name = "schema_managers",
     srcs = [
         "DatabaseSchemaManager.java",
-        "PostgresSchemaManager.java",
+        "Sqlite3SchemaManager.java",
         "ScriptRunner.java",
         "RuntimeSqlException.java",
     ],

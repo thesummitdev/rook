@@ -3,7 +3,6 @@ package dev.thesummit.rook.models;
 import dev.thesummit.rook.database.DatabaseField;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 import org.json.JSONObject;
 
 public class User implements BaseModel {
@@ -15,7 +14,7 @@ public class User implements BaseModel {
   }
 
   @DatabaseField(isId = true)
-  public UUID id;
+  public Integer id;
 
   @DatabaseField(isIdentifier = true)
   public String username;
@@ -23,11 +22,11 @@ public class User implements BaseModel {
   @DatabaseField public String userEncryptedPassword;
   @DatabaseField public String userSalt;
 
-  public void setId(UUID id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
-  public UUID getId() {
+  public Integer getId() {
     return this.id;
   }
 
@@ -52,7 +51,7 @@ public class User implements BaseModel {
               rs.getString("username"),
               rs.getString("userencryptedpassword"),
               rs.getString("usersalt"));
-      u.setId(UUID.fromString(rs.getString("id")));
+      u.setId(rs.getInt("id"));
       return u;
     } catch (SQLException e) {
       e.printStackTrace();

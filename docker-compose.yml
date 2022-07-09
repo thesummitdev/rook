@@ -5,10 +5,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - "/tmp/postgresql/data:/data"
+      - "/tmp/rook/data:/data"
     environment:
       - ROOK_PORT=8000
       - ROOK_SERVER_SECRET_KEY=some_secret
-      - PGDATA=/data/rook
-      - POSTGRES_USER=rook_system
-      - POSTGRES_USER=rooksystem
+      - DATA=/data

@@ -3,7 +3,6 @@ package dev.thesummit.rook.models;
 import dev.thesummit.rook.database.DatabaseField;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 import org.json.JSONObject;
 
 public class SystemKey implements BaseModel {
@@ -14,7 +13,7 @@ public class SystemKey implements BaseModel {
   }
 
   @DatabaseField(isId = true)
-  public UUID id;
+  public Integer id;
 
   @DatabaseField(isIdentifier = true)
   public String key;
@@ -22,12 +21,12 @@ public class SystemKey implements BaseModel {
   @DatabaseField public String value;
 
   @Override
-  public void setId(UUID id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
   @Override
-  public UUID getId() {
+  public Integer getId() {
     return this.id;
   }
 
@@ -47,7 +46,7 @@ public class SystemKey implements BaseModel {
       SystemKey sk = new SystemKey(rs.getString("key"), rs.getString("value"));
       try {
         // Just in case ID doesn't exist in the schema yet.
-        sk.setId(rs.getObject("id", UUID.class));
+        sk.setId(rs.getInt("id"));
       } catch (SQLException e) {
         e.printStackTrace();
       }

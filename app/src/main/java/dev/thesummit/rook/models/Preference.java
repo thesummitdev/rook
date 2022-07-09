@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.json.JSONObject;
@@ -16,9 +15,9 @@ public class Preference implements BaseModel {
       Stream.of("appVersion", "allowNewUsers").collect(Collectors.toCollection(HashSet::new));
 
   @DatabaseField(isId = true)
-  public UUID id;
+  public Integer id;
 
-  @DatabaseField() public UUID userId;
+  @DatabaseField() public Integer userId;
 
   @DatabaseField(isIdentifier = true)
   public String key;
@@ -33,10 +32,10 @@ public class Preference implements BaseModel {
   public static Preference fromResultSet(ResultSet rs) {
     try {
       Preference p = new Preference(rs.getString("key"), rs.getString("value"));
-      p.setId(UUID.fromString(rs.getString("id")));
-      String possibleUserId = rs.getString("userId");
+      p.setId(rs.getInt("id"));
+      int possibleUserId = rs.getInt("userId");
       if (!rs.wasNull()) {
-        p.userId = UUID.fromString(possibleUserId);
+        p.userId = possibleUserId;
       }
       return p;
     } catch (SQLException e) {
@@ -46,12 +45,12 @@ public class Preference implements BaseModel {
   }
 
   @Override
-  public void setId(UUID id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
   @Override
-  public UUID getId() {
+  public Integer getId() {
     return this.id;
   }
 
@@ -76,6 +75,6 @@ public class Preference implements BaseModel {
   @Override
   public String toString() {
     // TODO Auto-generated method stub
-    return String.format("id: %s, key: %s, value: %s", this.id.toString(), this.key, this.value);
+    return String.format("id: %s, key: %s, value: %s", this.id, this.key, this.value);
   }
 }

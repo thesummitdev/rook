@@ -13,7 +13,7 @@ public class RookConnectionPool implements ConnectionPool {
   private String path;
   private ArrayList<Connection> connectionPool;
   private ArrayList<Connection> usedConnections = new ArrayList<Connection>(INITIAL_POOL_SIZE);
-  private static int INITIAL_POOL_SIZE = 1;
+  private static int INITIAL_POOL_SIZE = 5;
   private static int MAX_POOL_SIZE = 10;
 
   public static RookConnectionPool create(String path) throws SQLException {

@@ -1,11 +1,10 @@
 package dev.thesummit.rook.models;
 
-import dev.thesummit.rook.database.DatabaseArrayField;
 import dev.thesummit.rook.database.DatabaseField;
+import dev.thesummit.rook.database.DatabaseListField;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.UUID;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
 
@@ -15,37 +14,34 @@ public class Link implements BaseModel {
   private static final UrlValidator urlValidator = new UrlValidator(URL_SCHEMES);
 
   @DatabaseField(isId = true)
-  public UUID id;
+  public Integer id;
 
   @DatabaseField() public String url;
 
   @DatabaseField()
-  @DatabaseArrayField(
-      arrayFuncton = "string_to_array(tags, ' ')",
-      arrayCompareOperator = " @> ",
-      arraySeperator = " ")
+  @DatabaseListField(seperator = " ")
   public String tags;
 
-  @DatabaseField(whereOperator = " ~* ")
+  @DatabaseField(whereOperator = " LIKE ", valueWrapper = "%")
   public String title;
 
-  @DatabaseField() public UUID userId;
+  @DatabaseField() public Integer userId;
 
   @DatabaseField(isSetByDatabase = true)
   public Timestamp modified;
 
-  public Link(String title, String url, String tags, UUID userId) {
+  public Link(String title, String url, String tags, int userId) {
     this.url = url;
     this.tags = tags;
     this.userId = userId;
     this.title = title;
   }
 
-  public void setId(UUID id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
-  public UUID getId() {
+  public Integer getId() {
     return this.id;
   }
 
@@ -55,10 +51,10 @@ public class Link implements BaseModel {
             obj.getString("title"),
             obj.getString("url"),
             obj.optString("tags", "").toLowerCase(),
-            UUID.fromString(obj.getString("userId")));
+            obj.getInt("userId"));
 
     if (obj.has("id")) {
-      l.setId((UUID) obj.get("id"));
+      l.setId(obj.getInt("id"));
     }
 
     return l;
@@ -91,9 +87,9 @@ public class Link implements BaseModel {
               rs.getString("title"),
               rs.getString("url"),
               rs.getString("tags"),
-              UUID.fromString(rs.getString("userId")));
-      l.setId(UUID.fromString(rs.getString("id")));
-      l.modified = rs.getTimestamp("modified");
+              rs.getInt("userId"));
+      l.setId(rs.getInt("id"));
+      l.modified = Timestamp.valueOf(rs.getString("modified"));
       return l;
     } catch (SQLException e) {
       return null;

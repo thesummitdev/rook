@@ -9,6 +9,8 @@ public @interface DatabaseField {
 
   public String whereOperator() default " = ";
 
+  public String valueWrapper() default "";
+
   public boolean isId() default false;
 
   public boolean isIdentifier() default false;

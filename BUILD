@@ -23,9 +23,7 @@ download_pkgs(
     packages = [
         "openjdk-11-jre",  # Only the Java runtime, JDK is not needed for production container.
         "sqlite3",
-        # "postgresql",
-        # "postgresql-contrib",
-        # "locales",
+        "locales",
         "sudo",  # Needed for the container_init script.
     ],
     visibility = ["//visibility:private"],
@@ -53,18 +51,12 @@ container_image(
     ],
     env = {
         "ROOK_PORT": "8000",
-        "POSTGRES_USER": "rook_system",
-        "POSTGRES_PASSWORD": "rooksystem",
+        "ROOK_USER": "rook_system",
+        "ROOK_PASSWORD": "rook_system",
         "DATA":"/usr/local/rook/data",
-        "PGDATA":"/usr/local/pgsql/data",
     },
     files = [
         "container_init.sh",
-        "sqlite3/init.sql",
-        # "postgres/user_init.sql",
-        # "postgres/database_test_data.sql",
-        # "postgres/schema_init.sql",
-        # "postgres/populate.sql",
         ":rook_deploy.jar",
     ],
     repository = "thesummit/rook",

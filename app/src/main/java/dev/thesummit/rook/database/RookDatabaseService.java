@@ -9,13 +9,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +34,6 @@ public class RookDatabaseService implements DatabaseService {
 
   @Override
   public void put(BaseModel entity) {
-
-    entity.setId(UUID.randomUUID());
 
     String tableName = this.tableMapping.get(entity.getClass());
 
@@ -76,7 +75,7 @@ public class RookDatabaseService implements DatabaseService {
       log.debug(String.format("PUT SQL: %s", statement.toString()));
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
-          // entity.setId(rs.getObject("id", UUID.class));
+          entity.setId(rs.getInt("id"));
 
           for (Field f : entity.getClass().getDeclaredFields()) {
 
@@ -86,7 +85,11 @@ public class RookDatabaseService implements DatabaseService {
             }
             if (annotation.isSetByDatabase()) {
               try {
-                f.set(entity, rs.getObject(f.getName(), f.getType()));
+                if (f.getType() == Timestamp.class) {
+                  f.set(entity, Timestamp.valueOf(rs.getString(f.getName())));
+                } else {
+                  f.set(entity, rs.getObject(f.getName()));
+                }
               } catch (IllegalAccessException e) {
                 log.debug(
                     "Field was not accessible, check fields marked with @DatabaseField are not"
@@ -109,7 +112,7 @@ public class RookDatabaseService implements DatabaseService {
     String tableName = this.tableMapping.get(entity.getClass());
     StringJoiner fields = new StringJoiner(",");
 
-    UUID id = entity.getId();
+    Integer id = entity.getId();
     for (Field f : entity.getClass().getDeclaredFields()) {
 
       DatabaseField annotation = f.getAnnotation(DatabaseField.class);
@@ -118,7 +121,7 @@ public class RookDatabaseService implements DatabaseService {
       }
       if (annotation.isId()) {
         try {
-          id = (UUID) f.get(entity);
+          id = (Integer) f.get(entity);
         } catch (IllegalAccessException e) {
           log.debug(
               "Field was not accessible, check fields marked with @DatbaseField are not private.",
@@ -137,8 +140,7 @@ public class RookDatabaseService implements DatabaseService {
     StringBuilder query =
         new StringBuilder(
             String.format(
-                "UPDATE %s set %s WHERE id::text='%s' returning *;",
-                tableName, fields.toString(), id));
+                "UPDATE %s set %s WHERE id=%s returning *;", tableName, fields.toString(), id));
 
     Connection conn = this.pool.getConnection();
     try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
@@ -154,9 +156,7 @@ public class RookDatabaseService implements DatabaseService {
         } else if (f.getType() == Boolean.class) {
           statement.setBoolean(fieldIndex, (Boolean) f.get(entity));
         } else if (f.getType() == Integer.class) {
-          statement.setInt(fieldIndex, f.getInt(entity));
-        } else if (f.getType() == UUID.class) {
-          statement.setObject(fieldIndex, f.get(entity));
+          statement.setInt(fieldIndex, (Integer) f.get(entity));
         } else {
           statement.setString(fieldIndex, (String) f.get(entity));
         }
@@ -166,7 +166,7 @@ public class RookDatabaseService implements DatabaseService {
       log.info(statement.toString());
       try (ResultSet rs = statement.executeQuery()) {
         while (rs.next()) {
-          entity.setId(rs.getObject("id", UUID.class));
+          entity.setId(rs.getInt("id"));
         }
       }
     } catch (IllegalAccessException e) {
@@ -184,16 +184,18 @@ public class RookDatabaseService implements DatabaseService {
   public void delete(BaseModel entity) {
 
     String tableName = this.tableMapping.get(entity.getClass());
-    String query = String.format("DELETE FROM %s where id::text=?;", tableName);
+    String query = String.format("DELETE FROM %s where id=?;", tableName);
 
     Connection conn = this.pool.getConnection();
 
     try (PreparedStatement statement = conn.prepareStatement(query)) {
 
-      statement.setString(1, entity.getId().toString());
+      statement.setInt(1, entity.getId());
+      log.info(statement.toString());
       statement.execute();
     } catch (SQLException e) {
       log.debug("Unable to delete entity, SQL error occured.", e);
+      e.printStackTrace();
     } finally {
       this.pool.releaseConnection(conn);
     }
@@ -250,6 +252,7 @@ public class RookDatabaseService implements DatabaseService {
         }
       }
     } catch (SQLException e) {
+      e.printStackTrace();
       return null;
     } finally {
       this.pool.releaseConnection(conn);
@@ -258,7 +261,7 @@ public class RookDatabaseService implements DatabaseService {
   }
 
   @Override
-  public <T extends BaseModel> T get(Class<T> cls, UUID id) {
+  public <T extends BaseModel> T get(Class<T> cls, Integer id) {
 
     String tableName = this.tableMapping.get(cls);
     Connection conn = this.pool.getConnection();
@@ -268,8 +271,7 @@ public class RookDatabaseService implements DatabaseService {
             cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
 
     StringBuilder query =
-        new StringBuilder(
-            String.format("SELECT %s FROM %s WHERE id::text='%s';", fields, tableName, id));
+        new StringBuilder(String.format("SELECT %s FROM %s WHERE id='%s';", fields, tableName, id));
 
     try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
@@ -283,11 +285,13 @@ public class RookDatabaseService implements DatabaseService {
             return entity;
           } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // Couldn't call fromResultSet
+            e.printStackTrace();
             return null;
           }
         }
       }
     } catch (SQLException e) {
+      e.printStackTrace();
       return null;
     } finally {
       this.pool.releaseConnection(conn);
@@ -296,7 +300,8 @@ public class RookDatabaseService implements DatabaseService {
   }
 
   @Override
-  public <T extends BaseModel> List<T> getAll(Class<T> cls, Map<String, Object> params) {
+  public <T extends BaseModel> List<T> getAll(Class<T> cls, Map<String, Object> params)
+      throws IllegalArgumentException {
 
     String fieldsString =
         this.getQueryFieldsString(
@@ -319,20 +324,15 @@ public class RookDatabaseService implements DatabaseService {
         // params don't match a known db field, so continue with params.
         continue;
       }
+
       DatabaseField annotation = dbField.getAnnotation(DatabaseField.class);
-      DatabaseArrayField arrayAnnotation = dbField.getAnnotation(DatabaseArrayField.class);
+      DatabaseListField listAnnotation = dbField.getAnnotation(DatabaseListField.class);
 
-      if (arrayAnnotation != null) {
-        // Handle Array fields differently.
+      // Handle list fields differently.
+      if (listAnnotation != null) {
+        // Default implementation assumes this is a string list.
 
-        // Param value is empty, so skip the field.
-        if (params.get(field) == "") {
-          log.info("Array field with empty string value");
-          if (index == params.size()) {
-            query.append(";"); // End the Query
-          }
-          index++; // skip this field;
-          log.info("Continuing...");
+        if (params.get(field).equals("")) {
           continue;
         }
 
@@ -340,13 +340,23 @@ public class RookDatabaseService implements DatabaseService {
           query.append("\n AND ");
         }
 
-        query
-            .append(arrayAnnotation.arrayFuncton())
-            .append(arrayAnnotation.arrayCompareOperator())
-            .append("?");
-
-        if (index == params.size()) {
-          query.append(";"); // End the Query
+        // get all list values we are querying for
+        Object listValue = params.get(field);
+        if (listValue instanceof String) {
+          String[] values = ((String) params.get(field)).split(listAnnotation.seperator());
+          int valueIndex = 1;
+          for (String value : values) {
+            query.append(field).append(" LIKE ").append(String.format("\"%%%s%%\"", value));
+            if (valueIndex < values.length) {
+              query.append("\n AND ");
+            }
+            valueIndex++;
+          }
+        } else {
+          throw new IllegalArgumentException(
+              String.format(
+                  "Query parameter %s was not a handleable field type for the declared field.",
+                  field));
         }
 
       } else {
@@ -365,10 +375,9 @@ public class RookDatabaseService implements DatabaseService {
               .append(annotation.whereOperator())
               .append("?");
         }
-
-        if (index == params.size()) {
-          query.append(";"); // End the Query
-        }
+      }
+      if (index == params.size()) {
+        query.append(";"); // End the Query
       }
       index++;
     }
@@ -386,7 +395,7 @@ public class RookDatabaseService implements DatabaseService {
           continue;
         }
         DatabaseField annotation = dbField.getAnnotation(DatabaseField.class);
-        DatabaseArrayField arrayAnnotation = dbField.getAnnotation(DatabaseArrayField.class);
+        DatabaseListField listAnnotation = dbField.getAnnotation(DatabaseListField.class);
         if (e.getValue() instanceof Boolean) {
           boolean b = (boolean) e.getValue();
           statement.setBoolean(index, b);
@@ -399,19 +408,16 @@ public class RookDatabaseService implements DatabaseService {
           continue;
         } else if (e.getValue() instanceof String) {
 
-          // Check if the string field should be compared as an array.
-          if (arrayAnnotation != null) {
-            String value = (String) e.getValue();
-            if (value.length() == 0) {
-              log.info("Skipping empty array field in value setter.");
-              index++;
-              continue;
-            }
-            statement.setArray(
-                index, conn.createArrayOf("TEXT", value.split(arrayAnnotation.arraySeperator())));
+          if (listAnnotation != null) {
+            // No parameter for this index, query values have already been set.
+            index++;
+            continue;
           } else {
-
-            statement.setString(index, e.getValue().toString());
+            statement.setString(
+                index,
+                String.format(
+                    "%s%s%s",
+                    annotation.valueWrapper(), e.getValue().toString(), annotation.valueWrapper()));
           }
 
         } else {
@@ -431,13 +437,13 @@ public class RookDatabaseService implements DatabaseService {
           } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // Couldn't call fromResultSet
             e.printStackTrace();
-            return null;
+            return Collections.emptyList();
           }
         }
       }
     } catch (SQLException e) {
       log.info("Database error during getAll", e);
-      return null;
+      return Collections.emptyList();
     } finally {
       this.pool.releaseConnection(conn);
     }
@@ -449,7 +455,7 @@ public class RookDatabaseService implements DatabaseService {
    * Generates a list of database queriable fields as a comma seprated list.
    *
    * @param cls - The class to inspect.
-   * @param includeId - whether to include the UUID field for this entity.
+   * @param includeId - whether to include the id field for this entity.
    * @param includeFieldsSetByDatabase - whether to include fields that the database sets.
    * @return fields - Comma seperated list of fields. i.e. id,field1,field2
    */
@@ -475,7 +481,7 @@ public class RookDatabaseService implements DatabaseService {
    * Generates a map of Field names to class fields.
    *
    * @param cls - The class to inspect.
-   * @param includeId - whether to include the UUID field for this entity.
+   * @param includeId - whether to include the id field for this entity.
    * @return fields - Map of string name to actual class field.
    */
   private <T extends BaseModel> HashMap<String, Field> getQueryFieldsMap(
@@ -498,7 +504,7 @@ public class RookDatabaseService implements DatabaseService {
    * Generates a list of object values from the given BaseModel entity.
    *
    * @param entity - The entity to inspect.
-   * @param includeId - whether to include the UUID field for this entity.
+   * @param includeId - whether to include the id field for this entity.
    * @return values - List of values for database fields on that entity.
    */
   private <T extends BaseModel> ArrayList<Object> getQueryFieldValues(

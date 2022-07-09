@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS users;$
-DROP TABLE IF EXISTS links;$
-DROP TABLE IF EXISTS preferences;$
-DROP TABLE IF EXISTS system;$
-DROP TRIGGER IF EXISTS update_link_modified;$
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS links;
+DROP TABLE IF EXISTS preferences;
+DROP TABLE IF EXISTS system;
+DROP TRIGGER IF EXISTS update_link_modified;

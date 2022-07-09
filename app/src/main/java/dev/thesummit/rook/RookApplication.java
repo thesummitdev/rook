@@ -6,7 +6,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import dev.thesummit.rook.auth.AuthModule;
 import dev.thesummit.rook.database.DatabaseModule;
-import dev.thesummit.rook.database.PostgresSchemaManager;
+import dev.thesummit.rook.database.Sqlite3SchemaManager;
 import dev.thesummit.rook.handlers.AuthHandler;
 import dev.thesummit.rook.handlers.LinkHandler;
 import dev.thesummit.rook.handlers.PreferenceHandler;
@@ -49,12 +49,12 @@ public class RookApplication {
             new FlagModule(args), new DatabaseModule(RESET_DATABASE_FLAG), new AuthModule());
 
     // Verify & Check for database updates before starting the server.
-    injector.getInstance(PostgresSchemaManager.class).verifySchema();
+    injector.getInstance(Sqlite3SchemaManager.class).verifySchema();
 
     Javalin app =
         Javalin.create(
             config -> {
-              // config.enableDevLogging();
+              config.enableDevLogging();
               config.addStaticFiles("web", Location.CLASSPATH);
               config.addStaticFiles("assets", Location.CLASSPATH);
               config.addSinglePageRoot("/", "web/index.html");

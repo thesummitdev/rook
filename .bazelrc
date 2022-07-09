@@ -1,3 +1,7 @@
 # The Angular CLI will by default try to write to a cache, but under Bazel it's a read only fs
 # so we need to disable it with this env var
 build --define=NG_BUILD_CACHE=false
+build --java_language_version=11
+build --java_runtime_version=remotejdk_11
+build --tool_java_language_version=11
+build --tool_java_runtime_version=remotejdk_11

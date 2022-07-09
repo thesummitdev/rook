@@ -12,7 +12,6 @@ import io.javalin.http.InternalServerErrorResponse;
 import io.javalin.http.NotFoundResponse;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,9 +48,8 @@ public class LinkHandler {
         arr.put(l.toJSONObject());
       }
 
-    } catch (JsonProcessingException e) {
-      ctx.status(401);
-      return;
+    } catch (JsonProcessingException | IllegalArgumentException e) {
+      throw new BadRequestResponse(e.getMessage());
     }
 
     String response = arr.toString();
@@ -63,11 +61,11 @@ public class LinkHandler {
   /** Request handler for GET ${host}/links/{id} */
   public void getOne(Context ctx) {
 
-    String resourceId = ctx.pathParam("id");
+    Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
 
     try {
       User user = ctx.sessionAttribute("current_user");
-      Link link = this.dbService.get(Link.class, UUID.fromString(resourceId));
+      Link link = this.dbService.get(Link.class, resourceId);
 
       if (link == null || !user.id.equals(link.userId)) {
         throw new NotFoundResponse(String.format("Link with id %s was not found.", resourceId));
@@ -78,8 +76,7 @@ public class LinkHandler {
       ctx.result(link.toJSONObject().toString());
 
     } catch (IllegalArgumentException e) {
-      throw new BadRequestResponse(
-          String.format("Bad Request: %s is not a valid UUID.", resourceId));
+      throw new BadRequestResponse(String.format("Bad Request: %s is not a valid id.", resourceId));
     }
   }
 
@@ -134,9 +131,9 @@ public class LinkHandler {
   public void update(Context ctx) {
 
     User user = ctx.sessionAttribute("current_user");
-    String resourceId = ctx.pathParam("id");
+    Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
 
-    Link link = this.dbService.get(Link.class, UUID.fromString(resourceId));
+    Link link = this.dbService.get(Link.class, resourceId);
 
     if (link == null || !user.id.equals(link.userId)) {
       ctx.status(404);
@@ -191,11 +188,14 @@ public class LinkHandler {
   /** Request handler for DELETE ${host}/links/{id} */
   public void delete(Context ctx) {
 
-    String resourceId = ctx.pathParam("id");
-    Link l = this.dbService.get(Link.class, UUID.fromString(resourceId));
+    Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
+    Link l = this.dbService.get(Link.class, resourceId);
 
     if (l != null) {
       this.dbService.delete(l);
+      ctx.status(200);
+    } else {
+      ctx.status(404);
     }
   }
 }
