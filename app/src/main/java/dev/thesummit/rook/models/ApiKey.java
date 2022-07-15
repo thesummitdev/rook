@@ -1,6 +1,8 @@
 package dev.thesummit.rook.models;
 
 import dev.thesummit.rook.database.DatabaseField;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import org.json.JSONObject;
 
 public class ApiKey implements BaseModel {
@@ -15,6 +17,19 @@ public class ApiKey implements BaseModel {
   public ApiKey(User user, String apiKey) {
     this.userId = user.getId();
     this.key = apiKey;
+  }
+
+  public ApiKey(Integer userId, String apiKey) {
+    this.userId = userId;
+    this.key = apiKey;
+  }
+
+  public static ApiKey fromResultSet(ResultSet rs) {
+    try {
+      return new ApiKey(rs.getInt("userId"), rs.getString("key"));
+    } catch (SQLException e) {
+      return null;
+    }
   }
 
   @Override
