@@ -8,6 +8,7 @@ import dev.thesummit.rook.auth.JWTProvider;
 import dev.thesummit.rook.auth.JWTResponse;
 import dev.thesummit.rook.auth.RookPasswordManager;
 import dev.thesummit.rook.database.RookDatabaseService;
+import dev.thesummit.rook.models.ApiKey;
 import dev.thesummit.rook.models.User;
 import io.javalin.http.Context;
 import java.util.Optional;
@@ -54,6 +55,29 @@ public class AuthHandlerTest {
     verify(pwm).authenticateUser("testuser", "testpassword");
     verify(ctx).json(any(JWTResponse.class));
     verify(ctx).status(200);
+    verify(ctx).contentType("application/json");
+  }
+
+  @Test
+  public void generateApiKey() {
+
+    ApiKey expectedKey = new ApiKey(mockUser, "thisisanapikey");
+
+    doReturn(mockUser).when(ctx).sessionAttribute("current_user");
+    doReturn("thisisanapikey").when(jwtProvider).generateApiKey(mockUser);
+
+    doAnswer(
+            invocation -> {
+              ApiKey key = invocation.getArgument(0);
+              key.setId(1);
+              return null;
+            })
+        .when(dbService)
+        .put(any(ApiKey.class));
+
+    handler.generateApiKey(ctx);
+    verify(ctx).status(200);
+    verify(ctx).result(expectedKey.toJSONObject().toString());
     verify(ctx).contentType("application/json");
   }
 

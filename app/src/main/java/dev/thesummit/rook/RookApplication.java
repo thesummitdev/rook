@@ -64,6 +64,7 @@ public class RookApplication {
     app.before("/links", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/links/*", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/tags", injector.getInstance(AuthHandler.class)::requireUserContext);
+    app.before("/users/newapikey", injector.getInstance(AuthHandler.class)::requireUserContext);
 
     // Routes that have optional user context handling, but don't require authorization.
     app.before("/prefs", injector.getInstance(AuthHandler.class)::optionalUserContext);
@@ -80,6 +81,11 @@ public class RookApplication {
               "users",
               () -> {
                 put(injector.getInstance(UserHandler.class)::create);
+                path(
+                    "newapikey",
+                    () -> {
+                      get(injector.getInstance(AuthHandler.class)::generateApiKey);
+                    });
               });
 
           // Link Entity
