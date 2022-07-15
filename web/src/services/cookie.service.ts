@@ -37,7 +37,7 @@ export class CookieService implements OnDestroy {
             takeUntil(this.unsubscribe))
         .subscribe(
             (user: User|undefined) => user ?
-                this.setCookie('user', user.username, 1) :
+                this.setCookie('user', user.username, 7) :
                 this.removeCookie('user'));
   }
 
