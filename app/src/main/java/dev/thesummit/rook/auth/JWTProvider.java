@@ -22,7 +22,11 @@ public class JWTProvider {
   }
 
   public String generateToken(User user) {
-    return generator.generate(user, this.algorithm);
+    return generator.generate(user, this.algorithm, /* shouldExpire=*/ true);
+  }
+
+  public String generateApiKey(User user) {
+    return generator.generate(user, this.algorithm, /* shouldExpire=*/ false);
   }
 
   public Optional<DecodedJWT> validateToken(String token) {

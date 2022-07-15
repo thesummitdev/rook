@@ -8,6 +8,14 @@ CREATE TABLE IF NOT EXISTS users(
   userSalt              TEXT                    NULL
 );
 
+CREATE TABLE IF NOT EXISTS apikeys(
+  id       INTEGER PRIMARY KEY ASC NOT NULL,
+  userId   INTEGER                 NOT NULL,
+  key      TEXT                    NOT NULL,
+  created  timestamp(0)            NOT NULL DEFAULT ( datetime('now', 'utc')),
+  FOREIGN KEY ( userId ) REFERENCES users(id),
+)
+
 CREATE TABLE IF NOT EXISTS links(
   id       INTEGER PRIMARY KEY ASC NOT NULL,
   title    TEXT                    NOT NULL,

@@ -2,6 +2,7 @@ package dev.thesummit.rook.database;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import dev.thesummit.rook.models.ApiKey;
 import dev.thesummit.rook.models.Link;
 import dev.thesummit.rook.models.Preference;
 import dev.thesummit.rook.models.SystemKey;
@@ -34,6 +35,7 @@ public class DatabaseModule extends AbstractModule {
     DatabaseModule.tableMapping.put(User.class, "USERS");
     DatabaseModule.tableMapping.put(Preference.class, "PREFERENCES");
     DatabaseModule.tableMapping.put(SystemKey.class, "SYSTEM");
+    DatabaseModule.tableMapping.put(ApiKey.class, "APIKEYS");
 
     DatabaseModule.service =
         new RookDatabaseService(DatabaseModule.pool, DatabaseModule.tableMapping);

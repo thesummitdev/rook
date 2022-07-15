@@ -9,6 +9,7 @@ java_library(
         "Link.java",
         "Preference.java",
         "User.java",
+        "ApiKey.java",
         "SystemKey.java",
     ],
     deps = [

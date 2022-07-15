@@ -25,15 +25,18 @@ public class AuthModule extends AbstractModule {
   @Provides()
   static JWTProvider provideJWTProvider() {
     JWTGenerator generator =
-        (user, alg) -> {
-          Date expires = new Date();
-          expires.setTime(expires.getTime() + (ONE_DAY * 7));
+        (user, alg, shouldExpire) -> {
           JWTCreator.Builder token =
               JWT.create()
                   .withClaim("username", user.username)
                   .withIssuer(ISSUER)
-                  .withIssuedAt(new Date())
-                  .withExpiresAt(expires);
+                  .withIssuedAt(new Date());
+
+          if (shouldExpire) {
+            Date expires = new Date();
+            expires.setTime(expires.getTime() + (ONE_DAY * 7));
+            token.withExpiresAt(expires);
+          }
           return token.sign(alg);
         };
 
