@@ -2,6 +2,7 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {Subject} from 'rxjs';
 import {skip, takeUntil} from 'rxjs/operators';
 import {User} from 'web/src/models/user';
+
 import {LoginService} from './login.service';
 
 @Injectable({providedIn: 'root'})
@@ -27,7 +28,7 @@ export class CookieService implements OnDestroy {
             takeUntil(this.unsubscribe))
         .subscribe(
             (token: string|undefined) => token ?
-                this.setCookie('jwt', token, 1) :
+                this.setCookie('jwt', token, 7) :
                 this.removeCookie('jwt'));
 
     this.login.getUserAsObservable()
