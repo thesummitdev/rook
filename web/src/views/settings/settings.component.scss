@@ -11,6 +11,10 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     padding: 12px;
+
+    a {
+      cursor: pointer;
+    }
   }
 }
 
