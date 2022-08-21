@@ -52,12 +52,12 @@
       </div>
       <ng-container
                     *ngIf="(tagsInput.value | lastword) && 
-                           (tagOptions$ | async | filterList: (model.tags | lastword) ) as options">
+                           (tagOptions$ | async | filterList: (model.tags | lastword | lowercase ) ) as options">
         <div *ngIf="options.length > 0"
              class="options-list">
 
           <ul>
-            <ng-container *ngFor="let option of ( options | filterList: (model.tags | lastword) )">
+            <ng-container *ngFor="let option of ( options | filterList: (model.tags | lastword | lowercase) )">
               <li tabindex="0"
                   *ngIf="option"
                   (keydown.enter)="appendTag($event, option)"
