@@ -65,15 +65,6 @@ container_image(
 )
 
 container_push(
-  name = "docker_hub_push_latest",
-  image = ":latest",
-  format = "Docker",
-  registry = "index.docker.io",
-  repository = "tylersaunders/rook",
-  tag = "latest",
-)
-
-container_push(
   name = "github_push_latest",
   image = ":latest",
   format = "Docker",

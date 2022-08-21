@@ -153,7 +153,7 @@ load(
 # Base image for the container is debian stable, this fetches it from the official docker library.
 container_pull(
     name = "debian_stable_linux_amd64",
-    digest = "sha256:3d8282536e0faa792afc317a5335b1487298341149a5ee6f5b34b1b02654df80",
+    digest = "sha256:93549d7c57b42181ba8af85bc3b7a967ae420b3388f95b879b1abaa2ee795c19",
     registry = "index.docker.io",
     repository = "library/debian",
 )
