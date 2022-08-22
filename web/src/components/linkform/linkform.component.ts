@@ -1,7 +1,8 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, Optional, Output, ViewChild} from '@angular/core';
 import {shareReplay} from 'rxjs';
 import {Link} from 'web/src/models/link';
 import {DataService} from 'web/src/services/data.service';
+import {EDIT_MODE} from 'web/src/util/injectiontokens';
 
 import {linkFormAnimations} from './linkform.animations';
 
@@ -27,11 +28,16 @@ export class LinkFormComponent implements AfterViewInit {
     title: '',
   };
 
-  constructor(private readonly dataService: DataService) {}
+  constructor(
+      private readonly dataService: DataService,
+      @Inject(EDIT_MODE) @Optional() public readonly editMode: boolean,
+  ) {}
 
   ngAfterViewInit(): void {
     if (this.data !== null) {
       this.model = {...this.data};
+    }
+    if (this.editMode) {
       this.editing = true;
     }
     this.titleInput.nativeElement.focus();
