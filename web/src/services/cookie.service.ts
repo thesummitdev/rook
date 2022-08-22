@@ -1,11 +1,11 @@
-import {Injectable, OnDestroy} from '@angular/core';
-import {Subject} from 'rxjs';
-import {skip, takeUntil} from 'rxjs/operators';
-import {User} from 'web/src/models/user';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
+import { skip, takeUntil } from 'rxjs/operators';
+import { User } from 'web/src/models/user';
 
-import {LoginService} from './login.service';
+import { LoginService } from './login.service';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 /** Service for handling cookies. */
 export class CookieService implements OnDestroy {
   private unsubscribe = new Subject<void>();  // Clean up subscriptions.
@@ -27,27 +27,27 @@ export class CookieService implements OnDestroy {
 
     // On future token updates, set the cookie.
     this.login.getTokenAsObservable()
-        .pipe(
-            skip(1),  // Ignore first value since this is a ReplaySubject.
-            takeUntil(this.unsubscribe))
-        .subscribe(
-            (token: string|undefined) => token ?
-                this.setCookie('jwt', token, 7) :
-                this.removeCookie('jwt'));
+      .pipe(
+        skip(1),  // Ignore first value since this is a ReplaySubject.
+        takeUntil(this.unsubscribe))
+      .subscribe(
+        (token: string | undefined) => token ?
+          this.setCookie('jwt', token, 7) :
+          this.removeCookie('jwt'));
 
     this.login.getUserAsObservable()
-        .pipe(
-            skip(1),  // Ignore first value since this is a ReplaySubject.
-            takeUntil(this.unsubscribe))
-        .subscribe((user: User|undefined) => {
-          if (user) {
-            this.setCookie('user', user.username, 1);
-            user.isAdmin ? this.setCookie('userIsAdmin', 'true', 1) : null;
+      .pipe(
+        skip(1),  // Ignore first value since this is a ReplaySubject.
+        takeUntil(this.unsubscribe))
+      .subscribe((user: User | undefined) => {
+        if (user) {
+          this.setCookie('user', user.username, 7);
+          user.isAdmin ? this.setCookie('userIsAdmin', 'true', 7) : null;
 
-          } else {
-            this.removeCookie('user');
-          }
-        });
+        } else {
+          this.removeCookie('user');
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -61,7 +61,7 @@ export class CookieService implements OnDestroy {
    * @param name the name of the cookie
    * @return the cookie value or undefined
    */
-  getCookie(name: string): string|undefined {
+  getCookie(name: string): string | undefined {
     const cookieArray: string[] = document.cookie.split('; ');
     const cookieName = `${name}=`;
 
@@ -78,13 +78,13 @@ export class CookieService implements OnDestroy {
    * @param value the value of the cookie
    * @param expireDays number of days until the cookie expires
    * @param path the cookie path
-   * */
+   */
   setCookie(
-      name: string,
-      value: string,
-      expireDays: number,
-      path: string = '/',
-      ): void {
+    name: string,
+    value: string,
+    expireDays: number,
+    path: string = '/',
+  ): void {
     const d: Date = new Date();
     d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
     const expires: string = `expires=${d.toUTCString()}`;
