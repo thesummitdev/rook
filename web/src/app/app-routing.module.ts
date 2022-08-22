@@ -6,6 +6,7 @@ import {SettingsViewComponent} from 'web/src/views/settings/settings.component';
 
 const routes: Routes = [
   {path: '', component: MainViewComponent},
+  {path: 'create', component: MainViewComponent},
   {path: 'settings', component: SettingsViewComponent},
 ];
 
