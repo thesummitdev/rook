@@ -64,6 +64,7 @@ const everforest: Theme = {
 @Injectable({ providedIn: 'root' })
 export class UiService {
   private readonly filterPanel$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private readonly pageSize$: ReplaySubject<number> = new ReplaySubject(1);
 
   private readonly themes: Map<string, Theme> = new Map([
     ['light', light],
@@ -101,6 +102,14 @@ export class UiService {
     for (const [key, value] of Object.entries(loadedTheme)) {
       root.style.setProperty(key, value);
     }
+  }
+
+  getPageSizeAsObservable(): Observable<number> {
+    return this.pageSize$.asObservable();
+  }
+
+  setPageSize(size: number) {
+    this.pageSize$.next(size);
   }
 
   /**

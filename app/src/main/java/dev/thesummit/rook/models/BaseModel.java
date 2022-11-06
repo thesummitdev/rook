@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import org.json.JSONObject;
 
 public interface BaseModel {
-
   public void setId(Integer id);
 
   public Integer getId();

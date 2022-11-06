@@ -25,6 +25,11 @@ import { User } from '../models/user';
 
 import { ToastService } from './toast.service';
 
+interface PagedResults<T> {
+  cursor?: { next?: string; prev?: string };
+  items: T[];
+}
+
 @Injectable({ providedIn: 'root' })
 /** Data service that fetches data from the rook api. */
 export class DataService {
@@ -70,7 +75,7 @@ export class DataService {
    * @returns {Observable} of the list of returned links. Can be empty an
    *                       empty list.
    */
-  getLinks(): Observable<Link[]> {
+  getLinks(cursor?: string, size?:number): Observable<PagedResults<Link>> {
     return combineLatest([
       this.filters.getSearchAsObservable().pipe(
         debounceTime(300) // debounce user input.
@@ -78,16 +83,18 @@ export class DataService {
       this.filters.getTagsAsObservable(),
     ]).pipe(
       switchMap(([searchTerm, tags]) =>
-        this.http.request<Link[]>('POST', '/links', {
+        this.http.request<PagedResults<Link>>('POST', '/links', {
           body: JSON.stringify({
+            cursor,
             title: searchTerm,
             tags: [...tags].join(' '),
+            limit: size,
           }),
         })
       ),
       // If the route errors or there is no auth token present, just
       // return an empty array.
-      catchError(() => of([]))
+      catchError(() => of({ items: [] }))
     );
   }
 

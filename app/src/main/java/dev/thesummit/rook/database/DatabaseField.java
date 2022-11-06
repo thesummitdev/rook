@@ -16,4 +16,6 @@ public @interface DatabaseField {
   public boolean isIdentifier() default false;
 
   public boolean isSetByDatabase() default false;
+
+  public boolean orderBy() default false;
 }

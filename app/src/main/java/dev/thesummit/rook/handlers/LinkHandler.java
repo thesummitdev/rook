@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import dev.thesummit.rook.database.DatabaseService;
+import dev.thesummit.rook.database.PagedResults;
 import dev.thesummit.rook.models.Link;
 import dev.thesummit.rook.models.User;
 import io.javalin.http.BadRequestResponse;
@@ -20,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkHandler {
-
   private static Logger log = LoggerFactory.getLogger(UserHandler.class);
   private DatabaseService dbService;
 
@@ -29,10 +29,10 @@ public class LinkHandler {
     this.dbService = dbService;
   }
 
-  /** Request handler for POST ${host}/links/ */
+  /** Request handler for POST ${host}/links. */
   public void getAll(Context ctx) {
-
     User user = ctx.sessionAttribute("current_user");
+    JSONObject payload = new JSONObject();
     JSONArray arr = new JSONArray();
 
     try {
@@ -40,19 +40,22 @@ public class LinkHandler {
       HashMap<String, Object> params = new ObjectMapper().readValue(ctx.body(), HashMap.class);
       params.put("userId", user.id); // Scope the search to Links the user owns.
 
-      List<Link> lns =
-          this.dbService.getAll(Link.class, params).stream()
-              .sorted((Link l1, Link l2) -> l2.modified.compareTo(l1.modified))
-              .collect(Collectors.toList());
-      for (Link l : lns) {
+      PagedResults<Link> results = this.dbService.getAllPaged(Link.class, params);
+      for (Link l : results.getItems()) {
         arr.put(l.toJSONObject());
       }
+
+      if (results.getCursor() != null) {
+        payload.put("cursor", results.getCursor().toJSONObject());
+        log.info(results.getCursor().toString());
+      }
+      payload.put("items", arr);
 
     } catch (JsonProcessingException | IllegalArgumentException e) {
       throw new BadRequestResponse(e.getMessage());
     }
 
-    String response = arr.toString();
+    String response = payload.toString();
     ctx.status(200);
     ctx.contentType("application/json");
     ctx.result(response);
@@ -60,7 +63,6 @@ public class LinkHandler {
 
   /** Request handler for GET ${host}/links/{id} */
   public void getOne(Context ctx) {
-
     Integer resourceId;
 
     try {
@@ -85,7 +87,6 @@ public class LinkHandler {
 
   /** Request handler for PUT ${host}/links/ */
   public void create(Context ctx) {
-
     User user = ctx.sessionAttribute("current_user");
 
     JSONObject body = null;
@@ -132,7 +133,6 @@ public class LinkHandler {
 
   /** Request handler for PATCH ${host}/links/{id} */
   public void update(Context ctx) {
-
     User user = ctx.sessionAttribute("current_user");
     Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
 
@@ -190,7 +190,6 @@ public class LinkHandler {
 
   /** Request handler for DELETE ${host}/links/{id} */
   public void delete(Context ctx) {
-
     Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
     Link l = this.dbService.get(Link.class, resourceId);
 

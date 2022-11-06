@@ -12,6 +12,7 @@ import { UiService } from 'web/src/services/ui.service';
 interface Settings {
   theme: string;
   allowNewUsers: boolean;
+  pageSize: number;
 }
 
 @Component({
@@ -27,10 +28,12 @@ export class SettingsViewComponent {
   readonly displayedColumns = ['agent', 'key', 'copy', 'delete'];
   prefs$: Observable<Map<string, Preference>>;
   allThemes = this.ui.getAllThemes();
+  readonly pageSizes = [5, 20, 40, 75, 100];
 
   model: Settings = {
     theme: 'light',
     allowNewUsers: true,
+    pageSize: 20,
   };
 
   constructor(
@@ -56,6 +59,9 @@ export class SettingsViewComponent {
           this.model.allowNewUsers =
             prefs.get('allowNewUsers').value === 'true';
         }
+        if (prefs.has('pageSize')) {
+          this.model.pageSize = Number(prefs.get('pageSize').value);
+        }
         return prefs;
       })
     );
@@ -69,6 +75,12 @@ export class SettingsViewComponent {
   onThemeChange(newTheme: string): void {
     this.ui.setPageTheme(newTheme);
     this.data.setPreference({ key: 'theme', value: newTheme }).subscribe();
+  }
+
+  onPageSizeChange(newSize: number): void {
+    this.data
+      .setPreference({ key: 'pageSize', value: newSize.toString() })
+      .subscribe();
   }
 
   /**

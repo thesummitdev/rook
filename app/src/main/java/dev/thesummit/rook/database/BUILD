@@ -60,6 +60,8 @@ java_library(
     srcs = [
         "DatabaseService.java",
         "RookDatabaseService.java",
+        "PagedResults.java",
+        "PagedCursor.java",
     ],
     deps = [
         ":connection_pool",
@@ -67,5 +69,6 @@ java_library(
         "//app/src/main/java/dev/thesummit/rook/models",
         "@maven//:com_google_inject_guice",
         "@maven//:org_slf4j_slf4j_api",
+        "@maven//:org_json_json",
     ],
 )

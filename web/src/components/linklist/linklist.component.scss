@@ -10,6 +10,18 @@
   border-top: 1px solid theme.$DIM;
 }
 
+.paging-container {
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.button-container {
+  min-width: 50px;
+}
+
 .empty-list {
   font-family: 'Fira Sans', sans-serif;
   font-size: 13px;
