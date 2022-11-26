@@ -5,12 +5,9 @@ web application.
 
 ## Getting Started
 
-**NOTE:** This project is still under active development, and currently only supports the `x86_64` 
-architecture. For the `arm` architecture, follow [this](https://github.com/thesummitdev/rook/issues/26)
-issue.
+alpha container images have been published and can be pulled from:
 
-0.2.0-alpha container images have been published and can be pulled from:
-
+`docker pull ghcr.io/thesummitdev/rook:arm`
 `docker pull ghcr.io/thesummitdev/rook:latest`
 
 For sample configuration see the [docker-compose.yml](docker-compose.yml) in this repo.
