@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Required packages
+apt-get update && apt-get install -y \
+  openjdk-11-jre \
+  sqlite3 \
+  locales \
+  sudo
+
 # Setup locale.
 sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen

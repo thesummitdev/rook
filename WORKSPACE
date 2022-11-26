@@ -157,3 +157,10 @@ container_pull(
     registry = "index.docker.io",
     repository = "library/debian",
 )
+
+container_pull(
+    name = "debian_stable_linux_arm64_v8",
+    digest = "sha256:4054983f9800a53e63608b51008325494065760e35918cb45c8f65d4cb4b7773",
+    registry = "index.docker.io",
+    repository = "library/debian",
+)

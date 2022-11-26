@@ -16,33 +16,11 @@ package_group(
     ],
 )
 
-# This defines a list of linux packages to download that will be installed in the container.
-download_pkgs(
-    name = "image_deps",
-    image_tar = "@debian_stable_linux_amd64//image",
-    packages = [
-        "openjdk-11-jre",  # Only the Java runtime, JDK is not needed for production container.
-        "sqlite3",
-        "locales",
-        "sudo",  # Needed for the container_init script.
-    ],
-    visibility = ["//visibility:private"],
-)
-
-# Installs the downloaded packages in the base debian image container.
-install_pkgs(
-    name = "required_pkgs_image",
-    image_tar = "@debian_stable_linux_amd64//image",
-    installables_tar = ":image_deps.tar",
-    output_image_name = "required_pkgs_image",
-    visibility = ["//visibility:private"],
-)
-
 # Builds the latest version of the container image.
 # blaze run //:latest will add the image to the local docker instance.
 container_image(
     name = "latest",
-    base = ":required_pkgs_image.tar",  # Our custom image base with the installed packages.
+    base = "@debian_stable_linux_amd64//image",  # Our custom image base with the installed packages.
     creation_time = "{BUILD_TIMESTAMP}",
     entrypoint = [
         "/bin/bash",
@@ -64,6 +42,30 @@ container_image(
     tags = ["latest"],
 )
 
+container_image(
+    name = "arm",
+    base = "@debian_stable_linux_arm64_v8//image",  # Our custom image base with the installed packages.
+    creation_time = "{BUILD_TIMESTAMP}",
+    entrypoint = [
+        "/bin/bash",
+        "-c",
+        "./container_init.sh",
+    ],
+    env = {
+        "ROOK_PORT": "8000",
+        "ROOK_USER": "rook_system",
+        "ROOK_PASSWORD": "rook_system",
+        "DATA":"/usr/local/rook/data",
+    },
+    files = [
+        "container_init.sh",
+        ":rook_deploy.jar",
+    ],
+    repository = "thesummit/rook",
+    stamp = "@io_bazel_rules_docker//stamp:always",
+    tags = ["arm64/v8"],
+)
+
 container_push(
   name = "github_push_latest",
   image = ":latest",
@@ -71,6 +73,15 @@ container_push(
   registry = "ghcr.io",
   repository = "thesummitdev/rook",
   tag = "latest",
+)
+
+container_push(
+  name = "github_push_arm",
+  image = ":arm",
+  format = "Docker",
+  registry = "ghcr.io",
+  repository = "thesummitdev/rook",
+  tag = "arm",
 )
 
 # The actual server binary. bazel run //:rook can run this locally.
