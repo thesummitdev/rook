@@ -17,4 +17,4 @@ ALTER TABLE users_backup RENAME to users;
 COMMIT;
 
 -- Finally, update the system version.
-UPDATE system SET value = '1.0' where key = 'sqlite3_schema_version';
+PRAGMA user_version=100;

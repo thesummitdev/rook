@@ -7,4 +7,4 @@ ALTER TABLE users ADD COLUMN isAdmin boolean NOT NULL DEFAULT false;
 UPDATE users SET isAdmin = true;
 
 -- Finally, update the system version.
-UPDATE system SET value = '1.1' where key = 'sqlite3_schema_version';
+PRAGMA user_version=110;

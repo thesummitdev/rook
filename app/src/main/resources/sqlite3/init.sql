@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS users(
   id                    INTEGER PRIMARY KEY ASC NOT NULL,
   username              TEXT                    NOT NULL,
   userEncryptedPassword TEXT                    NULL,
-  userSalt              TEXT                    NULL
+  userSalt              TEXT                    NULL,
+  isAdmin               BOOLEAN                 NOT NULL DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS links(
@@ -35,5 +36,5 @@ CREATE TABLE IF NOT EXISTS system(
 );
 
 -- ------------------------------------------------------------------------------
-INSERT INTO SYSTEM (key,value) VALUES ('sqlite3_schema_version', '1.0') ON CONFLICT DO NOTHING;
+PRAGMA user_version=110;
 INSERT INTO PREFERENCES (key, value) VALUES ('allowNewUsers', 'true') ON CONFLICT DO NOTHING;
