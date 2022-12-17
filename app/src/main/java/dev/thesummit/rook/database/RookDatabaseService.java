@@ -25,6 +25,7 @@ public class RookDatabaseService implements DatabaseService {
   private static Logger log = LoggerFactory.getLogger(RookDatabaseService.class);
   private ConnectionPool pool;
   private HashMap<Class<?>, String> tableMapping;
+  private Object lock = new Object();
 
   @Inject
   public RookDatabaseService(ConnectionPool pool, HashMap<Class<?>, String> tableMapping) {
@@ -37,20 +38,18 @@ public class RookDatabaseService implements DatabaseService {
 
     String tableName = this.tableMapping.get(entity.getClass());
 
-    String fields =
-        this.getQueryFieldsString(
-            entity.getClass(), /*includeId= */ true, /* includeFieldsSetByDatabase= */ false);
-    ArrayList<Object> values = this.getQueryFieldValues(entity, /*includeId= */ true, false);
+    String fields = this.getQueryFieldsString(
+        entity.getClass(), /* includeId= */ true, /* includeFieldsSetByDatabase= */ false);
+    ArrayList<Object> values = this.getQueryFieldValues(entity, /* includeId= */ true, false);
     String valuePlaceholders = "?";
     if (values.size() > 1) {
       valuePlaceholders = "?,".repeat(values.size() - 1) + "?";
     }
 
-    StringBuilder query =
-        new StringBuilder(
-            String.format(
-                "INSERT into %s (%s) VALUES (%s) returning *;",
-                tableName, fields, valuePlaceholders));
+    StringBuilder query = new StringBuilder(
+        String.format(
+            "INSERT into %s (%s) VALUES (%s) returning *;",
+            tableName, fields, valuePlaceholders));
     log.info(query.toString());
     log.info(values.toString());
 
@@ -73,28 +72,32 @@ public class RookDatabaseService implements DatabaseService {
         fieldIndex++;
       }
       log.debug(String.format("PUT SQL: %s", statement.toString()));
-      try (ResultSet rs = statement.executeQuery()) {
-        while (rs.next()) {
-          entity.setId(rs.getInt("id"));
 
-          for (Field f : entity.getClass().getDeclaredFields()) {
+      synchronized (lock) {
 
-            DatabaseField annotation = f.getAnnotation(DatabaseField.class);
-            if (annotation == null) {
-              continue;
-            }
-            if (annotation.isSetByDatabase()) {
-              try {
-                if (f.getType() == Timestamp.class) {
-                  f.set(entity, Timestamp.valueOf(rs.getString(f.getName())));
-                } else {
-                  f.set(entity, rs.getObject(f.getName()));
+        try (ResultSet rs = statement.executeQuery()) {
+          while (rs.next()) {
+            entity.setId(rs.getInt("id"));
+
+            for (Field f : entity.getClass().getDeclaredFields()) {
+
+              DatabaseField annotation = f.getAnnotation(DatabaseField.class);
+              if (annotation == null) {
+                continue;
+              }
+              if (annotation.isSetByDatabase()) {
+                try {
+                  if (f.getType() == Timestamp.class) {
+                    f.set(entity, Timestamp.valueOf(rs.getString(f.getName())));
+                  } else {
+                    f.set(entity, rs.getObject(f.getName()));
+                  }
+                } catch (IllegalAccessException e) {
+                  log.debug(
+                      "Field was not accessible, check fields marked with @DatabaseField are not"
+                          + " private.",
+                      e);
                 }
-              } catch (IllegalAccessException e) {
-                log.debug(
-                    "Field was not accessible, check fields marked with @DatabaseField are not"
-                        + " private.",
-                    e);
               }
             }
           }
@@ -137,10 +140,9 @@ public class RookDatabaseService implements DatabaseService {
       return;
     }
 
-    StringBuilder query =
-        new StringBuilder(
-            String.format(
-                "UPDATE %s set %s WHERE id=%s returning *;", tableName, fields.toString(), id));
+    StringBuilder query = new StringBuilder(
+        String.format(
+            "UPDATE %s set %s WHERE id=%s returning *;", tableName, fields.toString(), id));
 
     Connection conn = this.pool.getConnection();
     try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
@@ -164,9 +166,12 @@ public class RookDatabaseService implements DatabaseService {
       }
 
       log.info(statement.toString());
-      try (ResultSet rs = statement.executeQuery()) {
-        while (rs.next()) {
-          entity.setId(rs.getInt("id"));
+
+      synchronized (lock) {
+        try (ResultSet rs = statement.executeQuery()) {
+          while (rs.next()) {
+            entity.setId(rs.getInt("id"));
+          }
         }
       }
     } catch (IllegalAccessException e) {
@@ -207,9 +212,8 @@ public class RookDatabaseService implements DatabaseService {
     String tableName = this.tableMapping.get(cls);
     Connection conn = this.pool.getConnection();
 
-    String fields =
-        this.getQueryFieldsString(
-            cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
+    String fields = this.getQueryFieldsString(
+        cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
     HashMap<String, Field> fieldMap = this.getQueryFieldsMap(cls, true);
     String identifierField = null;
 
@@ -228,11 +232,10 @@ public class RookDatabaseService implements DatabaseService {
       return null;
     }
 
-    StringBuilder query =
-        new StringBuilder(
-            String.format(
-                "SELECT %s FROM %s WHERE %s='%s';",
-                fields, tableName, identifierField, identifier));
+    StringBuilder query = new StringBuilder(
+        String.format(
+            "SELECT %s FROM %s WHERE %s='%s';",
+            fields, tableName, identifierField, identifier));
 
     try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
@@ -266,12 +269,10 @@ public class RookDatabaseService implements DatabaseService {
     String tableName = this.tableMapping.get(cls);
     Connection conn = this.pool.getConnection();
 
-    String fields =
-        this.getQueryFieldsString(
-            cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
+    String fields = this.getQueryFieldsString(
+        cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
 
-    StringBuilder query =
-        new StringBuilder(String.format("SELECT %s FROM %s WHERE id='%s';", fields, tableName, id));
+    StringBuilder query = new StringBuilder(String.format("SELECT %s FROM %s WHERE id='%s';", fields, tableName, id));
 
     try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
@@ -303,12 +304,10 @@ public class RookDatabaseService implements DatabaseService {
   public <T extends BaseModel> List<T> getAll(Class<T> cls, Map<String, Object> params)
       throws IllegalArgumentException {
 
-    String fieldsString =
-        this.getQueryFieldsString(
-            cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
+    String fieldsString = this.getQueryFieldsString(
+        cls, /* includeId= */ true, /* includeFieldsSetByDatabase= */ true);
     String tableName = this.tableMapping.get(cls);
-    StringBuilder query =
-        new StringBuilder(String.format("SELECT %s FROM %s", fieldsString, tableName));
+    StringBuilder query = new StringBuilder(String.format("SELECT %s FROM %s", fieldsString, tableName));
     ArrayList<T> results = new ArrayList<T>();
 
     if (!params.isEmpty()) {
@@ -454,9 +453,11 @@ public class RookDatabaseService implements DatabaseService {
   /**
    * Generates a list of database queriable fields as a comma seprated list.
    *
-   * @param cls - The class to inspect.
-   * @param includeId - whether to include the id field for this entity.
-   * @param includeFieldsSetByDatabase - whether to include fields that the database sets.
+   * @param cls                        - The class to inspect.
+   * @param includeId                  - whether to include the id field for this
+   *                                   entity.
+   * @param includeFieldsSetByDatabase - whether to include fields that the
+   *                                   database sets.
    * @return fields - Comma seperated list of fields. i.e. id,field1,field2
    */
   private <T extends BaseModel> String getQueryFieldsString(
@@ -480,7 +481,7 @@ public class RookDatabaseService implements DatabaseService {
   /**
    * Generates a map of Field names to class fields.
    *
-   * @param cls - The class to inspect.
+   * @param cls       - The class to inspect.
    * @param includeId - whether to include the id field for this entity.
    * @return fields - Map of string name to actual class field.
    */
@@ -503,7 +504,7 @@ public class RookDatabaseService implements DatabaseService {
   /**
    * Generates a list of object values from the given BaseModel entity.
    *
-   * @param entity - The entity to inspect.
+   * @param entity    - The entity to inspect.
    * @param includeId - whether to include the id field for this entity.
    * @return values - List of values for database fields on that entity.
    */
