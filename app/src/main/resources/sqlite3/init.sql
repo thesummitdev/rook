@@ -13,9 +13,10 @@ CREATE TABLE IF NOT EXISTS apikeys(
   id       INTEGER PRIMARY KEY ASC NOT NULL,
   userId   INTEGER                 NOT NULL,
   key      TEXT                    NOT NULL,
+  agent    TEXT                    NOT NULL DEFAULT 'unknown',
   created  timestamp(0)            NOT NULL DEFAULT ( datetime('now', 'utc')),
-  FOREIGN KEY ( userId ) REFERENCES users(id),
-)
+  FOREIGN KEY ( userId ) REFERENCES users(id)
+);
 
 CREATE TABLE IF NOT EXISTS links(
   id       INTEGER PRIMARY KEY ASC NOT NULL,
@@ -44,5 +45,5 @@ CREATE TABLE IF NOT EXISTS system(
 );
 
 -- ------------------------------------------------------------------------------
-PRAGMA user_version=110;
+PRAGMA user_version=120;
 INSERT INTO PREFERENCES (key, value) VALUES ('allowNewUsers', 'true') ON CONFLICT DO NOTHING;

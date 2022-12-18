@@ -107,7 +107,7 @@ public class AuthHandler {
     }
 
     log.info(user.getId().toString());
-    ApiKey newKey = new ApiKey(user, this.jwtProvider.generateApiKey(user));
+    ApiKey newKey = new ApiKey(user, this.jwtProvider.generateApiKey(user), ctx.userAgent());
     this.dbService.put(newKey);
 
     if (newKey.getId() != null) {
@@ -124,7 +124,7 @@ public class AuthHandler {
     User user = ctx.sessionAttribute("current_user");
 
     if (user == null) {
-      throw new ForbiddenResponse("You must be logged in to request a new api key.");
+      throw new ForbiddenResponse("You must be logged in to request your api keys.");
     }
 
     HashMap<String, Object> params = new HashMap<String, Object>();

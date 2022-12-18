@@ -10,23 +10,30 @@ public class ApiKey implements BaseModel {
   @DatabaseField(isId = true)
   public Integer id;
 
-  @DatabaseField public Integer userId;
+  @DatabaseField
+  public Integer userId;
 
-  @DatabaseField public String key;
+  @DatabaseField
+  public String key;
 
-  public ApiKey(User user, String apiKey) {
+  @DatabaseField
+  public String agent;
+
+  public ApiKey(User user, String apiKey, String agent) {
     this.userId = user.getId();
     this.key = apiKey;
+    this.agent = agent;
   }
 
-  public ApiKey(Integer userId, String apiKey) {
+  public ApiKey(Integer userId, String apiKey, String agent) {
     this.userId = userId;
     this.key = apiKey;
+    this.agent = agent;
   }
 
   public static ApiKey fromResultSet(ResultSet rs) {
     try {
-      return new ApiKey(rs.getInt("userId"), rs.getString("key"));
+      return new ApiKey(rs.getInt("userId"), rs.getString("key"), rs.getString("agent"));
     } catch (SQLException e) {
       return null;
     }
@@ -49,6 +56,6 @@ public class ApiKey implements BaseModel {
 
   @Override
   public JSONObject toJSONObject() {
-    return new JSONObject().put("userId", userId).put("apiKey", key);
+    return new JSONObject().put("userId", userId).put("apiKey", key).put("agent", agent);
   }
 }

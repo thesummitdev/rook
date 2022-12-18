@@ -20,14 +20,15 @@ public class Sqlite3SchemaManager implements DatabaseSchemaManager {
   private static Logger log = LoggerFactory.getLogger(Sqlite3SchemaManager.class);
 
   private static final int VERSION_DEFAULT = 0;
-  private static final int VERSION_1_0 = 100;
-  private static final int VERSION_1_1 = 110;
+  private static final int VERSION_100 = 100;
+  private static final int VERSION_110 = 110;
+  private static final int VERSION_120 = 120;
   private static final String COLON_DELIMITER = ";";
   private static final String SPECIAL_DELIMITER = "$$";
   private static final String USER_VERSION_FETCH = "PRAGMA user_version;";
   private static final String USER_VERSION_SET = "PRAGMA user_version=%s;";
 
-  private static final int RELEASE_VERSION = VERSION_1_1;
+  private static final int RELEASE_VERSION = VERSION_120;
 
   private final HashMap<Integer, String> SCRIPT_UPGRADE_MAP = new HashMap<Integer, String>();
 
@@ -45,7 +46,8 @@ public class Sqlite3SchemaManager implements DatabaseSchemaManager {
 
     // Register upgrade scripts.
     SCRIPT_UPGRADE_MAP.put(VERSION_DEFAULT, "/sqlite3/init.sql");
-    SCRIPT_UPGRADE_MAP.put(VERSION_1_1, "/sqlite3/migrations/1_0_to_1_1.sql");
+    SCRIPT_UPGRADE_MAP.put(VERSION_110, "/sqlite3/migrations/100_to_110.sql");
+    SCRIPT_UPGRADE_MAP.put(VERSION_120, "/sqlite3/migrations/110_to_120.sql");
   }
 
   @Override
@@ -84,8 +86,11 @@ public class Sqlite3SchemaManager implements DatabaseSchemaManager {
         runScript(SCRIPT_UPGRADE_MAP.get(VERSION_DEFAULT), COLON_DELIMITER);
         runScript("/sqlite3/init_triggers.sql", SPECIAL_DELIMITER);
         break;
-      case VERSION_1_0:
-        runScript(SCRIPT_UPGRADE_MAP.get(VERSION_1_1), COLON_DELIMITER);
+      case VERSION_100:
+        runScript(SCRIPT_UPGRADE_MAP.get(VERSION_110), COLON_DELIMITER);
+        break;
+      case VERSION_110:
+        runScript(SCRIPT_UPGRADE_MAP.get(VERSION_110), COLON_DELIMITER);
         break;
       default:
         break;
