@@ -61,10 +61,12 @@ public class AuthHandlerTest {
   @Test
   public void generateApiKey() {
 
-    ApiKey expectedKey = new ApiKey(mockUser, "thisisanapikey");
+    ApiKey expectedKey = new ApiKey(mockUser, "thisisanapikey", "agent");
+    expectedKey.setId(1);
 
     doReturn(mockUser).when(ctx).sessionAttribute("current_user");
     doReturn("thisisanapikey").when(jwtProvider).generateApiKey(mockUser);
+    doReturn("agent").when(ctx).userAgent();
 
     doAnswer(
             invocation -> {

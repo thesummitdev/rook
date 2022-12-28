@@ -33,7 +33,9 @@ public class ApiKey implements BaseModel {
 
   public static ApiKey fromResultSet(ResultSet rs) {
     try {
-      return new ApiKey(rs.getInt("userId"), rs.getString("key"), rs.getString("agent"));
+      ApiKey key = new ApiKey(rs.getInt("userId"), rs.getString("key"), rs.getString("agent"));
+      key.setId(rs.getInt("id"));
+      return key;
     } catch (SQLException e) {
       return null;
     }
@@ -41,7 +43,7 @@ public class ApiKey implements BaseModel {
 
   @Override
   public Boolean isValid() {
-    return this.userId != null && this.key != null;
+    return this.userId != null && this.key != null && this.agent != null;
   }
 
   @Override
@@ -56,6 +58,9 @@ public class ApiKey implements BaseModel {
 
   @Override
   public JSONObject toJSONObject() {
-    return new JSONObject().put("userId", userId).put("apiKey", key).put("agent", agent);
+    return new JSONObject()
+        .put("id", id)
+        .put("apiKey", key)
+        .put("agent", agent);
   }
 }

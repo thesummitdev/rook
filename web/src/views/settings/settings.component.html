@@ -2,28 +2,16 @@
   <section>
     <h2 class="settings-name">settings</h2>
   </section>
-  <ng-container *ngIf="user$|async as user">
+  <ng-container *ngIf="user$ | async as user">
     <section>
       <div class="user-container">
         <ng-container *ngIf="user.isAdmin">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               class="icon-hammer"
-               width="24"
-               height="24"
-               viewBox="0 0 24 24"
-               stroke-width="1.5"
-               stroke="currentColor"
-               fill="none"
-               stroke-linecap="round"
-               stroke-linejoin="round">
-            <path stroke="none"
-                  d="M0 0h24v24H0z"
-                  fill="none"></path>
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-hammer" width="24" height="24" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M11.414 10l-7.383 7.418a2.091 2.091 0 0 0 0 2.967a2.11 2.11 0 0 0 2.976 0l7.407 -7.385"></path>
             <path
-                  d="M11.414 10l-7.383 7.418a2.091 2.091 0 0 0 0 2.967a2.11 2.11 0 0 0 2.976 0l7.407 -7.385">
-            </path>
-            <path
-                  d="M18.121 15.293l2.586 -2.586a1 1 0 0 0 0 -1.414l-7.586 -7.586a1 1 0 0 0 -1.414 0l-2.586 2.586a1 1 0 0 0 0 1.414l7.586 7.586a1 1 0 0 0 1.414 0z">
+              d="M18.121 15.293l2.586 -2.586a1 1 0 0 0 0 -1.414l-7.586 -7.586a1 1 0 0 0 -1.414 0l-2.586 2.586a1 1 0 0 0 0 1.414l7.586 7.586a1 1 0 0 0 1.414 0z">
             </path>
           </svg>
         </ng-container>
@@ -32,27 +20,22 @@
     </section>
   </ng-container>
   <section>
-    <ng-container *ngIf="prefs$|async as prefs">
-      <form #form="ngForm"
-            class="settings-form">
+    <ng-container *ngIf="prefs$ | async as prefs">
+      <form #form="ngForm" class="settings-form">
         <div class="setting form-theme">
           <span>Theme</span>
-          <select [(ngModel)]="model.theme"
-                  name="theme"
-                  (ngModelChange)="onThemeChange($event)">
+          <select [(ngModel)]="model.theme" name="theme" (ngModelChange)="onThemeChange($event)">
             <option *ngFor="let theme of allThemes | keyvalue">
-              {{theme.key}}
+              {{ theme.key }}
             </option>
           </select>
         </div>
-        <ng-container *ngIf="user$|async as user">
+        <ng-container *ngIf="user$ | async as user">
           <ng-container *ngIf="user.isAdmin">
             <div class="setting form-allow-new-users">
               <span> Allow new users?</span>
-              <input type="checkbox"
-                     [(ngModel)]="model.allowNewUsers"
-                     name="allowNewUsers"
-                     (ngModelChange)="onAllowNewUsersChange($event)">
+              <input type="checkbox" [(ngModel)]="model.allowNewUsers" name="allowNewUsers"
+                (ngModelChange)="onAllowNewUsersChange($event)" />
             </div>
           </ng-container>
         </ng-container>
@@ -63,5 +46,44 @@
     </ng-container>
   </section>
 
+  <ng-container *ngIf="apiKeys$ | async as keys">
+    <section>
+      <h2>API Keys</h2>
+      <p>
+        <b>Note</b>: These keys do not expire and provide full Rook API access.
+      </p>
+      <table cdk-table [dataSource]="keys">
+        <ng-container cdkColumnDef="agent">
+          <th cdk-header-cell *cdkHeaderCellDef>Agent</th>
+          <td cdk-cell *cdkCellDef="let element">{{ element.agent }}</td>
+        </ng-container>
 
+        <ng-container cdkColumnDef="key">
+          <th cdk-header-cell *cdkHeaderCellDef>Key</th>
+          <td cdk-cell *cdkCellDef="let element">
+            <a (click)="handleShowApiKey($event, element)">show</a>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="delete">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            <button (click)="handleCreateApiKey($event)">+</button>
+          </th>
+          <td cdk-cell *cdkCellDef="let element">
+            <a (click)="handleDeleteApiKey($event, element)">delete</a>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="copy">
+          <th cdk-header-cell *cdkHeaderCellDef></th>
+          <td cdk-cell *cdkCellDef="let element">
+            <a (click)="handleCopyApiKey($event, element)">copy</a>
+          </td>
+        </ng-container>
+
+        <tr cdk-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+        <tr cdk-row *cdkRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </section>
+  </ng-container>
 </div>

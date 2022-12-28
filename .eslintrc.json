@@ -8,6 +8,7 @@
       "files": [
         "*.ts"
       ],
+      "plugins": [ "jsdoc" ],
       "parserOptions": {
         "project": [
           "tsconfig.json",
@@ -16,11 +17,18 @@
         "createDefaultProgram": true
       },
       "extends": [
-        "google",
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:jsdoc/recommended",
+        "plugin:prettier/recommended"
       ],
       "rules": {
+        "jsdoc/require-jsdoc": ["warn", {
+          "require": {
+            "MethodDefinition": true
+          },
+          "checkConstructors": false
+        }],
         "@angular-eslint/directive-selector": [
           "error",
           {
@@ -65,18 +73,6 @@
           {
             "ignoreEOLComments": true
           }
-        ],
-        "require-jsdoc": [
-          "warn"
-        ],
-        "valid-jsdoc": [
-          "error",
-          {
-            "requireParamDescription": false,
-            "requireParamType": false,
-            "requireReturn": false,
-            "requireReturnType": false
-          }
         ]
       }
     },
@@ -88,6 +84,18 @@
         "plugin:@angular-eslint/template/recommended"
       ],
       "rules": {}
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "excludedFiles": ["*inline-template-*.component.html"],
+      "extends": [
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        "prettier/prettier": ["error", { "parser": "angular" }]
+      }
     }
   ]
 }

@@ -25,6 +25,18 @@
   }
 }
 
+.cdk-header-cell,
+.cdk-cell {
+
+  min-width: 75px;
+  padding: 10px;
+  text-align: start;
+
+  a {
+    cursor: pointer;
+  }
+}
+
 .settings-name {
   font-family: 'Fira Sans', sans-serif;
   font-weight: 300;
