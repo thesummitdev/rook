@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {Observable, ReplaySubject} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, ReplaySubject } from 'rxjs';
 
 interface Theme {
   '--background': string;
@@ -59,9 +59,10 @@ const everforest: Theme = {
   '--dark': '#2f383e',
   '--error': '#e67e80',
   '--success': '#a7c080',
-}
+};
 
-@Injectable({providedIn: 'root'}) export class UiService {
+@Injectable({ providedIn: 'root' })
+export class UiService {
   private readonly filterPanel$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   private readonly themes: Map<string, Theme> = new Map([
@@ -71,6 +72,10 @@ const everforest: Theme = {
     ['everforest', everforest],
   ]);
 
+  /**
+   *
+   * @param theme
+   */
   private getTheme(theme?: string): Theme {
     if (theme && this.themes.has(theme)) {
       return this.themes.get(theme);
@@ -78,10 +83,17 @@ const everforest: Theme = {
     return this.themes.get('light');
   }
 
+  /**
+   *
+   */
   getAllThemes(): Map<string, Theme> {
     return new Map(this.themes);
   }
 
+  /**
+   *
+   * @param theme
+   */
   setPageTheme(theme: string): void {
     const loadedTheme = this.getTheme(theme);
     const root: HTMLElement = document.querySelector(':root');
@@ -91,10 +103,17 @@ const everforest: Theme = {
     }
   }
 
+  /**
+   *
+   */
   getFilterPanelAsObservable(): Observable<boolean> {
     return this.filterPanel$.asObservable();
   }
 
+  /**
+   *
+   * @param visible
+   */
   setFilterPanelVisible(visible: boolean): void {
     this.filterPanel$.next(visible);
   }

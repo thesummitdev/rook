@@ -1,15 +1,21 @@
-import {Component, ElementRef, HostListener, Inject, ViewChild} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
-import {DIALOG_CONTAINER} from 'web/src/util/injectiontokens';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  ViewChild,
+} from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { DIALOG_CONTAINER } from 'web/src/util/injectiontokens';
 
-import {DialogContainer} from './dialog.container.component';
-import {DialogResult} from './dialog.result';
+import { DialogContainer } from './dialog.container.component';
+import { DialogResult } from './dialog.result';
 
-@Component({template: '<div></div>'})
+@Component({ template: '<div></div>' })
 /** Required methods and properties on Dialogs */
 export abstract class DialogComponent<T> {
   constructor(
-      @Inject(DIALOG_CONTAINER) protected readonly container: DialogContainer,
+    @Inject(DIALOG_CONTAINER) protected readonly container: DialogContainer
   ) {}
 
   /** Subject for setting the dialog result. */
@@ -20,18 +26,24 @@ export abstract class DialogComponent<T> {
 
   /**
    * An Observable stream that will eventually emit the results of the dialog.
-   * @return obs
+   *
+   * @returns obs
    */
   resultAsObservable(): Observable<DialogResult<T>> {
     return this.result$.asObservable();
   }
 
+  /**
+   *
+   * @param event
+   */
   @HostListener('document:click', ['$event'])
   /**
    * Click listener that closes the dialog if the click location was outside of
    * the dialog.
    * NOTE: This is a NOOP if the dialog does not have a #dialog tag in the
    * template.
+   *
    * @param event
    */
   protected listenForOutsideClicks(event: PointerEvent): void {
@@ -47,12 +59,13 @@ export abstract class DialogComponent<T> {
 
   /** Exit the dialog and emit a canclled result. */
   cancel(): void {
-    this.setResult({cancelled: true});
+    this.setResult({ cancelled: true });
     this.container.exit();
   }
 
   /**
    * Emit the results of the dialog and end the observable.
+   *
    * @param result
    */
   protected setResult(result: DialogResult<T>): void {

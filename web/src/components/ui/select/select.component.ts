@@ -1,5 +1,12 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild} from '@angular/core';
-
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-select',
@@ -17,25 +24,30 @@ export class SelectComponent {
   @Output() selectionChanged: EventEmitter<string[]> = new EventEmitter();
   @ViewChild('root') root: ElementRef;
   @Input() selected: Set<string> = new Set();
-  @ViewChild('input', {static: false}) input: ElementRef<HTMLInputElement>;
+  @ViewChild('input', { static: false }) input: ElementRef<HTMLInputElement>;
 
   showList = false;
   searchText: string = '';
 
   /**
    * Event handler when the text input recieves focus.
+   *
    * @param _ the focus event.
    */
   onFocus(_: FocusEvent): void {
     this.showList = true;
   }
 
+  /**
+   *
+   */
   focus(): void {
     this.input.nativeElement.focus();
   }
 
   /**
    * Event handler for the select autocomplete selection.
+   *
    * @param option - the selected option.
    */
   onSelect(option: string): void {
@@ -50,12 +62,15 @@ export class SelectComponent {
    * Global event listener on the root document that listens for clicks
    * outside of this SelectComponent. When a click outside is detected, it hides
    * the autocomplete list.
+   *
    * @param event
    */
   @HostListener('document:click', ['$event'])
   maybeBlur(event: PointerEvent): void {
-    if (event.target instanceof Node &&
-        !(this.root.nativeElement as HTMLDivElement).contains(event.target)) {
+    if (
+      event.target instanceof Node &&
+      !(this.root.nativeElement as HTMLDivElement).contains(event.target)
+    ) {
       this.showList = false;
     }
   }

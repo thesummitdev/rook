@@ -1,15 +1,18 @@
-import {coerceBooleanProperty} from '@angular/cdk/coercion';
-import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {pillAnimations} from './pill.animations';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+} from '@angular/core';
+import { pillAnimations } from './pill.animations';
 
 @Component({
   selector: 'app-pill',
   templateUrl: './pill.component.html',
   styleUrls: ['./pill.component.scss'],
-  animations: [
-    pillAnimations.fadeInOut,
-    pillAnimations.growWidth,
-  ],
+  animations: [pillAnimations.fadeInOut, pillAnimations.growWidth],
 })
 /** A basic UI pill element that optionally can be removed */
 export class PillComponent {
@@ -21,6 +24,7 @@ export class PillComponent {
 
   /**
    * Getter for the private _removable property.
+   *
    * @returns whether the pill is removable.
    */
   @Input()
@@ -30,8 +34,9 @@ export class PillComponent {
 
   /**
    * Parses HTML attributes to set removeable trait.
+   *
    * @param attr
-   * */
+   */
   set removeable(attr: unknown) {
     this._removeable = coerceBooleanProperty(attr);
   }
@@ -50,6 +55,7 @@ export class PillComponent {
 
   /**
    * Click handler for the remove button for removable pills.
+   *
    * @param event - the click event that is swallowed by this component.
    */
   onRemove(event: MouseEvent): void {

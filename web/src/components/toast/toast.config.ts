@@ -1,5 +1,4 @@
-
-import {Semantic} from 'web/src/util/enums';
+import { Semantic } from 'web/src/util/enums';
 
 /* The configuration for a Toast message. */
 export interface ToastConfig {

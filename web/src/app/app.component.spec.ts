@@ -1,15 +1,13 @@
-import {TestBed, waitForAsync} from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 
-import {AppComponent} from './app.component';
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
-    TestBed
-        .configureTestingModule({
-          imports : [],
-          declarations : [ AppComponent ],
-        })
-        .compileComponents();
+    TestBed.configureTestingModule({
+      imports: [],
+      declarations: [AppComponent],
+    }).compileComponents();
   }));
 
   it('should create the app', () => {
@@ -28,15 +26,17 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent)
-        .toContain('frontend app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain(
+      'frontend app is running!'
+    );
   });
 
   it('should render title library component', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('lib-frontend-lib').textContent)
-        .toContain('frontend-lib works!');
+    expect(compiled.querySelector('lib-frontend-lib').textContent).toContain(
+      'frontend-lib works!'
+    );
   });
 });

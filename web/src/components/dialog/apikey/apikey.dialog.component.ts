@@ -37,6 +37,10 @@ export class ApiKeyDialogComponent extends DialogComponent<void> {
     this.close();
   }
 
+  /**
+   *
+   * @param event
+   */
   handleDeleteKey(event: MouseEvent): void {
     event.stopPropagation();
     this.data.deleteApiKey(this.apikey).subscribe(() => {

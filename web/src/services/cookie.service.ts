@@ -8,7 +8,7 @@ import { LoginService } from './login.service';
 @Injectable({ providedIn: 'root' })
 /** Service for handling cookies. */
 export class CookieService implements OnDestroy {
-  private unsubscribe = new Subject<void>();  // Clean up subscriptions.
+  private unsubscribe = new Subject<void>(); // Clean up subscriptions.
 
   constructor(private readonly login: LoginService) {
     // Check for a stored authentication token.
@@ -26,30 +26,35 @@ export class CookieService implements OnDestroy {
     }
 
     // On future token updates, set the cookie.
-    this.login.getTokenAsObservable()
+    this.login
+      .getTokenAsObservable()
       .pipe(
-        skip(1),  // Ignore first value since this is a ReplaySubject.
-        takeUntil(this.unsubscribe))
-      .subscribe(
-        (token: string | undefined) => token ?
-          this.setCookie('jwt', token, 7) :
-          this.removeCookie('jwt'));
+        skip(1), // Ignore first value since this is a ReplaySubject.
+        takeUntil(this.unsubscribe)
+      )
+      .subscribe((token: string | undefined) =>
+        token ? this.setCookie('jwt', token, 7) : this.removeCookie('jwt')
+      );
 
-    this.login.getUserAsObservable()
+    this.login
+      .getUserAsObservable()
       .pipe(
-        skip(1),  // Ignore first value since this is a ReplaySubject.
-        takeUntil(this.unsubscribe))
+        skip(1), // Ignore first value since this is a ReplaySubject.
+        takeUntil(this.unsubscribe)
+      )
       .subscribe((user: User | undefined) => {
         if (user) {
           this.setCookie('user', user.username, 7);
           user.isAdmin ? this.setCookie('userIsAdmin', 'true', 7) : null;
-
         } else {
           this.removeCookie('user');
         }
       });
   }
 
+  /**
+   *
+   */
   ngOnDestroy(): void {
     // Send unsubscribe because the service is being destroyed.
     this.unsubscribe.next();
@@ -58,14 +63,15 @@ export class CookieService implements OnDestroy {
 
   /**
    * Fetch a cookie by key
+   *
    * @param name the name of the cookie
-   * @return the cookie value or undefined
+   * @returns the cookie value or undefined
    */
   getCookie(name: string): string | undefined {
     const cookieArray: string[] = document.cookie.split('; ');
     const cookieName = `${name}=`;
 
-    const cookie = cookieArray.find((cookie) => cookie.includes(cookieName));
+    const cookie = cookieArray.find(cookie => cookie.includes(cookieName));
     if (cookie) {
       return cookie.substring(cookieName.length, cookie.length);
     }
@@ -74,6 +80,7 @@ export class CookieService implements OnDestroy {
 
   /**
    * Set a cookie in the current document.
+   *
    * @param name the name of the cookie
    * @param value the value of the cookie
    * @param expireDays number of days until the cookie expires
@@ -83,7 +90,7 @@ export class CookieService implements OnDestroy {
     name: string,
     value: string,
     expireDays: number,
-    path: string = '/',
+    path: string = '/'
   ): void {
     const d: Date = new Date();
     d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
@@ -92,6 +99,10 @@ export class CookieService implements OnDestroy {
     document.cookie = `${name}=${value}; ${expires}${cpath}; SameSite=Strict;`;
   }
 
+  /**
+   *
+   * @param name
+   */
   removeCookie(name: string): void {
     const expires = new Date();
     expires.setTime(expires.getTime() + 1000);

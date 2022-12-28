@@ -1,7 +1,4 @@
-<div #dialog
-     cdkTrapFocus
-     class="editlink-dialog-wrapper">
-  <h2>{{dialogTitle}}</h2>
-  <link-form [data]="link"
-             (formSubmit)="onFormSubmit($event)"></link-form>
+<div #dialog cdkTrapFocus class="editlink-dialog-wrapper">
+  <h2>{{ dialogTitle }}</h2>
+  <link-form [data]="link" (formSubmit)="onFormSubmit($event)"></link-form>
 </div>

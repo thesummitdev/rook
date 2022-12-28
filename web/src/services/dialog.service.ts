@@ -54,10 +54,18 @@ export class DialogService {
     return this.attach(CreateAccountDialogComponent);
   }
 
+  /**
+   *
+   * @param link
+   */
   showAddLinkDialog(link?: Link): EditLinkComponent {
     return this.attach(EditLinkComponent, [{ provide: LINK, useValue: link }]);
   }
 
+  /**
+   *
+   * @param link
+   */
   showEditLinkDialog(link: Link): EditLinkComponent {
     return this.attach(EditLinkComponent, [
       { provide: LINK, useValue: link },
@@ -65,6 +73,10 @@ export class DialogService {
     ]);
   }
 
+  /**
+   *
+   * @param apikey
+   */
   showApiKeyDialog(apikey: ApiKey): ApiKeyDialogComponent {
     return this.attach(ApiKeyDialogComponent, [
       { provide: API_KEY, useValue: apikey },

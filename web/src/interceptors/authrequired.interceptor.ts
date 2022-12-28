@@ -37,6 +37,7 @@ export class AuthRequiredInterceptor implements HttpInterceptor {
   /**
    * Logic to add Auth token to the request headers for matched routes. If route
    * is not protected, then continue the request as a noop.
+   *
    * @param req
    * @param next
    * @returns the http event as an obs.

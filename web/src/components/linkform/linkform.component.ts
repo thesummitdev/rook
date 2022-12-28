@@ -1,10 +1,20 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, Optional, Output, ViewChild} from '@angular/core';
-import {shareReplay} from 'rxjs';
-import {Link} from 'web/src/models/link';
-import {DataService} from 'web/src/services/data.service';
-import {EDIT_MODE} from 'web/src/util/injectiontokens';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  Optional,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { shareReplay } from 'rxjs';
+import { Link } from 'web/src/models/link';
+import { DataService } from 'web/src/services/data.service';
+import { EDIT_MODE } from 'web/src/util/injectiontokens';
 
-import {linkFormAnimations} from './linkform.animations';
+import { linkFormAnimations } from './linkform.animations';
 
 @Component({
   selector: 'link-form',
@@ -13,8 +23,8 @@ import {linkFormAnimations} from './linkform.animations';
   animations: [linkFormAnimations.formErrorMessage],
 })
 export class LinkFormComponent implements AfterViewInit {
-  @Input() data: Link|null = null;
-  @Output() formSubmit = new EventEmitter<Link|null>();
+  @Input() data: Link | null = null;
+  @Output() formSubmit = new EventEmitter<Link | null>();
 
   editing: boolean = false;
   tagOptions$ = this.dataService.getTags().pipe(shareReplay(1));
@@ -29,13 +39,16 @@ export class LinkFormComponent implements AfterViewInit {
   };
 
   constructor(
-      private readonly dataService: DataService,
-      @Inject(EDIT_MODE) @Optional() public readonly editMode: boolean,
+    private readonly dataService: DataService,
+    @Inject(EDIT_MODE) @Optional() public readonly editMode: boolean
   ) {}
 
+  /**
+   *
+   */
   ngAfterViewInit(): void {
     if (this.data !== null) {
-      this.model = {...this.data};
+      this.model = { ...this.data };
     }
     if (this.editMode) {
       this.editing = true;
@@ -43,6 +56,11 @@ export class LinkFormComponent implements AfterViewInit {
     this.titleInput.nativeElement.focus();
   }
 
+  /**
+   *
+   * @param event
+   * @param tag
+   */
   appendTag(event: Event, tag: string): void {
     event.stopPropagation();
     event.preventDefault();
@@ -54,12 +72,19 @@ export class LinkFormComponent implements AfterViewInit {
     this.tagInput.nativeElement.focus();
   }
 
+  /**
+   *
+   */
   onSubmit(): void {
     // Convert all tags to lower case before emitting.
     this.model.tags = this.model.tags.toLowerCase();
     this.formSubmit.emit(this.model);
   }
 
+  /**
+   *
+   * @param event
+   */
   onCancel(event: Event): void {
     this.formSubmit.emit(null);
   }
