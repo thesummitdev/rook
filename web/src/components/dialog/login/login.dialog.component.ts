@@ -1,8 +1,14 @@
-import {AfterViewInit, Component, ElementRef, Inject, ViewChild} from '@angular/core';
-import {DIALOG_CONTAINER} from 'web/src/util/injectiontokens';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Inject,
+  ViewChild,
+} from '@angular/core';
+import { DIALOG_CONTAINER } from 'web/src/util/injectiontokens';
 
-import {DialogComponent} from '../dialog.component';
-import {DialogContainer} from '../dialog.container.component';
+import { DialogComponent } from '../dialog.component';
+import { DialogContainer } from '../dialog.container.component';
 
 /** The data returned by the login dialog. */
 interface LoginData {
@@ -18,36 +24,45 @@ interface LoginData {
  * The dialog that collects the user's username and password via a displayed
  * form.
  */
-export class LoginDialogComponent extends DialogComponent<LoginData> implements
-    AfterViewInit {
+export class LoginDialogComponent
+  extends DialogComponent<LoginData>
+  implements AfterViewInit
+{
   @ViewChild('usernameInput') usernameInput: ElementRef<HTMLInputElement>;
 
-  model: LoginData = {username: '', password: ''};
+  model: LoginData = { username: '', password: '' };
 
-  constructor(
-      @Inject(DIALOG_CONTAINER) container: DialogContainer,
-  ) {
+  constructor(@Inject(DIALOG_CONTAINER) container: DialogContainer) {
     super(container);
   }
 
+  /**
+   *
+   */
   ngAfterViewInit(): void {
     this.usernameInput.nativeElement.focus();
   }
 
+  /**
+   *
+   */
   signIn(): void {
     const username = this.model.username;
     const password = this.model.password;
-    this.setResult({cancelled: false, result: {username, password}});
+    this.setResult({ cancelled: false, result: { username, password } });
     this.container.exit();
   }
 
+  /**
+   *
+   */
   override close(): void {
     this.container.exit();
   }
 
   /** Exit the dialog and emit a canclled result. */
   override cancel(): void {
-    this.setResult({cancelled: true});
+    this.setResult({ cancelled: true });
     this.container.exit();
   }
 }

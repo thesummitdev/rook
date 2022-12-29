@@ -1,40 +1,35 @@
-  <div class="link-container">
-    <div class="link-content">
-      <div>
-        <a class="link-title"
-           href="{{link.url}}"
-           target="_blank">
-          {{link.title}}
-        </a>
-      </div>
-      <div class="details-container">
-        <span class="link-anchor-container">
-          <a class="link-anchor"
-             href="{{link.url}}"
-             target="_blank">{{link.url}}</a>
-        </span>
-        <div class="link-tags">
-          <span (click)="addTag(tag)"
-                class="tag"
-                *ngFor="let tag of tags">{{tag}}</span>
-        </div>
-        <div class="link-date">
-          {{link.modified | timeSince}}
-        </div>
-      </div>
+<div class="link-container">
+  <div class="link-content">
+    <div>
+      <a class="link-title" href="{{ link.url }}" target="_blank">
+        {{ link.title }}
+      </a>
     </div>
-    <div class="actions-row">
-      <span>
-        <span class="action-item"
-              (click)="onCopy($event)">copy url</span>
+    <div class="details-container">
+      <span class="link-anchor-container">
+        <a class="link-anchor" href="{{ link.url }}" target="_blank">{{
+          link.url
+        }}</a>
       </span>
-      <span>
-        <span class="action-item"
-              (click)="onEdit($event)">edit</span>
-      </span>
-      <span>
-        <span class="action-item"
-              (click)="onDelete($event)">delete</span>
-      </span>
+      <div class="link-tags">
+        <span (click)="addTag(tag)" class="tag" *ngFor="let tag of tags">{{
+          tag
+        }}</span>
+      </div>
+      <div class="link-date">
+        {{ link.modified | timeSince }}
+      </div>
     </div>
   </div>
+  <div class="actions-row">
+    <span>
+      <span class="action-item" (click)="onCopy($event)">copy url</span>
+    </span>
+    <span>
+      <span class="action-item" (click)="onEdit($event)">edit</span>
+    </span>
+    <span>
+      <span class="action-item" (click)="onDelete($event)">delete</span>
+    </span>
+  </div>
+</div>

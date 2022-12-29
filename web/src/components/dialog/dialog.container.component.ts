@@ -1,9 +1,23 @@
-import {AnimationEvent} from '@angular/animations';
-import {BasePortalOutlet, CdkPortalOutlet, ComponentPortal, TemplatePortal} from '@angular/cdk/portal';
-import {Component, ComponentRef, EmbeddedViewRef, HostBinding, HostListener, NgZone, OnDestroy, ViewChild} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
-import {take} from 'rxjs/operators';
-import {dialogAnimations} from './dialog.animations';
+import { AnimationEvent } from '@angular/animations';
+import {
+  BasePortalOutlet,
+  CdkPortalOutlet,
+  ComponentPortal,
+  TemplatePortal,
+} from '@angular/cdk/portal';
+import {
+  Component,
+  ComponentRef,
+  EmbeddedViewRef,
+  HostBinding,
+  HostListener,
+  NgZone,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { dialogAnimations } from './dialog.animations';
 
 export interface DialogContainer {
   readonly onExit: Subject<any>;
@@ -20,8 +34,10 @@ export interface DialogContainer {
   styleUrls: ['./dialog.container.component.scss'],
   animations: [dialogAnimations.dialogState],
 })
-export class DialogContainerComponent extends BasePortalOutlet implements
-    OnDestroy, DialogContainer {
+export class DialogContainerComponent
+  extends BasePortalOutlet
+  implements OnDestroy, DialogContainer
+{
   /** Subject for notifying that the snack bar has exited from view. */
   readonly onExit: Subject<void> = new Subject();
 
@@ -33,6 +49,9 @@ export class DialogContainerComponent extends BasePortalOutlet implements
 
   @HostBinding('class') readonly classes = 'dialog-container';
 
+  /**
+   *
+   */
   @HostBinding('@state')
   get animationState(): string {
     return this.internalAnimationState;
@@ -42,29 +61,42 @@ export class DialogContainerComponent extends BasePortalOutlet implements
    * The portal outlet inside of this container into which the toast content
    * will be loaded.
    */
-  @ViewChild(CdkPortalOutlet, {static: true}) portalOutlet: CdkPortalOutlet;
+  @ViewChild(CdkPortalOutlet, { static: true }) portalOutlet: CdkPortalOutlet;
 
-  constructor(
-      private ngZone: NgZone,
-  ) {
+  constructor(private ngZone: NgZone) {
     super();
   }
 
+  /**
+   *
+   */
   ngOnDestroy(): void {
     this.completeExit();
   }
 
+  /**
+   *
+   * @param portal
+   */
   attachComponentPortal<T>(portal: ComponentPortal<T>): ComponentRef<T> {
     return this.portalOutlet.attachComponentPortal(portal);
   }
+  /**
+   *
+   * @param portal
+   */
   attachTemplatePortal<C>(portal: TemplatePortal<C>): EmbeddedViewRef<C> {
     return this.portalOutlet.attachTemplatePortal(portal);
   }
 
+  /**
+   *
+   * @param event
+   */
   @HostListener('@state.done', ['$event'])
   /** Listens for the end of state animations. */
   onAnimationEnd(event: AnimationEvent) {
-    const {fromState, toState} = event;
+    const { fromState, toState } = event;
     if ((toState === 'void' && fromState !== 'void') || toState === 'hidden') {
       this.completeExit();
     }
@@ -92,6 +124,9 @@ export class DialogContainerComponent extends BasePortalOutlet implements
     return this.onExit;
   }
 
+  /**
+   *
+   */
   private completeExit() {
     this.ngZone.onMicrotaskEmpty.pipe(take(1)).subscribe(() => {
       this.onExit.next();

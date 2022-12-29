@@ -1,8 +1,12 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {DateTime} from 'luxon';
+import { Pipe, PipeTransform } from '@angular/core';
+import { DateTime } from 'luxon';
 
-@Pipe({name: 'timeSince'})
+@Pipe({ name: 'timeSince' })
 export class TimeSince implements PipeTransform {
+  /**
+   *
+   * @param value
+   */
   transform(value: number): string {
     let result = '';
     if (!value || value === 0) {
@@ -40,7 +44,7 @@ export class TimeSince implements PipeTransform {
       const months = Math.floor(difference / 40320);
       result = `${months} months ago`;
     } else {
-      result = `on ${date.toLocaleString((DateTime.DATE_HUGE))}`;
+      result = `on ${date.toLocaleString(DateTime.DATE_HUGE)}`;
     }
 
     return result;

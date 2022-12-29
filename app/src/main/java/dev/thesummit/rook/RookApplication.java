@@ -44,28 +44,30 @@ public class RookApplication {
     // Set application time zone to UTC to match the database.
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
-    Injector injector =
-        Guice.createInjector(
-            new FlagModule(args), new DatabaseModule(RESET_DATABASE_FLAG), new AuthModule());
+    Injector injector = Guice.createInjector(
+        new FlagModule(args), new DatabaseModule(RESET_DATABASE_FLAG), new AuthModule());
 
     // Verify & Check for database updates before starting the server.
     injector.getInstance(Sqlite3SchemaManager.class).verifySchema();
 
-    Javalin app =
-        Javalin.create(
-            config -> {
-              config.enableDevLogging();
-              config.addStaticFiles("web", Location.CLASSPATH);
-              config.addStaticFiles("assets", Location.CLASSPATH);
-              config.addSinglePageRoot("/", "web/index.html");
-            });
+    Javalin app = Javalin.create(
+        config -> {
+          config.enableDevLogging();
+          config.addStaticFiles("web", Location.CLASSPATH);
+          config.addStaticFiles("assets", Location.CLASSPATH);
+          config.addSinglePageRoot("/", "web/index.html");
+        });
 
     // Protected routes that require a User to be logged in and pass a bearer token.
     app.before("/links", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/links/*", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/tags", injector.getInstance(AuthHandler.class)::requireUserContext);
+    app.before("/users/apikey", injector.getInstance(AuthHandler.class)::requireUserContext);
+    app.before("/users/apikey/<id>", injector.getInstance(AuthHandler.class)::requireUserContext);
+    app.before("/users/apikey/new", injector.getInstance(AuthHandler.class)::requireUserContext);
 
-    // Routes that have optional user context handling, but don't require authorization.
+    // Routes that have optional user context handling, but don't require
+    // authorization.
     app.before("/prefs", injector.getInstance(AuthHandler.class)::optionalUserContext);
 
     // Other Routes
@@ -80,6 +82,20 @@ public class RookApplication {
               "users",
               () -> {
                 put(injector.getInstance(UserHandler.class)::create);
+                path(
+                    "apikey",
+                    () -> {
+                      get(injector.getInstance(AuthHandler.class)::getApiKeys);
+                      path(
+                          "new",
+                          () -> {
+                            get(injector.getInstance(AuthHandler.class)::generateApiKey);
+                          });
+                      path("<id>",
+                          () -> {
+                            delete(injector.getInstance(AuthHandler.class)::deleteApiKey);
+                          });
+                    });
               });
 
           // Link Entity

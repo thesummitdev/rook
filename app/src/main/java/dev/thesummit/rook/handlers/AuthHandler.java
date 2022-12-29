@@ -6,11 +6,18 @@ import dev.thesummit.rook.auth.JWTProvider;
 import dev.thesummit.rook.auth.JWTResponse;
 import dev.thesummit.rook.auth.PasswordManager;
 import dev.thesummit.rook.database.DatabaseService;
+import dev.thesummit.rook.models.ApiKey;
 import dev.thesummit.rook.models.User;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.ForbiddenResponse;
+import io.javalin.http.InternalServerErrorResponse;
+import io.javalin.http.NotFoundResponse;
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -31,7 +38,8 @@ public class AuthHandler {
   }
 
   /**
-   * HTTP handler for the users/login route. Expects to recieve a valid username/password JSON
+   * HTTP handler for the users/login route. Expects to recieve a valid
+   * username/password JSON
    * object and returns a JWT to be used for future requests.
    */
   public void login(Context ctx) throws Exception {
@@ -93,24 +101,88 @@ public class AuthHandler {
     }
   }
 
+  public void deleteApiKey(Context ctx) {
+
+    Optional<User> user = getUserFromRequest(ctx);
+    Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
+    ApiKey key = this.dbService.get(ApiKey.class, resourceId);
+
+    if (key != null) {
+
+      if (!user.isPresent() || !user.get().getId().equals(key.userId)) {
+        throw new ForbiddenResponse("You must be logged in and own the resource to delete it.");
+      }
+
+      this.dbService.delete(key);
+      ctx.status(200);
+    } else {
+      throw new NotFoundResponse("Could not find resource");
+    }
+  }
+
+  public void generateApiKey(Context ctx) {
+
+    User user = ctx.sessionAttribute("current_user");
+
+    if (user == null) {
+      throw new ForbiddenResponse("You must be logged in to request a new api key.");
+    }
+
+    log.info(user.getId().toString());
+    ApiKey newKey = new ApiKey(user, this.jwtProvider.generateApiKey(user), ctx.userAgent());
+    this.dbService.put(newKey);
+
+    if (newKey.getId() != null) {
+      ctx.status(200);
+      ctx.contentType("application/json");
+      ctx.result(newKey.toJSONObject().toString());
+    } else {
+      throw new InternalServerErrorResponse("Failed to create ApiKey, unknown error");
+    }
+  }
+
+  public void getApiKeys(Context ctx) {
+
+    User user = ctx.sessionAttribute("current_user");
+
+    if (user == null) {
+      throw new ForbiddenResponse("You must be logged in to request your api keys.");
+    }
+
+    HashMap<String, Object> params = new HashMap<String, Object>();
+    params.put("userId", user.id); // Scope the search to Links the user owns.
+
+    List<ApiKey> keys = this.dbService.getAll(ApiKey.class, params);
+
+    JSONArray arr = new JSONArray();
+    for (ApiKey key : keys) {
+      arr.put(key.toJSONObject());
+    }
+
+    ctx.status(200);
+    ctx.contentType("application/json");
+    ctx.result(arr.toString());
+  }
+
   /**
-   * Attempts to find the {@link User} from the request context. Looks up the user based on the
-   * username claim in the Auth token. In the case where there is no Auth token present, or the user
+   * Attempts to find the {@link User} from the request context. Looks up the user
+   * based on the
+   * username claim in the Auth token. In the case where there is no Auth token
+   * present, or the user
    * cannot be found, returns Optional.empty().
    */
   private Optional<User> getUserFromRequest(Context ctx) {
 
-    Optional<String> token =
-        Optional.ofNullable(ctx.header("Authorization"))
-            .flatMap(
-                header -> {
-                  String[] split = header.split(" ");
-                  if (split.length != 2 || !split[0].equals("Bearer")) {
-                    return Optional.empty();
-                  }
+    Optional<String> token = Optional.ofNullable(ctx.header("Authorization"))
+        .flatMap(
+            header -> {
+              String[] split = header.split(" ");
+              if (split.length != 2 || !split[0].equals("Bearer")) {
+                return Optional.empty();
+              }
 
-                  return Optional.of(split[1]);
-                });
+              return Optional.of(split[1]);
+            });
 
     if (token.isPresent()) {
 

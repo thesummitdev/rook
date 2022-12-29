@@ -2,30 +2,30 @@
   <div class="left-column">
     <section>
       <div class="app-name-wrapper">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="icon icon-tabler icon-tabler-feather"
-             width="48"
-             height="48"
-             viewBox="0 0 24 24"
-             stroke-width="1.0"
-             stroke="currentColor"
-             fill="none"
-             stroke-linecap="round"
-             stroke-linejoin="round">
-          <desc>Download more icon variants from https://tabler-icons.io/i/feather</desc>
-          <path stroke="none"
-                d="M0 0h24v24H0z"
-                fill="none"></path>
-          <path d="M4 20l10 -10m0 -5v5h5m-9 -1v5h5m-9 -1v5h5m-5 -5l4 -4l4 -4"></path>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="icon icon-tabler icon-tabler-feather"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          stroke-width="1.0"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <desc>
+            Download more icon variants from https://tabler-icons.io/i/feather
+          </desc>
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
           <path
-                d="M19 10c.638 -.636 1 -1.515 1 -2.486a3.515 3.515 0 0 0 -3.517 -3.514c-.97 0 -1.847 .367 -2.483 1m-3 13l4 -4l4 -4">
-          </path>
+            d="M4 20l10 -10m0 -5v5h5m-9 -1v5h5m-9 -1v5h5m-5 -5l4 -4l4 -4"></path>
+          <path
+            d="M19 10c.638 -.636 1 -1.515 1 -2.486a3.515 3.515 0 0 0 -3.517 -3.514c-.97 0 -1.847 .367 -2.483 1m-3 13l4 -4l4 -4"></path>
         </svg>
-        <h1 class="app-name"
-            routerLink="/">rook</h1>
+        <h1 class="app-name" routerLink="/">rook</h1>
       </div>
     </section>
-    <ng-container *ngIf="user$|async">
+    <ng-container *ngIf="user$ | async">
       <div class="filter-panel">
         <app-filter-panel></app-filter-panel>
       </div>
@@ -33,19 +33,21 @@
     <section>
       <div class="footer">
         rook is an
-        <a href="https://github.com/thesummitdev/rook"
-           target="_blank">open source</a>
+        <a href="https://github.com/thesummitdev/rook" target="_blank"
+          >open source</a
+        >
         project.
-        <br>
-        <br>
+        <br />
+        <br />
         consider donating or sponsoring development.
-        <br>
-        <br>
+        <br />
+        <br />
         this project is available under the
-        <br>
+        <br />
         GNU GENERAL PUBLIC (v3) License; see the
-        <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"
-           target="_blank">License</a>
+        <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"
+          >License</a
+        >
         for details.
       </div>
     </section>

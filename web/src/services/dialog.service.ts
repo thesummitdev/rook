@@ -1,32 +1,45 @@
-import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
-import {ComponentPortal, ComponentType} from '@angular/cdk/portal';
-import {ComponentRef, Injectable, Injector, SkipSelf, StaticProvider} from '@angular/core';
-import {DialogContainer, DialogContainerComponent} from 'web/src/components/dialog/dialog.container.component';
-import {DialogModule} from 'web/src/components/dialog/dialog.module';
-import {LoginDialogComponent} from 'web/src/components/dialog/login/login.dialog.component';
+import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
+import {
+  ComponentRef,
+  Injectable,
+  Injector,
+  SkipSelf,
+  StaticProvider,
+} from '@angular/core';
+import {
+  DialogContainer,
+  DialogContainerComponent,
+} from 'web/src/components/dialog/dialog.container.component';
+import { DialogModule } from 'web/src/components/dialog/dialog.module';
+import { LoginDialogComponent } from 'web/src/components/dialog/login/login.dialog.component';
+import { ApiKeyDialogComponent } from '../components/dialog/apikey/apikey.dialog.component';
 
-import {CreateAccountDialogComponent} from '../components/dialog/createaccount/createaccount.dialog.component';
-import {DialogComponent} from '../components/dialog/dialog.component';
-import {EditLinkComponent} from '../components/dialog/editlink/editlink.dialog.component';
-import {Link} from '../models/link';
-import {DIALOG_CONTAINER, EDIT_MODE, LINK} from '../util/injectiontokens';
+import { CreateAccountDialogComponent } from '../components/dialog/createaccount/createaccount.dialog.component';
+import { DialogComponent } from '../components/dialog/dialog.component';
+import { EditLinkComponent } from '../components/dialog/editlink/editlink.dialog.component';
+import { ApiKey } from '../models/apikey';
+import { Link } from '../models/link';
+import {
+  API_KEY,
+  DIALOG_CONTAINER,
+  EDIT_MODE,
+  LINK,
+} from '../util/injectiontokens';
 
-import {HotkeysService} from './hotkeys.service';
-
-
-@Injectable({providedIn: DialogModule})
-/** Dialog service that displays dialogs to the user. */
+@Injectable({ providedIn: DialogModule })
 export class DialogService {
-  private currentOverlayRef: OverlayRef|null;
+  private currentOverlayRef: OverlayRef | null;
 
   constructor(
-      private overlay: Overlay,
-      @SkipSelf() private readonly injector: Injector,
+    private overlay: Overlay,
+    @SkipSelf() private readonly injector: Injector
   ) {}
 
   /**
    * Opens the login dialog component.
-   * @return a reference to the open dialog.
+   *
+   * @returns {LoginDialogComponent} a reference to the open dialog.
    */
   showLoginDialog(): LoginDialogComponent {
     return this.attach(LoginDialogComponent);
@@ -34,32 +47,54 @@ export class DialogService {
 
   /**
    * Opens the create account dialog component.
-   * @return a reference to the open dialog.
+   *
+   * @returns {CreateAccountDialogComponent} a reference to the open dialog.
    */
   showCreateAccountDialog(): CreateAccountDialogComponent {
     return this.attach(CreateAccountDialogComponent);
   }
 
+  /**
+   *
+   * @param link
+   */
   showAddLinkDialog(link?: Link): EditLinkComponent {
+    return this.attach(EditLinkComponent, [{ provide: LINK, useValue: link }]);
+  }
+
+  /**
+   *
+   * @param link
+   */
+  showEditLinkDialog(link: Link): EditLinkComponent {
     return this.attach(EditLinkComponent, [
-      {provide: LINK, useValue: link},
+      { provide: LINK, useValue: link },
+      { provide: EDIT_MODE, useValue: true },
     ]);
   }
 
-  showEditLinkDialog(link: Link): EditLinkComponent {
-    return this.attach(EditLinkComponent, [
-      {provide: LINK, useValue: link},
-      {provide: EDIT_MODE, useValue: true},
+  /**
+   *
+   * @param apikey
+   */
+  showApiKeyDialog(apikey: ApiKey): ApiKeyDialogComponent {
+    return this.attach(ApiKeyDialogComponent, [
+      { provide: API_KEY, useValue: apikey },
     ]);
   }
 
   /**
    * Attaches the dialog component the the dom
-   * @param dialog The component to open as a dialog.
-   * @return a dialog instance
+   *
+   * @param {ComponentType} dialog The component to open as a dialog.
+   * @param {StaticProvider[]} providers A list of providers to inject into
+   *                                     the dialog.
+   * @returns {DialogComponent} a dialog instance
    */
   private attach<T extends DialogComponent<unknown>>(
-      dialog: ComponentType<T>, providers?: StaticProvider[]): T {
+    dialog: ComponentType<T>,
+    providers?: StaticProvider[]
+  ): T {
     if (this.currentOverlayRef) {
       this.currentOverlayRef.detach();
       this.currentOverlayRef.dispose();
@@ -82,7 +117,8 @@ export class DialogService {
 
   /**
    * Creates a new overlay and places it in the correct location.
-   * @return a reference to the overlay.
+   *
+   * @returns {OverlayRef} a reference to the overlay.
    */
   private createOverlay(): OverlayRef {
     const overlayConfig = new OverlayConfig();
@@ -98,30 +134,36 @@ export class DialogService {
 
   /**
    * Attaches the dialog's container to the overlay.
-   * @param overlayRef
-   * @return The dialog container
+   *
+   * @param {OverlayRef} overlayRef the singleton overlayref.
+   * @returns {DialogContainer} The dialog container
    */
   private attachContainer(overlayRef: OverlayRef): DialogContainer {
-    const containerPortal =
-        new ComponentPortal(DialogContainerComponent, null, null);
+    const containerPortal = new ComponentPortal(
+      DialogContainerComponent,
+      null,
+      null
+    );
     const containerRef: ComponentRef<DialogContainer> =
-        overlayRef.attach(containerPortal);
+      overlayRef.attach(containerPortal);
     return containerRef.instance;
   }
 
   /**
    * Creates an injector with the given dialog container ref.
-   * @param containerRef - The dialog's container.
-   * @param providers - a list of tokens to provide.
-   * @return An injector that can instantiate the dialog.
+   *
+   * @param {DialogContainer} containerRef The dialog's container.
+   * @param {StaticProvider[]} providers a list of tokens to provide.
+   * @returns {Injector} An injector that can instantiate the dialog.
    */
   private createInjector(
-      containerRef: DialogContainer,
-      providers: StaticProvider[] = []): Injector {
+    containerRef: DialogContainer,
+    providers: StaticProvider[] = []
+  ): Injector {
     return Injector.create({
       parent: this.injector,
       providers: [
-        {provide: DIALOG_CONTAINER, useValue: containerRef},
+        { provide: DIALOG_CONTAINER, useValue: containerRef },
         ...providers,
       ],
     });

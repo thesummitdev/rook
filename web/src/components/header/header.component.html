@@ -1,28 +1,29 @@
 <div class="header-wrapper">
   <div class="header-panel">
-    <ng-container *ngIf="user$|async else empty">
-      <span (click)="showCreate($event)">
-        add a bookmark
-      </span>
+    <ng-container *ngIf="user$ | async; else empty">
+      <span (click)="showCreate($event)"> add a bookmark </span>
     </ng-container>
     <ng-template #empty>
       <span></span>
     </ng-template>
     <div class="login-panel">
-      <ng-container *ngIf="user$|async as user; else login">
+      <ng-container *ngIf="user$ | async as user; else login">
         <span routerLink="/settings">settings</span>
-        <span aria-label="Sign out"
-              role="button"
-              (click)="signOut()">sign out</span>
+        <span aria-label="Sign out" role="button" (click)="signOut()"
+          >sign out</span
+        >
       </ng-container>
       <ng-template #login>
-        <span aria-label="Login"
-              role="button"
-              (click)="showLogin($event)">login</span>
+        <span aria-label="Login" role="button" (click)="showLogin($event)"
+          >login</span
+        >
         <ng-container *ngIf="allowCreateNewUsers$ | async">
-          <span aria-label="Create a new account"
-                role="button"
-                (click)="showCreateAccount($event)">create account</span>
+          <span
+            aria-label="Create a new account"
+            role="button"
+            (click)="showCreateAccount($event)"
+            >create account</span
+          >
         </ng-container>
       </ng-template>
     </div>

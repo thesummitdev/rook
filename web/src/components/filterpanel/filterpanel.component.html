@@ -1,54 +1,53 @@
-<div class="filter-panel"
-     *ngIf="show | async">
+<div class="filter-panel" *ngIf="show | async">
   <div>
     <div class="search-bar">
       <div class="search-bar-internal-wrapper">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="icon icon-tabler icon-tabler-search search-icon"
-             width="24"
-             height="24"
-             viewBox="0 0 24 24"
-             stroke-width="2"
-             stroke="currentColor"
-             fill="none"
-             stroke-linecap="round"
-             stroke-linejoin="round">
-          <desc>Download more icon variants from https://tabler-icons.io/i/search</desc>
-          <path stroke="none"
-                d="M0 0h24v24H0z"
-                fill="none"></path>
-          <circle cx="10"
-                  cy="10"
-                  r="7"></circle>
-          <line x1="21"
-                y1="21"
-                x2="15"
-                y2="15"></line>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="icon icon-tabler icon-tabler-search search-icon"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <desc>
+            Download more icon variants from https://tabler-icons.io/i/search
+          </desc>
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <circle cx="10" cy="10" r="7"></circle>
+          <line x1="21" y1="21" x2="15" y2="15"></line>
         </svg>
-        <input #searchInput
-               class='search-input'
-               (keyup)="onSearchChange(searchInput.value)"
-               type="text"
-               placeholder="search for bookmarks">
+        <input
+          #searchInput
+          class="search-input"
+          (keyup)="onSearchChange(searchInput.value)"
+          type="text"
+          placeholder="search for bookmarks" />
       </div>
     </div>
   </div>
 
   <div class="active-filters">
-    <div class="selected-tags"
-         [@growHeight]="(selectedTags$ | async).size > 0 ? 'active' : 'inactive'">
+    <div
+      class="selected-tags"
+      [@growHeight]="(selectedTags$ | async).size > 0 ? 'active' : 'inactive'">
       <!-- This span prevents the container from collapsing so it can animate open and closed. -->
-      <span style="height:36px"></span>
-      <app-pill removeable
-                (removed)="onTagRemoved($event)"
-                *ngFor="let tag of selectedTags$ | async"
-                [content]="tag"></app-pill>
+      <span style="height: 36px"></span>
+      <app-pill
+        removeable
+        (removed)="onTagRemoved($event)"
+        *ngFor="let tag of selectedTags$ | async"
+        [content]="tag"></app-pill>
     </div>
-    <app-select #tagSelect
-                [options]="tags$ | async"
-                [selected]="selectedTags$ | async"
-                placeholder="filter by tag"
-                (selectionChanged)="onTagSelected($event)">
+    <app-select
+      #tagSelect
+      [options]="tags$ | async"
+      [selected]="selectedTags$ | async"
+      placeholder="filter by tag"
+      (selectionChanged)="onTagSelected($event)">
     </app-select>
   </div>
 </div>
