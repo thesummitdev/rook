@@ -77,7 +77,7 @@ export class LinkFormComponent implements AfterViewInit {
    */
   onSubmit(): void {
     // Convert all tags to lower case before emitting.
-    this.model.tags = this.model.tags.toLowerCase();
+    this.model.tags = this.model.tags?.toLowerCase() ?? '';
     this.formSubmit.emit(this.model);
   }
 
