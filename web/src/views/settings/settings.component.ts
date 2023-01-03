@@ -77,6 +77,11 @@ export class SettingsViewComponent {
     this.data.setPreference({ key: 'theme', value: newTheme }).subscribe();
   }
 
+  /**
+   * Handler for changing the page size.
+   *
+   * @param {number} newSize the selected page size to use.
+   */
   onPageSizeChange(newSize: number): void {
     this.data
       .setPreference({ key: 'pageSize', value: newSize.toString() })
@@ -88,7 +93,7 @@ export class SettingsViewComponent {
    *
    * @param {boolean} allowed if new users can be created
    */
-  onAllowNewUsersChange(allowed: boolean) {
+  onAllowNewUsersChange(allowed: boolean): void {
     const value = allowed ? 'true' : 'false';
     this.data.setPreference({ key: 'allowNewUsers', value }).subscribe();
   }
@@ -160,7 +165,7 @@ export class SettingsViewComponent {
    * @param {MouseEvent} event : the click event.
    * @param {ApiKey} key : the table row's api key.
    */
-  handleShowApiKey(event: MouseEvent, key: ApiKey) {
+  handleShowApiKey(event: MouseEvent, key: ApiKey): void {
     event.stopPropagation();
     this.dialog
       .showApiKeyDialog(key)

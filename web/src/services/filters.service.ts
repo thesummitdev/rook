@@ -14,9 +14,11 @@ export class FilterService {
   }
 
   /**
-   * Sets the current tags to be used for data requests.
+   * Sets the current list/set of tags to be used for data requests.
    *
-   * @param nextTags
+   * @param {Set<string>|string[]} nextTags the list of selected tags. will be
+   *                                        converted into a set if not already
+   *                                        a set.
    */
   setTags(nextTags: string[] | Set<string>): void {
     this.cursor$.next(undefined);
@@ -27,18 +29,20 @@ export class FilterService {
     }
   }
 
-  setCursor(cursor?: string) {
+  /**
+   * Sets the current pagination cursor to be used for data requests.
+   *
+   * @param {string|undefined} cursor the next cursor to use. Can be undefined
+   *                                  to force the first page to be fetched.
+   */
+  setCursor(cursor?: string): void {
     this.cursor$.next(cursor);
-  }
-
-  getCursorAsObservable(): Observable<string | undefined> {
-    return this.cursor$.asObservable();
   }
 
   /**
    * Sets the current search term to be used for data requests.
    *
-   * @param search
+   * @param {string|undefined} search the search term to use for requests.
    */
   setSearch(search: string | undefined): void {
     this.searchTerm$.next(search);
@@ -47,16 +51,25 @@ export class FilterService {
   /**
    * Returns the current set of tags as an observable.
    *
-   * @returns Observable of the current tags.
+   * @returns {Observable<Set<string>>} stream of the current tags.
    */
   getTagsAsObservable(): Observable<Set<string>> {
     return this.tags$.asObservable();
   }
 
   /**
+   * Get an observable stream of the current cursor.
+   *
+   * @returns {Observable<string|undefined>} stream of cursor
+   */
+  getCursorAsObservable(): Observable<string | undefined> {
+    return this.cursor$.asObservable();
+  }
+
+  /**
    * Returns the current search term as an observable.
    *
-   * @returns Observable of the current search term.
+   * @returns {Observable<string|undefined>} stream of the current search term.
    */
   getSearchAsObservable(): Observable<string | undefined> {
     return this.searchTerm$.asObservable();

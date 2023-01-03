@@ -31,7 +31,7 @@ public class SystemKey implements BaseModel {
   }
 
   @Override
-  public JSONObject toJSONObject() {
+  public JSONObject toJsonObject() {
     JSONObject obj = new JSONObject().put("key", this.key).put("value", this.value);
     return obj;
   }

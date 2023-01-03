@@ -79,7 +79,7 @@ public class AuthHandlerTest {
 
     handler.generateApiKey(ctx);
     verify(ctx).status(200);
-    verify(ctx).result(expectedKey.toJSONObject().toString());
+    verify(ctx).result(expectedKey.toJsonObject().toString());
     verify(ctx).contentType("application/json");
   }
 

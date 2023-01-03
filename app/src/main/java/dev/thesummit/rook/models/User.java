@@ -38,7 +38,7 @@ public class User implements BaseModel {
    *
    * @return The JSONObject.
    */
-  public JSONObject toJSONObject() {
+  public JSONObject toJsonObject() {
     JSONObject obj = new JSONObject().put("id", this.id).put("username", this.username);
     return obj;
   }

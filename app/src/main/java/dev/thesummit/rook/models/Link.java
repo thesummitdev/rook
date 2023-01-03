@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
 
+/** The BaseModel implementation of the Link entity. */
 public class Link implements PageableBaseModel {
   private static final String[] URL_SCHEMES = {"http", "https"};
   private static final UrlValidator urlValidator = new UrlValidator(URL_SCHEMES);
@@ -24,6 +25,15 @@ public class Link implements PageableBaseModel {
 
   @DatabaseField(isSetByDatabase = true) public Timestamp modified;
 
+  /**
+   * Creates a link entity.
+   *
+   * @param title  the link's title / description.
+   * @param url    the url (must be a valid url).
+   * @param tags   space separated list of tags.
+   * @param userId the id of the user who owns this link.
+   *
+   */
   public Link(String title, String url, String tags, int userId) {
     this.url = url;
     this.tags = tags;
@@ -39,7 +49,7 @@ public class Link implements PageableBaseModel {
     return this.id;
   }
 
-  public static Link fromJSONObject(JSONObject obj) {
+  public static Link fromJsonObject(JSONObject obj) {
     Link l = new Link(obj.getString("title"), obj.getString("url"),
         obj.optString("tags", "").toLowerCase(), obj.getInt("userId"));
 
@@ -50,12 +60,7 @@ public class Link implements PageableBaseModel {
     return l;
   }
 
-  /**
-   * Make a JSON compliant object from the link instance.
-   *
-   * @return The JSONObject.
-   */
-  public JSONObject toJSONObject() {
+  public JSONObject toJsonObject() {
     JSONObject obj = new JSONObject()
                          .put("id", this.id)
                          .put("title", this.title)

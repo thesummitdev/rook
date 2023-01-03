@@ -12,14 +12,15 @@ import io.javalin.http.Context;
 import io.javalin.http.InternalServerErrorResponse;
 import io.javalin.http.NotFoundResponse;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Endpoint handler for the Link api entity-type.
+ */
 public class LinkHandler {
   private static Logger log = LoggerFactory.getLogger(UserHandler.class);
   private DatabaseService dbService;
@@ -42,11 +43,11 @@ public class LinkHandler {
 
       PagedResults<Link> results = this.dbService.getAllPaged(Link.class, params);
       for (Link l : results.getItems()) {
-        arr.put(l.toJSONObject());
+        arr.put(l.toJsonObject());
       }
 
       if (results.getCursor() != null) {
-        payload.put("cursor", results.getCursor().toJSONObject());
+        payload.put("cursor", results.getCursor().toJsonObject());
         log.info(results.getCursor().toString());
       }
       payload.put("items", arr);
@@ -61,7 +62,7 @@ public class LinkHandler {
     ctx.result(response);
   }
 
-  /** Request handler for GET ${host}/links/{id} */
+  /** Request handler for GET ${host}/links/{id}. */
   public void getOne(Context ctx) {
     Integer resourceId;
 
@@ -77,7 +78,7 @@ public class LinkHandler {
 
       ctx.status(200);
       ctx.contentType("application/json");
-      ctx.result(link.toJSONObject().toString());
+      ctx.result(link.toJsonObject().toString());
 
     } catch (IllegalArgumentException e) {
       throw new BadRequestResponse(
@@ -85,7 +86,7 @@ public class LinkHandler {
     }
   }
 
-  /** Request handler for PUT ${host}/links/ */
+  /** Request handler for PUT ${host}/links. */
   public void create(Context ctx) {
     User user = ctx.sessionAttribute("current_user");
 
@@ -124,14 +125,14 @@ public class LinkHandler {
     if (l.getId() != null) {
       ctx.status(200);
       ctx.contentType("application/json");
-      ctx.result(l.toJSONObject().toString());
+      ctx.result(l.toJsonObject().toString());
     } else {
       log.debug("New link failed to recieve an ID from the database. Creation failed.");
       throw new InternalServerErrorResponse("Failed to create link, unknown error.");
     }
   }
 
-  /** Request handler for PATCH ${host}/links/{id} */
+  /** Request handler for PATCH ${host}/links/{id}. */
   public void update(Context ctx) {
     User user = ctx.sessionAttribute("current_user");
     Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
@@ -180,15 +181,15 @@ public class LinkHandler {
       throw new BadRequestResponse("Invalid link parameters");
     }
 
-    log.info(link.toJSONObject().toString());
+    log.info(link.toJsonObject().toString());
 
     this.dbService.patch(link);
 
     ctx.status(200);
-    ctx.result(link.toJSONObject().toString());
+    ctx.result(link.toJsonObject().toString());
   }
 
-  /** Request handler for DELETE ${host}/links/{id} */
+  /** Request handler for DELETE ${host}/links/{id}. */
   public void delete(Context ctx) {
     Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
     Link l = this.dbService.get(Link.class, resourceId);

@@ -57,7 +57,7 @@ public class ApiKey implements BaseModel {
   }
 
   @Override
-  public JSONObject toJSONObject() {
+  public JSONObject toJsonObject() {
     return new JSONObject()
         .put("id", id)
         .put("apiKey", key)

@@ -1,6 +1,5 @@
 import {
   Component,
-  ComponentRef,
   ElementRef,
   OnDestroy,
   OnInit,
@@ -38,7 +37,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
     private readonly ui: UiService,
     private readonly hotkeys: HotkeysService
   ) {
-    this.show = this.ui.getFilterPanelAsObservable();
+    this.show = this.ui.getFilterPanelVisibilityAsObservable();
     this.tags$ = this.data.getNewLinksAsObservable().pipe(
       startWith(null),
       switchMap(() => this.data.getTags())

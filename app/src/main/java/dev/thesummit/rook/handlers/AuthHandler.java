@@ -13,7 +13,6 @@ import io.javalin.http.Context;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.InternalServerErrorResponse;
 import io.javalin.http.NotFoundResponse;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -23,13 +22,14 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Authentication handler for /user/ related routes. */
 public class AuthHandler {
-
   private static Logger log = LoggerFactory.getLogger(UserHandler.class);
   private PasswordManager pwm;
   private DatabaseService dbService;
   private JWTProvider jwtProvider;
 
+  /** Builds an auth handler for API authentication related routes. */
   @Inject()
   public AuthHandler(PasswordManager pwm, DatabaseService dbService, JWTProvider jwtProvider) {
     this.pwm = pwm;
@@ -43,7 +43,6 @@ public class AuthHandler {
    * object and returns a JWT to be used for future requests.
    */
   public void login(Context ctx) throws Exception {
-
     JSONObject body = null;
 
     try {
@@ -64,13 +63,13 @@ public class AuthHandler {
         ctx.json(new JWTResponse(token, user.username, user.isAdmin));
         ctx.status(200);
         ctx.contentType("application/json");
-        log.debug("User is successfully logged in.");
+        log.info("[Login] {} has successfully logged in.", user.username);
         return;
       } else {
         // User is not authenticated.
         ctx.status(401);
         ctx.result("Invalid username and password");
-        log.debug("Unable to log user in, invalid credentials.");
+        log.debug("[Login] Unable to log user in, invalid credentials.");
         return;
       }
     }
@@ -78,8 +77,8 @@ public class AuthHandler {
     throw new BadRequestResponse("Missing required username and password.");
   }
 
+  /** Ensures that a properly authenticated user is present in the current request context. */
   public void requireUserContext(Context ctx) {
-
     Optional<User> user = getUserFromRequest(ctx);
 
     if (user.isPresent()) {
@@ -90,8 +89,8 @@ public class AuthHandler {
     }
   }
 
+  /** Checks to see if a properly authenticated user is present in the current request context. */
   public void optionalUserContext(Context ctx) {
-
     Optional<User> user = getUserFromRequest(ctx);
 
     if (user.isPresent()) {
@@ -101,14 +100,13 @@ public class AuthHandler {
     }
   }
 
+  /** Handler for deleting API keys. */
   public void deleteApiKey(Context ctx) {
-
     Optional<User> user = getUserFromRequest(ctx);
     Integer resourceId = Integer.parseInt(ctx.pathParam("id"));
     ApiKey key = this.dbService.get(ApiKey.class, resourceId);
 
     if (key != null) {
-
       if (!user.isPresent() || !user.get().getId().equals(key.userId)) {
         throw new ForbiddenResponse("You must be logged in and own the resource to delete it.");
       }
@@ -120,29 +118,28 @@ public class AuthHandler {
     }
   }
 
+  /** Handler for creating API keys. */
   public void generateApiKey(Context ctx) {
-
     User user = ctx.sessionAttribute("current_user");
 
     if (user == null) {
       throw new ForbiddenResponse("You must be logged in to request a new api key.");
     }
 
-    log.info(user.getId().toString());
     ApiKey newKey = new ApiKey(user, this.jwtProvider.generateApiKey(user), ctx.userAgent());
     this.dbService.put(newKey);
 
     if (newKey.getId() != null) {
       ctx.status(200);
       ctx.contentType("application/json");
-      ctx.result(newKey.toJSONObject().toString());
+      ctx.result(newKey.toJsonObject().toString());
     } else {
       throw new InternalServerErrorResponse("Failed to create ApiKey, unknown error");
     }
   }
 
+  /** Handler for listing a user's current API keys. */
   public void getApiKeys(Context ctx) {
-
     User user = ctx.sessionAttribute("current_user");
 
     if (user == null) {
@@ -156,7 +153,7 @@ public class AuthHandler {
 
     JSONArray arr = new JSONArray();
     for (ApiKey key : keys) {
-      arr.put(key.toJSONObject());
+      arr.put(key.toJsonObject());
     }
 
     ctx.status(200);
@@ -166,26 +163,20 @@ public class AuthHandler {
 
   /**
    * Attempts to find the {@link User} from the request context. Looks up the user
-   * based on the
-   * username claim in the Auth token. In the case where there is no Auth token
-   * present, or the user
-   * cannot be found, returns Optional.empty().
+   * based on the username claim in the Auth token. In the case where there is no Auth token
+   * present, or the user cannot be found, returns Optional.empty().
    */
   private Optional<User> getUserFromRequest(Context ctx) {
+    Optional<String> token = Optional.ofNullable(ctx.header("Authorization")).flatMap(header -> {
+      String[] split = header.split(" ");
+      if (split.length != 2 || !split[0].equals("Bearer")) {
+        return Optional.empty();
+      }
 
-    Optional<String> token = Optional.ofNullable(ctx.header("Authorization"))
-        .flatMap(
-            header -> {
-              String[] split = header.split(" ");
-              if (split.length != 2 || !split[0].equals("Bearer")) {
-                return Optional.empty();
-              }
-
-              return Optional.of(split[1]);
-            });
+      return Optional.of(split[1]);
+    });
 
     if (token.isPresent()) {
-
       Optional<DecodedJWT> jwt = this.jwtProvider.validateToken(token.get());
 
       if (jwt.isPresent()) {

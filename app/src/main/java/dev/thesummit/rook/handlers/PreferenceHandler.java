@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Endpoint handler for preferences. */
 public class PreferenceHandler {
 
   private static Logger log = LoggerFactory.getLogger(PreferenceHandler.class);
@@ -27,7 +28,7 @@ public class PreferenceHandler {
     this.dbService = dbService;
   }
 
-  /** Request handler for GET ${host}/prefs/ */
+  /** Request handler for GET ${host}/prefs. */
   public void getAll(Context ctx) {
 
     JSONArray arr = new JSONArray();
@@ -39,7 +40,7 @@ public class PreferenceHandler {
         this.dbService.getAll(Preference.class, params).stream().collect(Collectors.toList());
 
     for (Preference p : prefs) {
-      arr.put(p.toJSONObject());
+      arr.put(p.toJsonObject());
     }
 
     // Fetch User specific Prefs.
@@ -51,7 +52,7 @@ public class PreferenceHandler {
           this.dbService.getAll(Preference.class, userParams).stream().collect(Collectors.toList());
 
       for (Preference p : userPrefs) {
-        arr.put(p.toJSONObject());
+        arr.put(p.toJsonObject());
       }
     }
 
@@ -61,7 +62,7 @@ public class PreferenceHandler {
     ctx.result(response);
   }
 
-  /** Request handler for PUT ${host}/prefs/ */
+  /** Request handler for PUT ${host}/prefs. */
   public void create(Context ctx) {
 
     User user = ctx.sessionAttribute("current_user");
@@ -131,7 +132,7 @@ public class PreferenceHandler {
     if (p.getId() != null) {
       ctx.status(200);
       ctx.contentType("application/json");
-      ctx.result(p.toJSONObject().toString());
+      ctx.result(p.toJsonObject().toString());
     } else {
       log.debug("New Preference failed to recieve an ID from database, creation failed.");
       throw new InternalServerErrorResponse("Failed to create preference, unknown error");

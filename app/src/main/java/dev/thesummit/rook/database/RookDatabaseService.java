@@ -21,6 +21,9 @@ import java.util.StringJoiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation for the {@link DatabaseService}.
+ */
 public class RookDatabaseService implements DatabaseService {
   private static Logger log = LoggerFactory.getLogger(RookDatabaseService.class);
   private ConnectionPool pool;
@@ -343,10 +346,9 @@ public class RookDatabaseService implements DatabaseService {
 
         if (params.get(field) == null) {
           // For fields where the value is actually null do an "IS NULL" compare.
-          query.append(field).append(annotation.cast()).append(" is ").append("NULL");
+          query.append(field).append(" is ").append("NULL");
         } else {
           query.append(field)
-              .append(annotation.cast())
               .append(annotation.whereOperator())
               .append("?");
         }
@@ -619,6 +621,7 @@ public class RookDatabaseService implements DatabaseService {
         continue;
       }
       String field = dbField.getName();
+      DatabaseField annotation = dbField.getAnnotation(DatabaseField.class);
       DatabaseListField listAnnotation = dbField.getAnnotation(DatabaseListField.class);
       if (listAnnotation != null) {
         // get all list values we are querying for
@@ -649,7 +652,7 @@ public class RookDatabaseService implements DatabaseService {
         continue;
       }
 
-      whereClause.add(String.format("%s=?", dbField.getName()));
+      whereClause.add(String.format("%s%s?", dbField.getName(), annotation.whereOperator()));
     }
 
     return whereClause;

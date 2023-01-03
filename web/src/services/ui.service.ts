@@ -63,7 +63,8 @@ const everforest: Theme = {
 
 @Injectable({ providedIn: 'root' })
 export class UiService {
-  private readonly filterPanel$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private readonly filterPanelVisibility$: ReplaySubject<boolean> =
+    new ReplaySubject(1);
   private readonly pageSize$: ReplaySubject<number> = new ReplaySubject(1);
 
   private readonly themes: Map<string, Theme> = new Map([
@@ -74,8 +75,11 @@ export class UiService {
   ]);
 
   /**
+   * Returns the requested theme if it exists, otherwise the default theme.
    *
-   * @param theme
+   * @param   {string} theme the name of the requested theme
+   * @returns {Theme}        the requested theme or the default theme if the
+   *                         requested one does not exist.
    */
   private getTheme(theme?: string): Theme {
     if (theme && this.themes.has(theme)) {
@@ -85,15 +89,19 @@ export class UiService {
   }
 
   /**
+   * Assembles a Map of the available themes and their names.
    *
+   * @returns {Map<string,Theme>} a map of the theme names / themes.
    */
   getAllThemes(): Map<string, Theme> {
     return new Map(this.themes);
   }
 
   /**
+   * Changes the current application color theme.
+   * Note: if the theme does not exist the default theme will be used.
    *
-   * @param theme
+   * @param {string} theme the name of the color theme to change to.
    */
   setPageTheme(theme: string): void {
     const loadedTheme = this.getTheme(theme);
@@ -104,26 +112,41 @@ export class UiService {
     }
   }
 
+  /**
+   * Gets the current link list page size as an Observable stream.
+   *
+   * @returns {Observable<number>} stream of the current page size.
+   */
   getPageSizeAsObservable(): Observable<number> {
     return this.pageSize$.asObservable();
   }
 
-  setPageSize(size: number) {
+  /**
+   * Sets the current link list page size.
+   * Note: this might trigger a new data fetch.
+   *
+   * @param {number} size the next page size to use.
+   */
+  setPageSize(size: number): void {
     this.pageSize$.next(size);
   }
 
   /**
+   * Gets an Observable stream of the filter panel's current visibility.
    *
+   * @returns {Observable<boolean>} stream of the filter panel's current
+   *                                visibility.
    */
-  getFilterPanelAsObservable(): Observable<boolean> {
-    return this.filterPanel$.asObservable();
+  getFilterPanelVisibilityAsObservable(): Observable<boolean> {
+    return this.filterPanelVisibility$.asObservable();
   }
 
   /**
+   * Sets the current visibility state of the filter panel.
    *
-   * @param visible
+   * @param {boolean} visible the visibility state to set.
    */
   setFilterPanelVisible(visible: boolean): void {
-    this.filterPanel$.next(visible);
+    this.filterPanelVisibility$.next(visible);
   }
 }
