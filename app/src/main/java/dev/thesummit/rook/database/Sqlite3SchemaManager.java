@@ -90,7 +90,7 @@ public class Sqlite3SchemaManager implements DatabaseSchemaManager {
         runScript(SCRIPT_UPGRADE_MAP.get(VERSION_110), COLON_DELIMITER);
         break;
       case VERSION_110:
-        runScript(SCRIPT_UPGRADE_MAP.get(VERSION_110), COLON_DELIMITER);
+        runScript(SCRIPT_UPGRADE_MAP.get(VERSION_120), COLON_DELIMITER);
         break;
       default:
         break;
