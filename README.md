@@ -25,7 +25,7 @@ and later restart the application's configuration and data will not be lost.
 
 ## Contributing
 
-* If this project interests you contact me on Twitter: [_tylersaunders@](https://twitter.com/_tylersaunders)
+* If this project interests you contact me on Fosstodon: [tylersaunders@](https://fosstodon.org/@tylersaunders)
 * [Good first issues](https://github.com/thesummitdev/rook/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) 
   are marked in the issue tracker if you are looking to contribute.
 
