@@ -37,4 +37,4 @@ and later restart the application's configuration and data will not be lost.
 ## Licenses
 
 * [GNU GPL v3](http://www.gnu.org/licenses/gpl.html)
-* Copyright 2021-2022 thesummit.dev
+* Copyright 2021-2023 thesummit.dev
