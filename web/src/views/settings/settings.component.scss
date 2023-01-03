@@ -1,4 +1,4 @@
-@use "web/src/styles/theme";
+@use 'web/src/styles/theme';
 
 .settings {
   section {
@@ -27,7 +27,6 @@
 
 .cdk-header-cell,
 .cdk-cell {
-
   min-width: 75px;
   padding: 10px;
   text-align: start;
@@ -52,11 +51,9 @@
 }
 
 .form-theme {
-
   span {
     margin-right: 6px;
   }
-
 }
 
 .form-allow-new-users {

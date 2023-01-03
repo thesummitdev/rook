@@ -8,28 +8,32 @@ import java.sql.Timestamp;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
 
-public class Link implements BaseModel {
-
+/** The BaseModel implementation of the Link entity. */
+public class Link implements PageableBaseModel {
   private static final String[] URL_SCHEMES = {"http", "https"};
   private static final UrlValidator urlValidator = new UrlValidator(URL_SCHEMES);
 
-  @DatabaseField(isId = true)
-  public Integer id;
+  @DatabaseField(isId = true, orderBy = true) public Integer id;
 
   @DatabaseField() public String url;
 
-  @DatabaseField()
-  @DatabaseListField(seperator = " ")
-  public String tags;
+  @DatabaseField() @DatabaseListField(seperator = " ") public String tags;
 
-  @DatabaseField(whereOperator = " LIKE ", valueWrapper = "%")
-  public String title;
+  @DatabaseField(whereOperator = " LIKE ", valueWrapper = "%") public String title;
 
   @DatabaseField() public Integer userId;
 
-  @DatabaseField(isSetByDatabase = true)
-  public Timestamp modified;
+  @DatabaseField(isSetByDatabase = true) public Timestamp modified;
 
+  /**
+   * Creates a link entity.
+   *
+   * @param title  the link's title / description.
+   * @param url    the url (must be a valid url).
+   * @param tags   space separated list of tags.
+   * @param userId the id of the user who owns this link.
+   *
+   */
   public Link(String title, String url, String tags, int userId) {
     this.url = url;
     this.tags = tags;
@@ -45,13 +49,9 @@ public class Link implements BaseModel {
     return this.id;
   }
 
-  public static Link fromJSONObject(JSONObject obj) {
-    Link l =
-        new Link(
-            obj.getString("title"),
-            obj.getString("url"),
-            obj.optString("tags", "").toLowerCase(),
-            obj.getInt("userId"));
+  public static Link fromJsonObject(JSONObject obj) {
+    Link l = new Link(obj.getString("title"), obj.getString("url"),
+        obj.optString("tags", "").toLowerCase(), obj.getInt("userId"));
 
     if (obj.has("id")) {
       l.setId(obj.getInt("id"));
@@ -60,18 +60,12 @@ public class Link implements BaseModel {
     return l;
   }
 
-  /**
-   * Make a JSON compliant object from the link instance.
-   *
-   * @return The JSONObject.
-   */
-  public JSONObject toJSONObject() {
-    JSONObject obj =
-        new JSONObject()
-            .put("id", this.id)
-            .put("title", this.title)
-            .put("url", this.url)
-            .put("tags", this.tags);
+  public JSONObject toJsonObject() {
+    JSONObject obj = new JSONObject()
+                         .put("id", this.id)
+                         .put("title", this.title)
+                         .put("url", this.url)
+                         .put("tags", this.tags);
 
     if (this.modified != null) {
       obj.put("modified", this.modified.getTime());
@@ -82,12 +76,8 @@ public class Link implements BaseModel {
 
   public static Link fromResultSet(ResultSet rs) {
     try {
-      Link l =
-          new Link(
-              rs.getString("title"),
-              rs.getString("url"),
-              rs.getString("tags"),
-              rs.getInt("userId"));
+      Link l = new Link(
+          rs.getString("title"), rs.getString("url"), rs.getString("tags"), rs.getInt("userId"));
       l.setId(rs.getInt("id"));
       l.modified = Timestamp.valueOf(rs.getString("modified"));
       return l;
@@ -103,5 +93,9 @@ public class Link implements BaseModel {
    */
   public Boolean isValid() {
     return urlValidator.isValid(this.url);
+  }
+
+  public Integer getCursor() {
+    return id;
   }
 }

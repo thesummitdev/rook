@@ -1,34 +1,53 @@
 <div class="link-list">
-  <ul class="links-ul" *ngIf="links$ | async as links; else empty">
-    <li class="links-li" *ngFor="let link of links">
-      <app-link [link]="link"></app-link>
-    </li>
+  <ng-container *ngIf="links$ | async as links; else empty">
+    <ul class="links-ul">
+      <li class="links-li" *ngFor="let link of links">
+        <app-link [link]="link"></app-link>
+      </li>
 
-    <li class="empty-list" *ngIf="links.length === 0">No results.</li>
-  </ul>
+      <li class="empty-list" *ngIf="links.length === 0">No results.</li>
+    </ul>
+
+    <div class="paging-container">
+      <div class="button-container">
+        <ng-container *ngIf="prev$ | async as prev">
+          <button (click)="setCursor(prev)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+              height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <polyline points="15 6 9 12 15 18"></polyline>
+            </svg>
+          </button>
+        </ng-container>
+      </div>
+      <div class="button-container">
+        <ng-container *ngIf="next$ | async as next">
+          <button (click)="setCursor(next)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+              height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <polyline points="9 6 15 12 9 18"></polyline>
+            </svg>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
 
   <ng-template #empty>
     <div class="empty-state">
       <p>Sign in or create an account to view your bookmarks</p>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="icon icon-tabler icon-tabler-link link-icon"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        fill="none"
-        stroke-linecap="round"
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link link-icon" width="24" height="24"
+        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
         stroke-linejoin="round">
         <desc>
           Download more icon variants from https://tabler-icons.io/i/link
         </desc>
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <path
-          d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
-        <path
-          d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
+        <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
+        <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
       </svg>
     </div>
   </ng-template>

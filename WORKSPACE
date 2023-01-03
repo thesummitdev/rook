@@ -39,7 +39,7 @@ maven_install(
         "io.javalin:javalin-bundle:4.6.4",
         "io.javalin:javalin:4.6.4",
         "org.json:json:20210307",
-        "org.xerial:sqlite-jdbc:3.36.0.3",
+        "org.xerial:sqlite-jdbc:3.40.0.0",
         "org.slf4j:slf4j-api:1.7.30",
         maven.artifact(
             "org.junit.jupiter",

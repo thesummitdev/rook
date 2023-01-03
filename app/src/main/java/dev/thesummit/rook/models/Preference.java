@@ -55,7 +55,7 @@ public class Preference implements BaseModel {
   }
 
   @Override
-  public JSONObject toJSONObject() {
+  public JSONObject toJsonObject() {
     JSONObject obj =
         new JSONObject().put("id", this.id).put("key", this.key).put("value", this.value);
     return obj;

@@ -19,6 +19,7 @@ export class AppComponent implements OnDestroy {
   private readonly destroyed$: ReplaySubject<void> = new ReplaySubject();
   user$: Observable<User | undefined>;
   readonly defaultTheme = 'light';
+  readonly defaultPageSize = 20;
 
   constructor(
     private readonly cookie: CookieService,
@@ -33,6 +34,11 @@ export class AppComponent implements OnDestroy {
     // Init page theme
     this.data.getPreferences().subscribe(prefs => {
       this.ui.setPageTheme(prefs.get('theme')?.value || this.defaultTheme);
+      if (prefs.has('pageSize')) {
+        this.ui.setPageSize(Number(prefs.get('pageSize').value));
+      } else {
+        this.ui.setPageSize(this.defaultPageSize);
+      }
     });
 
     // Setup hotkeys

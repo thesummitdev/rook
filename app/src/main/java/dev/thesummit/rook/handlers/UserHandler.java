@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** API handler for user creation. */
 public class UserHandler {
 
   private static Logger log = LoggerFactory.getLogger(UserHandler.class);
@@ -25,7 +26,7 @@ public class UserHandler {
   }
 
   /**
-   * HTTP handler for creating a new user. Expects to recieve a JSON object with a username/password
+   * HTTP handler for creating a new user. Expects to receive a JSON object with a username/password
    * and returns a 200 status and a User object if the creation is successful.
    */
   public void create(Context ctx) throws Exception {
@@ -57,7 +58,7 @@ public class UserHandler {
       log.debug(String.format("Creating new user %s", newUser.username));
       this.dbService.put(newUser);
 
-      ctx.result(newUser.toJSONObject().toString());
+      ctx.result(newUser.toJsonObject().toString());
       ctx.status(200);
       ctx.contentType("application/json");
       return;

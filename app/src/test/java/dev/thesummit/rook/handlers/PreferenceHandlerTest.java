@@ -60,10 +60,10 @@ public class PreferenceHandlerTest {
     doReturn(appPrefs, userPrefs).when(dbService).getAll(any(Class.class), any(HashMap.class));
 
     JSONArray expectedResult = new JSONArray();
-    expectedResult.put(mockPref.toJSONObject());
-    expectedResult.put(mockPref2.toJSONObject());
-    expectedResult.put(mockPref3.toJSONObject());
-    expectedResult.put(mockPref4.toJSONObject());
+    expectedResult.put(mockPref.toJsonObject());
+    expectedResult.put(mockPref2.toJsonObject());
+    expectedResult.put(mockPref3.toJsonObject());
+    expectedResult.put(mockPref4.toJsonObject());
 
     handler.getAll(ctx);
 

@@ -3,6 +3,7 @@ package dev.thesummit.rook.handlers;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import dev.thesummit.rook.database.PagedResults;
 import dev.thesummit.rook.database.RookDatabaseService;
 import dev.thesummit.rook.models.Link;
 import dev.thesummit.rook.models.User;
@@ -54,7 +55,7 @@ public class LinkHandlerTest {
     doReturn(id.toString()).when(ctx).pathParam("id");
 
     handler.getOne(ctx);
-    verify(ctx).result(link.toJSONObject().toString());
+    verify(ctx).result(link.toJsonObject().toString());
     verify(ctx).status(200);
     verify(ctx).contentType("application/json");
   }
@@ -94,13 +95,15 @@ public class LinkHandlerTest {
     ArrayList<Link> list = new ArrayList<Link>();
     list.add(mockLink);
     list.add(mockLink2);
+    PagedResults<Link> results = new PagedResults(list, null);
 
-    doReturn(list).when(dbService).getAll(any(Class.class), any(HashMap.class));
+    doReturn(results).when(dbService).getAllPaged(any(Class.class), any(HashMap.class));
     doReturn("{}").when(ctx).body();
 
-    JSONArray expectedResult = new JSONArray();
-    expectedResult.put(mockLink.toJSONObject());
-    expectedResult.put(mockLink2.toJSONObject());
+    JSONArray expectedItems = new JSONArray();
+    expectedItems.put(mockLink.toJsonObject());
+    expectedItems.put(mockLink2.toJsonObject());
+    JSONObject expectedResult = new JSONObject().put("items", expectedItems);
 
     handler.getAll(ctx);
     verify(ctx).result(expectedResult.toString());

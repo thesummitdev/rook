@@ -1,6 +1,11 @@
 package dev.thesummit.rook;
 
-import static io.javalin.apibuilder.ApiBuilder.*;
+import static io.javalin.apibuilder.ApiBuilder.delete;
+import static io.javalin.apibuilder.ApiBuilder.get;
+import static io.javalin.apibuilder.ApiBuilder.patch;
+import static io.javalin.apibuilder.ApiBuilder.path;
+import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.put;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -22,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RookApplication {
-
   private static Logger log = LoggerFactory.getLogger(RookApplication.class);
   private static Map<String, String> ENV = System.getenv();
   private static Integer PORT = Integer.parseInt(ENV.getOrDefault("ROOK_PORT", "8000"));
@@ -30,7 +34,6 @@ public class RookApplication {
   private static boolean RESET_DATABASE_FLAG = false;
 
   public static void main(String[] args) throws IOException {
-
     for (String arg : args) {
       if (arg.contains("resetdb")) {
         String value = arg.split("=")[1];
@@ -50,13 +53,12 @@ public class RookApplication {
     // Verify & Check for database updates before starting the server.
     injector.getInstance(Sqlite3SchemaManager.class).verifySchema();
 
-    Javalin app = Javalin.create(
-        config -> {
-          config.enableDevLogging();
-          config.addStaticFiles("web", Location.CLASSPATH);
-          config.addStaticFiles("assets", Location.CLASSPATH);
-          config.addSinglePageRoot("/", "web/index.html");
-        });
+    Javalin app = Javalin.create(config -> {
+      config.enableDevLogging();
+      config.addStaticFiles("web", Location.CLASSPATH);
+      config.addStaticFiles("assets", Location.CLASSPATH);
+      config.addSinglePageRoot("/", "web/index.html");
+    });
 
     // Protected routes that require a User to be logged in and pass a bearer token.
     app.before("/links", injector.getInstance(AuthHandler.class)::requireUserContext);
@@ -71,61 +73,35 @@ public class RookApplication {
     app.before("/prefs", injector.getInstance(AuthHandler.class)::optionalUserContext);
 
     // Other Routes
-    app.routes(
-        () -> {
-          path(
-              "login",
-              () -> {
-                post(injector.getInstance(AuthHandler.class)::login);
-              });
-          path(
-              "users",
-              () -> {
-                put(injector.getInstance(UserHandler.class)::create);
-                path(
-                    "apikey",
-                    () -> {
-                      get(injector.getInstance(AuthHandler.class)::getApiKeys);
-                      path(
-                          "new",
-                          () -> {
-                            get(injector.getInstance(AuthHandler.class)::generateApiKey);
-                          });
-                      path("<id>",
-                          () -> {
-                            delete(injector.getInstance(AuthHandler.class)::deleteApiKey);
-                          });
-                    });
-              });
-
-          // Link Entity
-          path(
-              "links",
-              () -> {
-                post(injector.getInstance(LinkHandler.class)::getAll);
-                put(injector.getInstance(LinkHandler.class)::create);
-                path(
-                    "<id>",
-                    () -> {
-                      get(injector.getInstance(LinkHandler.class)::getOne);
-                      patch(injector.getInstance(LinkHandler.class)::update);
-                      delete(injector.getInstance(LinkHandler.class)::delete);
-                    });
-              });
-
-          path(
-              "tags",
-              () -> {
-                get(injector.getInstance(TagHandler.class)::getAll);
-              });
-
-          path(
-              "prefs",
-              () -> {
-                get(injector.getInstance(PreferenceHandler.class)::getAll);
-                put(injector.getInstance(PreferenceHandler.class)::create);
-              });
+    app.routes(() -> {
+      path("login", () -> { post(injector.getInstance(AuthHandler.class)::login); });
+      path("users", () -> {
+        put(injector.getInstance(UserHandler.class)::create);
+        path("apikey", () -> {
+          get(injector.getInstance(AuthHandler.class)::getApiKeys);
+          path("new", () -> { get(injector.getInstance(AuthHandler.class)::generateApiKey); });
+          path("<id>", () -> { delete(injector.getInstance(AuthHandler.class)::deleteApiKey); });
         });
+      });
+
+      // Link Entity
+      path("links", () -> {
+        post(injector.getInstance(LinkHandler.class)::getAll);
+        put(injector.getInstance(LinkHandler.class)::create);
+        path("<id>", () -> {
+          get(injector.getInstance(LinkHandler.class)::getOne);
+          patch(injector.getInstance(LinkHandler.class)::update);
+          delete(injector.getInstance(LinkHandler.class)::delete);
+        });
+      });
+
+      path("tags", () -> { get(injector.getInstance(TagHandler.class)::getAll); });
+
+      path("prefs", () -> {
+        get(injector.getInstance(PreferenceHandler.class)::getAll);
+        put(injector.getInstance(PreferenceHandler.class)::create);
+      });
+    });
 
     app.start(RookApplication.PORT); // Start listening for http requests.
     log.info("Rook server successfully started.");

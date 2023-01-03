@@ -44,6 +44,17 @@
             </option>
           </select>
         </div>
+        <div class="setting">
+          <span>Entries per page</span>
+          <select
+            [(ngModel)]="model.pageSize"
+            name="pageSize"
+            (ngModelChange)="onPageSizeChange($event)">
+            <option *ngFor="let size of pageSizes">
+              {{ size }}
+            </option>
+          </select>
+        </div>
         <ng-container *ngIf="user$ | async as user">
           <ng-container *ngIf="user.isAdmin">
             <div class="setting form-allow-new-users">

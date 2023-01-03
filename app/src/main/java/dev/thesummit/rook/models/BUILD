@@ -6,11 +6,12 @@ java_library(
     name = "models",
     srcs = [
         "BaseModel.java",
-        "Link.java",
-        "Preference.java",
-        "User.java",
         "ApiKey.java",
+        "Link.java",
+        "PageableBaseModel.java",
+        "Preference.java",
         "SystemKey.java",
+        "User.java",
     ],
     deps = [
         "//app/src/main/java/dev/thesummit/rook/database:database_field",
