@@ -3,62 +3,50 @@ import { Observable, ReplaySubject } from 'rxjs';
 
 interface Theme {
   '--background': string;
-  '--foreground': string;
+  '--background-alt': string;
+  '--text': string;
+  '--text-alt': string;
   '--anchor': string;
+  '--icons': string;
   '--accent': string;
-  '--dim': string;
-  '--bright': string;
-  '--dark': string;
+  '--tags': string;
+  '--borders': string;
+  '--shadows': string;
   '--error': string;
+  '--warn': string;
   '--success': string;
 }
 
 const light: Theme = {
-  '--background': '#eeeef1',
-  '--foreground': '#6b717f',
-  '--anchor': '#0091ff',
-  '--accent': '#f77d00',
-  '--dim': '#959595',
-  '--bright': '#d1d1d1',
-  '--dark': '#4a4f5a',
-  '--error': '#e93f3f',
-  '--success': '#3fe99b',
+  '--background': '#eff8ff',
+  '--background-alt': '#edf2f7',
+  '--text': '#3a3f58',
+  '--text-alt': '#5a5d6a',
+  '--anchor': '#1067b1',
+  '--icons': '#4ea1e9',
+  '--accent': '#6b879b',
+  '--tags': '#0c4c82',
+  '--borders': '#93938e',
+  '--shadows': '#a8b1cf',
+  '--error': '#ee6a59',
+  '--warn': '#FCCC5B',
+  '--success': '#acd5bd',
 };
 
-const nord: Theme = {
-  '--background': '#2e3440',
-  '--foreground': '#d8dee9',
-  '--anchor': '#bf616a',
-  '--accent': '#ebcb8b',
-  '--dim': '#aeb3bb',
-  '--bright': '#eceff4',
-  '--dark': '#3b4252',
-  '--error': '#94545d',
-  '--success': '#aebe8c',
-};
-
-const gruvbox: Theme = {
-  '--background': '#282828',
-  '--foreground': '#ebdbb2',
-  '--anchor': '#ff524a',
-  '--accent': '#d79921',
-  '--dim': '#9d8d7d',
-  '--bright': '#ebdbb2',
-  '--dark': '#282828',
-  '--error': '#ff524a',
-  '--success': '#689d6a',
-};
-
-const everforest: Theme = {
-  '--background': '#2f383e',
-  '--foreground': '#d3c6aa',
-  '--anchor': '#dbbc7f',
-  '--accent': '#e69875',
-  '--dim': '#7a8478',
-  '--bright': '#d3c6aa',
-  '--dark': '#2f383e',
-  '--error': '#e67e80',
-  '--success': '#a7c080',
+const nightfox: Theme = {
+  '--background': '#192330',
+  '--background-alt': '#212e3f',
+  '--text': '#cdcecf',
+  '--text-alt': '#aeafb0',
+  '--anchor': '#8dbdff',
+  '--icons': '#8dbdff',
+  '--accent': '#d671b2',
+  '--tags': '#d671b2',
+  '--borders': '#39506d',
+  '--shadows': '#131a24',
+  '--error': '#a52d4b',
+  '--warn': '#f4a261',
+  '--success': '#176e3b',
 };
 
 @Injectable({ providedIn: 'root' })
@@ -69,9 +57,7 @@ export class UiService {
 
   private readonly themes: Map<string, Theme> = new Map([
     ['light', light],
-    ['nord', nord],
-    ['gruvbox', gruvbox],
-    ['everforest', everforest],
+    ['nightfox', nightfox],
   ]);
 
   /**

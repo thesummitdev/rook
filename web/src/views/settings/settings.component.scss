@@ -10,10 +10,14 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
+
+    .icon-hammer {
+      color: theme.$ICONS;
+    }
   }
 
   .setting {
-    border-top: 1px solid theme.$DIM;
+    border-top: 1px solid theme.$BORDERS;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -58,4 +62,12 @@
 
 .form-allow-new-users {
   min-width: 150px;
+}
+
+.add-button {
+  color: theme.$ICONS;
+
+  &:hover {
+    background-color: theme.$BACKGROUND-ALT;
+  }
 }

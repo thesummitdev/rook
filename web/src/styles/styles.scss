@@ -5,7 +5,7 @@
 
 body {
   background: theme.$BACKGROUND;
-  color: theme.$FOREGROUND;
+  color: theme.$TEXT;
   margin: 0;
 }
 
@@ -24,7 +24,7 @@ input[type=url] {
   background: inherit;
   border: none;
   border-bottom: 1px solid transparent;
-  color: theme.$DARK;
+  color: theme.$TEXT;
   font-family: 'Fira Mono', monospace;
   font-size: 14px;
   line-height: 22px;
@@ -32,43 +32,41 @@ input[type=url] {
   width: 100%;
 
   &::placeholder {
-    color: theme.$DIM;
+    color: theme.$TEXT;
   }
 
   &:focus {
-    border-bottom: 1px solid theme.$ACCENT;
+    border-bottom: 1px solid theme.$ICONS;
   }
 }
 
 button {
   background: transparent;
-  border-radius: 45px;
   border: none;
-  color: theme.$FOREGROUND;
+  color: theme.$TEXT;
   cursor: pointer;
   font-family: 'Fira Sans', sans-serif;
   font-size: 14px;
   outline: none;
   padding: 8px;
   text-transform: lowercase;
-  transition: all 0.3s ease 0s;
 
   &:focus:not(:disabled),
   &:hover:not(:disabled) {
 
-    background: theme.$SUCCESS;
-    color: theme.$DARK;
+    text-decoration: underline;
 
   }
 
   &:hover:disabled {
     background: theme.$ERROR;
-    color: theme.$DARK;
+    color: theme.$TEXT-ALT;
     cursor: default;
   }
 
   &:disabled {
-    color: theme.$DIM;
+    background: theme.$BACKGROUND-ALT;
+    color: theme.$TEXT-ALT;
   }
 
 }

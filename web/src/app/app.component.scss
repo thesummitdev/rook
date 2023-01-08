@@ -23,13 +23,14 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  color: theme.$ACCENT;
 }
 
 .app-name {
   font-family: 'Fira Sans', sans-serif;
-  font-weight: 300;
-  font-size: 24px;
-  line-height: 28px;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 48px;
   margin: 0 8px;
 
   &:hover {
@@ -64,7 +65,7 @@
   max-width: 300px;
 
   .footer {
-    color: theme.$DIM;
+    color: theme.$TEXT-ALT;
     font-family: 'Fira Mono', monospace;
     font-size: 13px;
     line-height: 16px;
@@ -79,5 +80,4 @@
 .right-column {
   // Make right column fill available horizontal space.
   flex-grow: 1;
-  max-width: 400px;
 }

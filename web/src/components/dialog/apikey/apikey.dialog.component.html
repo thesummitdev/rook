@@ -1,8 +1,8 @@
 <div #dialog cdkTrapFocus class="apikey-dialog-wrapper">
   <p>{{ apikey.apiKey }}</p>
   <div class="actions">
-    <button (click)="handleCopyKeyToClipboard($event)">copy</button>
-    <button (click)="handleDeleteKey($event)">delete</button>
     <button (click)="close()">close</button>
+    <button (click)="handleDeleteKey($event)">delete</button>
+    <button (click)="handleCopyKeyToClipboard($event)">copy</button>
   </div>
 </div>

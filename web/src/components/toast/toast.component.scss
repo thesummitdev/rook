@@ -11,17 +11,17 @@
 
   &.info {
     background: theme.$SUCCESS;
-    color: theme.$DARK;
+    color: theme.$TEXT;
   }
 
   &.warn {
-    background: theme.$ACCENT;
-    color: theme.$DARK;
+    background: theme.$WARN;
+    color: theme.$TEXT;
   }
 
   &.error {
     background: theme.$ERROR;
-    color: theme.$DARK;
+    color: theme.$TEXT;
   }
 
 }

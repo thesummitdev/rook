@@ -19,12 +19,12 @@
     width: 100%;
 
     &:focus-within {
-      border-bottom: 1px solid theme.$ACCENT;
+      border-bottom: 1px solid theme.$BORDERS;
     }
   }
 
   .search-icon {
-    color: theme.$ACCENT;
+    color: theme.$ICONS;
     height: 14px;
     width: 14px;
     margin-right: 6px;
@@ -33,14 +33,14 @@
   .search-input {
     background: inherit;
     border: none;
-    color: theme.$FOREGROUND;
+    color: theme.$TEXT;
     font-family: 'Fira Mono', monospace;
     line-height: 22px;
     outline: none;
     width: 100%;
 
     &::placeholder {
-      color: theme.$DIM;
+      color: theme.$TEXT-ALT;
     }
 
   }

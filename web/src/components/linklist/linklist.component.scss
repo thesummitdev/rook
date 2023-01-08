@@ -7,7 +7,7 @@
 }
 
 .links-li {
-  border-top: 1px solid theme.$DIM;
+  border-top: 1px solid theme.$BORDERS;
 }
 
 .paging-container {
@@ -38,7 +38,7 @@
   min-width: 350px;
 
   p {
-    color: theme.$DARK;
+    color: theme.$TEXT;
     font-family: 'Fira Sans', sans-serif;
     font-size: 13px;
     font-weight: 300;
@@ -47,7 +47,7 @@
   }
 
   .link-icon {
-    color: theme.$BRIGHT;
+    color: theme.$BACKGROUND-ALT;
     height: 128px;
     width: 128px;
   }

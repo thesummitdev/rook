@@ -11,7 +11,7 @@
   padding: 6px 0 6px 6px;
 
   &:focus-within {
-    border-bottom: 1px solid theme.$ACCENT;
+    border-bottom: 1px solid theme.$BACKGROUND-ALT;
   }
 
   span {
@@ -26,18 +26,21 @@
   &:focus {
     border-bottom: none;
   }
+
+  &::placeholder {
+    color: theme.$TEXT-ALT;
+  }
 }
 
 .icon {
-  color: theme.$ACCENT;
+  color: theme.$ICONS;
   height: 14px;
   width: 14px;
 }
 
 .options-list {
-
-  background-color: theme.$BACKGROUND;
-  border: 1px solid theme.$DARK;
+  background-color: theme.$BACKGROUND-ALT;
+  border: 1px solid theme.$TEXT-ALT;
   max-height: 70vh;
   overflow-y: auto;
   position: absolute;
@@ -54,12 +57,12 @@
       font-family: 'Fira Mono', monospace;
       font-size: 14px;
       line-height: 14px;
-      color: theme.$FOREGROUND;
+      color: theme.$TEXT;
 
       &:focus,
       &:hover {
-        background-color: theme.$ACCENT;
-        color: theme.$DARK;
+        background-color: theme.$BACKGROUND;
+        color: theme.$TEXT-ALT;
         cursor: pointer;
         outline: none;
       }
@@ -71,7 +74,7 @@
   }
 
   &::-webkit-scrollbar-track {
-    background: theme.$BRIGHT;
+    background: theme.$BORDERS;
   }
 
   &::-webkit-scrollbar-thumb {

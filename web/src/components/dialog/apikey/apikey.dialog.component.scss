@@ -3,9 +3,8 @@
 
 .apikey-dialog-wrapper {
   background: theme.$BACKGROUND;
-  border: 1px solid theme.$FOREGROUND;
   border-radius: 12px;
-  box-shadow: 3px 3px 5px theme.$DARK;
+  box-shadow: 3px 3px 5px theme.$SHADOWS;
   padding: 16px 24px;
   word-break: break-all;
   max-width: 500px;
@@ -24,4 +23,8 @@
   flex-flow: row nowrap;
   gap: 4px;
   justify-content: flex-end;
+
+  button {
+    letter-spacing: 1.5px;
+  }
 }

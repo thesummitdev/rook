@@ -1,21 +1,31 @@
 :root {
-  --background: #eeeef1;
-  --foreground: #6b717f;
-  --anchor: #0091ff;
-  --accent: #f77d00;
-  --dim: #959595;
-  --bright: #d1d1d1;
-  --dark: #4a4f5a;
-  --error: #e93f3f;
-  --success: #3fe99b;
+  --background: #eff8ff;
+  --background-alt: #edf2f7;
+  --text: #3a3f58;
+  --text-alt: #5a5d6a;
+  --anchor: #1067b1;
+  --icons: #4ea1e9;
+  --accent: #6b879b;
+  --tags: #0c4c82;
+  --borders: #93938e;
+  --shadows: #a8b1cf;
+  --error: #ee6a59;
+  --warn: #FCCC5B;
+  --success: #acd5bd;
 }
 
 $BACKGROUND: var(--background);
-$FOREGROUND: var(--foreground);
+$BACKGROUND-ALT: var(--background-alt);
+$TEXT: var(--text);
+$TEXT-ALT: var(--text-alt);
 $ANCHOR: var(--anchor);
+$ICONS: var(--icons);
 $ACCENT: var(--accent);
-$DIM: var(--dim);
-$BRIGHT: var(--bright);
-$DARK: var(--dark);
+$TAGS: var(--tags);
+$BORDERS: var(--borders);
+$SHADOWS: var(--shadows);
 $ERROR: var(--error);
+$WARN: var(--warn);
 $SUCCESS: var(--success);
+
+

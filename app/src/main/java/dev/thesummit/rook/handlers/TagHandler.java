@@ -34,6 +34,8 @@ public class TagHandler {
         lns.stream()
             .map(link -> link.tags.split(" "))
             .flatMap(Arrays::stream)
+            // Don't include white space tags, i.e. " "
+            .filter(tag -> !tag.isEmpty())
             .distinct()
             .sorted()
             .collect(Collectors.toList());

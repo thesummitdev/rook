@@ -4,12 +4,14 @@
     <input
       #usernameInput
       autocomplete="username"
+      required
       class="login-input"
       type="text"
       placeholder="username"
       [(ngModel)]="model.username" />
     <input
       autocomplete="current-password"
+      required
       class="login-input"
       type="password"
       placeholder="password"

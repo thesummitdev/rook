@@ -2,9 +2,9 @@
 
 .pill {
 
-  background-color: theme.$ACCENT;
+  background-color: theme.$BACKGROUND-ALT;
   border-radius: 20px;
-  color: theme.$DARK;
+  color: theme.$TEXT-ALT;
   font-family: 'Fira Mono', monospace;
   font-size: 12px;
   font-weight: 500;
@@ -22,7 +22,7 @@
     .remove-icon {
       width: 16px;
       height: 16px;
-      color: theme.$DARK;
+      color: theme.$TEXT-ALT;
 
       &:hover {
         cursor: pointer;

@@ -1,7 +1,6 @@
 @use 'web/src/styles/theme';
 
 .tags-input {
-
   .options-list {
     display: none;
   }
@@ -9,13 +8,11 @@
   &:focus-within .options-list {
     display: block;
   }
-
 }
 
 .options-list {
-
   background-color: theme.$BACKGROUND;
-  border: 1px solid theme.$DARK;
+  border: 1px solid theme.$BORDERS;
   max-height: 30vh;
   margin-left: 5px;
   margin-top: 2px;
@@ -34,12 +31,12 @@
       font-family: 'Fira Mono', monospace;
       font-size: 14px;
       line-height: 14px;
-      color: theme.$FOREGROUND;
+      color: theme.$TEXT;
 
       &:focus,
       &:hover {
-        background-color: theme.$ACCENT;
-        color: theme.$DARK;
+        background-color: theme.$BACKGROUND-ALT;
+        color: theme.$TEXT-ALT;
         cursor: pointer;
         outline: none;
       }
@@ -51,22 +48,20 @@
   }
 
   &::-webkit-scrollbar-track {
-    background: theme.$BRIGHT;
+    background: theme.$BORDERS;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: theme.$ACCENT;
+    background: theme.$ICONS;
   }
-
 }
-
 
 .link-form {
   display: flex;
   flex-flow: column;
 
   .input-wrapper {
-    border: 2px solid theme.$ACCENT;
+    border: 2px solid theme.$BORDERS;
     border-radius: 8px;
     display: flex;
     flex-flow: row nowrap;
@@ -76,11 +71,11 @@
     input,
     input:focus {
       border: none;
-      color: theme.$FOREGROUND;
+      color: theme.$TEXT;
     }
 
     .field-name {
-      color: theme.$FOREGROUND;
+      color: theme.$TEXT;
       font-family: 'Fira Sans', sans-serif;
       font-size: 14px;
       font-weight: 300;
@@ -94,10 +89,7 @@
     &.invalid {
       border: 2px solid theme.$ERROR;
     }
-
   }
-
-
 }
 
 .action-row {
@@ -106,6 +98,9 @@
   justify-content: flex-end;
   padding: 8px 12px;
 
+  button {
+    letter-spacing: 2.5px;
+  }
 }
 
 .error-container {
