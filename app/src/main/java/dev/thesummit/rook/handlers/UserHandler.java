@@ -6,7 +6,12 @@ import dev.thesummit.rook.database.DatabaseService;
 import dev.thesummit.rook.models.User;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
+import io.javalin.http.ForbiddenResponse;
+import io.javalin.http.HttpCode;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -14,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 /** API handler for user creation. */
 public class UserHandler {
-
   private static Logger log = LoggerFactory.getLogger(UserHandler.class);
   private PasswordManager pwm;
   private DatabaseService dbService;
@@ -30,7 +34,6 @@ public class UserHandler {
    * and returns a 200 status and a User object if the creation is successful.
    */
   public void create(Context ctx) throws Exception {
-
     JSONObject body = null;
 
     try {
@@ -65,5 +68,29 @@ public class UserHandler {
     }
 
     throw new BadRequestResponse("Missing required fields");
+  }
+
+  /**
+   * Request handler for GET ${host}/users.
+   *
+   * @param ctx                 the request {@link Context}
+   * @throws ForbiddenResponse  non-admin users are not authorized to list all users.
+   */
+  public void getAll(Context ctx) throws ForbiddenResponse {
+    User user = ctx.sessionAttribute("current_user");
+
+    if (!user.isAdmin) {
+      throw new ForbiddenResponse("Current user cannot make this request.");
+    }
+
+    List<User> results = this.dbService.getAll(User.class, Map.of());
+    JSONArray arr = new JSONArray();
+
+    for (User u : results) {
+      arr.put(u.toJsonObject());
+    }
+
+    ctx.status(HttpCode.OK);
+    ctx.result(new JSONObject().put("items", arr).toString());
   }
 }

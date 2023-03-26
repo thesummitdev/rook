@@ -64,6 +64,7 @@ public class RookApplication {
     app.before("/links", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/links/*", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/tags", injector.getInstance(AuthHandler.class)::requireUserContext);
+    app.before("/users", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/users/apikey", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/users/apikey/<id>", injector.getInstance(AuthHandler.class)::requireUserContext);
     app.before("/users/apikey/new", injector.getInstance(AuthHandler.class)::requireUserContext);
@@ -76,6 +77,7 @@ public class RookApplication {
     app.routes(() -> {
       path("login", () -> { post(injector.getInstance(AuthHandler.class)::login); });
       path("users", () -> {
+        get(injector.getInstance(UserHandler.class)::getAll);
         put(injector.getInstance(UserHandler.class)::create);
         path("apikey", () -> {
           get(injector.getInstance(AuthHandler.class)::getApiKeys);
